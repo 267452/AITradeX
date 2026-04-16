@@ -2,6 +2,8 @@
 
 **AITradeX** - 基于 Agent + Workflow + RAG 的 AI量化交易决策系统。
 
+![AITradeX 系统界面](https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=AITradeX%20dashboard%20interface%20with%20dark%20theme%2C%20showing%20overview%20center%2C%20trade%20command%20platform%2C%20and%20module%20status%20panels&image_size=landscape_16_9)
+
 ## 技术架构
 
 ```
