@@ -52,6 +52,8 @@
 |---------|------|
 | **决策交易引擎** | 基于工作流的 AI 决策交易，FinancialAgent 智能调度 |
 | **工作流引擎** | 可视化工作流设计，节点图结构管理 |
+| **Skill 管理** | AI 助手技能配置，提示词模板与工具绑定 |
+| **通知渠道** | 飞书、企业微信 Webhook 消息通知，支持交易信号推送 |
 | **券商管理** | paper / gtja / okx / usstock / real 多通道切换 |
 | **指令交易** | 中英文自然语言指令，买入/卖出/策略运行 |
 | **AI 智能助手** | 多服务商支持（OpenAI、MiniMax、Custom） |
@@ -144,7 +146,9 @@ AITradeX/
 │   ├── 005_system_setting.sql
 │   ├── 006_sys_user.sql
 │   ├── 007_ai_admin_modules.sql
-│   └── 008_ai_config.sql
+│   ├── 008_ai_config.sql
+│   ├── 009_skill.sql
+│   └── 010_notification_channel.sql
 │
 ├── docker-compose.yml         # 容器编排
 ├── .env                      # 环境变量配置
@@ -219,6 +223,24 @@ AITradeX/
 | `POST /api/admin/mcp/tools` | POST | 创建 MCP 工具 |
 | `PUT /api/admin/mcp/tools/{id}` | PUT | 更新 MCP 工具 |
 | `DELETE /api/admin/mcp/tools/{id}` | DELETE | 删除 MCP 工具 |
+
+### Skill 管理
+| 接口 | 方法 | 说明 |
+|------|------|------|
+| `GET /api/admin/skills` | GET | 获取 Skill 列表 |
+| `GET /api/admin/skills/{id}` | GET | 获取 Skill 详情 |
+| `POST /api/admin/skills` | POST | 创建 Skill |
+| `PUT /api/admin/skills/{id}` | PUT | 更新 Skill |
+| `DELETE /api/admin/skills/{id}` | DELETE | 删除 Skill |
+
+### 通知渠道管理
+| 接口 | 方法 | 说明 |
+|------|------|------|
+| `GET /api/admin/notification-channels` | GET | 获取通知渠道列表 |
+| `GET /api/admin/notification-channels/{id}` | GET | 获取通知渠道详情 |
+| `POST /api/admin/notification-channels` | POST | 创建通知渠道 |
+| `PUT /api/admin/notification-channels/{id}` | PUT | 更新通知渠道 |
+| `DELETE /api/admin/notification-channels/{id}` | DELETE | 删除通知渠道 |
 
 ## 环境变量配置
 

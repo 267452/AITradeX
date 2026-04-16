@@ -1823,6 +1823,14 @@
             <div class="nav-icon">M</div>
             <div class="nav-text">MCP 管理</div>
           </div>
+          <div class="nav-item" data-page="skill">
+            <div class="nav-icon">S</div>
+            <div class="nav-text">Skill 管理</div>
+          </div>
+          <div class="nav-item" data-page="notification">
+            <div class="nav-icon">N</div>
+            <div class="nav-text">通知渠道</div>
+          </div>
         </div>
 
         <div class="nav-group">
@@ -2158,6 +2166,52 @@
           </article>
         </section>
 
+        <section class="page-view" id="page-notification">
+          <div class="page-toolbar">
+            <div>
+              <h2 class="toolbar-title">通知渠道</h2>
+              <p class="toolbar-desc">配置飞书、企业微信等第三方消息通知渠道。</p>
+            </div>
+            <div class="action-row">
+              <button class="btn btn-primary small" data-action="open-add-notification">新增渠道</button>
+              <button class="btn btn-secondary small" data-action="reload-notification">刷新</button>
+            </div>
+          </div>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>第三方通知渠道</h3>
+                <p>Webhook 配置与启用状态</p>
+              </div>
+            </div>
+            <div class="panel-body" id="notificationChannelsTable"></div>
+          </article>
+        </section>
+
+        <section class="page-view" id="page-skill">
+          <div class="page-toolbar">
+            <div>
+              <h2 class="toolbar-title">Skill 管理</h2>
+              <p class="toolbar-desc">配置 AI 助手技能、提示词模板与可用工具。</p>
+            </div>
+            <div class="action-row">
+              <button class="btn btn-primary small" data-action="open-add-skill">新增 Skill</button>
+              <button class="btn btn-secondary small" data-action="reload-skill">刷新</button>
+            </div>
+          </div>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Skills</h3>
+                <p>技能名称、描述、状态与绑定的工具</p>
+              </div>
+            </div>
+            <div class="panel-body" id="skillsTable"></div>
+          </article>
+        </section>
+
         <section class="page-view" id="page-workflow">
           <div class="page-toolbar">
             <div>
@@ -2282,6 +2336,14 @@
         title: "MCP 管理",
         desc: "统一管理工具端点和市场分发状态。"
       },
+      skill: {
+        title: "Skill 管理",
+        desc: "配置 AI 助手技能、提示词模板与可用工具。"
+      },
+      notification: {
+        title: "通知渠道",
+        desc: "配置飞书、企业微信等第三方消息通知渠道。"
+      },
       workflow: {
         title: "工作流",
         desc: "编排定义、版本状态和节点结构总览。"
@@ -2303,6 +2365,8 @@
       conversationInsights: null,
       mcpTools: [],
       mcpMarkets: [],
+      skills: [],
+      notificationChannels: [],
       workflows: [],
       workflowNodes: [],
       workflowGraphLoadedFor: null,
@@ -2614,6 +2678,14 @@
         await loadMcpData(silent);
         return;
       }
+      if (page === "skill") {
+        await loadSkillData(silent);
+        return;
+      }
+      if (page === "notification") {
+        await loadNotificationChannelData(silent);
+        return;
+      }
       if (page === "workflow") {
         await loadWorkflowData(silent);
       }
@@ -2804,6 +2876,24 @@
         });
       }
       renderMcpPage();
+    }
+
+    async function loadSkillData(silent = false) {
+      const resp = await apiRequest("/admin/skills");
+      state.skills = resp || [];
+      if (!silent && resp === null) {
+        showToast("Skill 数据加载失败", "warning");
+      }
+      renderSkillPage();
+    }
+
+    async function loadNotificationChannelData(silent = false) {
+      const resp = await apiRequest("/admin/notification-channels");
+      state.notificationChannels = resp || [];
+      if (!silent && resp === null) {
+        showToast("通知渠道数据加载失败", "warning");
+      }
+      renderNotificationPage();
     }
 
     async function loadWorkflowData(silent = false) {
@@ -3214,6 +3304,74 @@
           `
         }
       ], state.mcpMarkets, "暂无 MCP 市场。");
+    }
+
+    function renderSkillPage() {
+      renderTable("skillsTable", [
+        {
+          label: "Skill",
+          render: (row) => `
+            <span class="value-strong">${escapeHtml(row.icon || "⚡")} ${escapeHtml(row.name || "--")}</span>
+            <br><span class="item-meta">${escapeHtml(row.category || "--")} · 运行 ${formatNumber(row.run_count || 0)} 次</span>
+          `
+        },
+        { label: "描述", render: (row) => escapeHtml(row.description || "--") },
+        {
+          label: "状态",
+          render: (row) => {
+            const status = String(row.status || "--");
+            return `<span class="badge ${toneClass(normalizeToneFromStatus(status))}">${escapeHtml(status.toUpperCase())}</span>`;
+          }
+        },
+        {
+          label: "工具",
+          render: (row) => {
+            const tools = row.enabled_tools || row.enabledTools || "";
+            if (!tools) return "-";
+            return tools.split(",").slice(0, 3).map(t => `<span class="tag">${escapeHtml(t.trim())}</span>`).join(" ") + (tools.split(",").length > 3 ? "..." : "");
+          }
+        },
+        { label: "最近运行", render: (row) => escapeHtml(formatDateTime(row.last_run_at || row.lastRunAt)) },
+        {
+          label: "操作",
+          render: (row) => `
+            <button class="mini-btn" data-action="edit-skill" data-id="${escapeHtml(row.id)}">编辑</button>
+            <button class="mini-btn danger" data-action="delete-skill" data-id="${escapeHtml(row.id)}">删除</button>
+          `
+        }
+      ], state.skills, "暂无 Skill。");
+    }
+
+    function renderNotificationPage() {
+      renderTable("notificationChannelsTable", [
+        {
+          label: "渠道",
+          render: (row) => `<span class="value-strong">${escapeHtml(row.name || "--")}</span><br><span class="item-meta">${escapeHtml(row.channel_type || "--")}</span>`
+        },
+        {
+          label: "配置",
+          render: (row) => {
+            const config = row.config || {};
+            const url = config.webhook_url || "";
+            return url ? `<span class="tag">${escapeHtml(url.substring(0, 30))}${url.length > 30 ? "..." : ""}</span>` : "-";
+          }
+        },
+        {
+          label: "启用",
+          render: (row) => {
+            const enabled = row.enabled;
+            return `<span class="badge ${enabled ? "success" : "secondary"}">${enabled ? "ENABLED" : "DISABLED"}</span>`;
+          }
+        },
+        { label: "创建时间", render: (row) => escapeHtml(formatDateTime(row.created_at)) },
+        {
+          label: "操作",
+          render: (row) => `
+            <button class="mini-btn" data-action="edit-notification" data-id="${escapeHtml(row.id)}">编辑</button>
+            <button class="mini-btn danger" data-action="delete-notification" data-id="${escapeHtml(row.id)}">删除</button>
+          `
+        }
+      ], state.notificationChannels, "暂无通知渠道。");
     }
 
     function renderWorkflowPage() {
@@ -4155,10 +4313,10 @@
             ]
           },
           { name: "account_name", label: "账户名称", type: "text", required: true, placeholder: "例如：主交易账户" },
-          { name: "base_url", label: "Base URL", type: "text", optional: true, placeholder: "可选，示例 https://api.xxx.com" },
+          { name: "base_url", label: "Base URL", type: "text", required: true, placeholder: "例如 https://api.xxx.com" },
           { name: "api_key", label: "API Key", type: "password", required: true, placeholder: "输入 API Key" },
-          { name: "api_secret", label: "API Secret", type: "password", optional: true, placeholder: "可选" },
-          { name: "access_token", label: "Access Token", type: "password", optional: true, placeholder: "可选" }
+          { name: "api_secret", label: "API Secret", type: "password", required: true, placeholder: "输入 API Secret" },
+          { name: "access_token", label: "Access Token", type: "password", required: true, placeholder: "输入 Access Token" }
         ],
         onSubmit: async (payload) => {
           await apiRequest("/broker/accounts", { method: "POST", body: payload });
@@ -4192,7 +4350,7 @@
           { name: "provider", label: "供应商", type: "select", required: true, value: initialProvider, options: providers, onChange: "handleProviderChange(this.value)" },
           { name: "model", label: "模型名称", type: "text", optional: true, value: pick(state.aiConfig, "model") || "", placeholder: "例如 MiniMax M2.7 高速版（可选）" },
           { name: "modelId", label: "模型ID", type: "text", required: true, value: pick(state.aiConfig, "modelId") || "", placeholder: "例如 MiniMax-M2.7-highspeed（必填）" },
-          { name: "baseUrl", label: "Base URL", type: "text", optional: true, value: pick(state.aiConfig, "baseUrl", "base_url") || "", placeholder: "可选" },
+          { name: "baseUrl", label: "Base URL", type: "text", required: true, value: pick(state.aiConfig, "baseUrl", "base_url") || "", placeholder: "例如 https://api.minimax.chat/v1（必填）" },
           { name: "apiKey", label: "API Key", type: "password", optional: mode !== "save", placeholder: "输入 API Key", value: pick(state.aiConfig, "hasApiKey") ? "••••••••" : "" }
         ],
         onSubmit: async (payload) => {
@@ -4232,7 +4390,8 @@
         successText: "模型已切换",
         fields: [
           { name: "provider", label: "已保存的配置", type: "select", required: true, value: initialProvider, options: providerOptions, onChange: "handleSwitchProviderChange(this.value)" },
-          { name: "model", label: "模型名称", type: "text", required: true, value: pick(state.aiConfig, "model") || "", placeholder: "例如 gpt-4.1" }
+          { name: "model", label: "模型名称", type: "text", required: true, value: pick(state.aiConfig, "model") || "", placeholder: "例如 MiniMax M2.7 高速版（可选）" },
+          { name: "modelId", label: "模型ID", type: "text", required: true, value: pick(state.aiConfig, "modelId") || "", placeholder: "例如 MiniMax-M2.7-highspeed（必填）" }
         ],
         onSubmit: async (payload) => {
           await apiRequest("/ai/switch-model", { method: "POST", body: payload });
@@ -4243,19 +4402,27 @@
 
       setTimeout(() => {
         const modelInput = $("modal-model");
+        const modelIdInput = $("modal-modelId");
         const cfg = savedConfigs.find((c) => c.provider === initialProvider);
         if (modelInput && cfg) {
           modelInput.value = cfg.model || "";
+        }
+        if (modelIdInput && cfg) {
+          modelIdInput.value = cfg.modelId || "";
         }
       }, 0);
     }
 
     function handleSwitchProviderChange(provider) {
       const modelInput = $("modal-model");
+      const modelIdInput = $("modal-modelId");
       const savedConfigs = state.savedAiConfigs || [];
       const cfg = savedConfigs.find((c) => c.provider === provider);
       if (modelInput) {
         modelInput.value = cfg ? (cfg.model || "") : "";
+      }
+      if (modelIdInput) {
+        modelIdInput.value = cfg ? (cfg.modelId || "") : "";
       }
     }
 
@@ -4267,11 +4434,11 @@
       }
       await apiRequest("/ai/switch-model", {
         method: "POST",
-        body: { provider: cfg.provider, model: cfg.model }
+        body: { provider: cfg.provider, model: cfg.model, modelId: cfg.modelId }
       });
       await loadModelData(true);
       await loadOverviewData(true);
-      showToast("已切换到: " + cfg.provider + " / " + cfg.model, "success");
+      showToast("已切换到: " + cfg.provider + " / " + cfg.model + " (" + cfg.modelId + ")", "success");
     }
 
     function openKnowledgeModal(record = null) {
@@ -4474,6 +4641,72 @@
           }
           await loadMcpData(true);
           await loadOverviewData(true);
+        }
+      });
+    }
+
+    function openSkillModal(record = null) {
+      const isEdit = Boolean(record);
+      openFormModal({
+        title: isEdit ? "编辑 Skill" : "新增 Skill",
+        desc: "配置技能名称、提示词模板与可用工具。",
+        submitText: isEdit ? "保存修改" : "创建 Skill",
+        successText: isEdit ? "Skill 已更新" : "Skill 已创建",
+        fields: [
+          { name: "name", label: "技能名称", type: "text", required: true, value: record?.name || "" },
+          { name: "description", label: "描述", type: "text", optional: true, value: record?.description || "" },
+          { name: "icon", label: "图标", type: "text", optional: true, value: record?.icon || "⚡" },
+          { name: "category", label: "分类", type: "text", optional: true, value: record?.category || "general" },
+          { name: "status", label: "状态", type: "select", value: record?.status || "enabled", options: [
+            { label: "enabled", value: "enabled" },
+            { label: "warning", value: "warning" },
+            { label: "gray", value: "gray" },
+            { label: "disabled", value: "disabled" }
+          ] },
+          { name: "promptTemplate", label: "提示词模板", type: "textarea", full: true, optional: true, value: record?.prompt_template || record?.promptTemplate || "" },
+          { name: "enabledTools", label: "可用工具 (逗号分隔)", type: "text", optional: true, value: record?.enabled_tools || record?.enabledTools || "" }
+        ],
+        onSubmit: async (payload) => {
+          if (isEdit) {
+            await apiRequest(`/admin/skills/${record.id}`, { method: "PUT", body: payload });
+          } else {
+            await apiRequest("/admin/skills", { method: "POST", body: payload });
+          }
+          await loadSkillData(true);
+        }
+      });
+    }
+
+    function openNotificationChannelModal(record = null) {
+      const isEdit = Boolean(record);
+      openFormModal({
+        title: isEdit ? "编辑通知渠道" : "新增通知渠道",
+        desc: "配置飞书、企业微信等 Webhook 通知渠道。",
+        submitText: isEdit ? "保存修改" : "创建渠道",
+        successText: isEdit ? "渠道已更新" : "渠道已创建",
+        fields: [
+          { name: "name", label: "渠道名称", type: "text", required: true, value: record?.name || "" },
+          { name: "channelType", label: "渠道类型", type: "select", required: true, value: record?.channel_type || "feishu", options: [
+            { label: "飞书", value: "feishu" },
+            { label: "企业微信", value: "wecom" }
+          ] },
+          { name: "webhookUrl", label: "Webhook URL", type: "text", full: true, value: record?.config?.webhook_url || "" },
+          { name: "secret", label: "密钥 (可选)", type: "text", optional: true, value: record?.config?.secret || "" },
+          { name: "enabled", label: "启用", type: "toggle", value: record?.enabled !== false }
+        ],
+        onSubmit: async (payload) => {
+          const data = {
+            name: payload.name,
+            channelType: payload.channelType,
+            config: { webhook_url: payload.webhookUrl, secret: payload.secret || "" },
+            enabled: payload.enabled
+          };
+          if (isEdit) {
+            await apiRequest(`/admin/notification-channels/${record.id}`, { method: "PUT", body: data });
+          } else {
+            await apiRequest("/admin/notification-channels", { method: "POST", body: data });
+          }
+          await loadNotificationChannelData(true);
         }
       });
     }
@@ -4783,6 +5016,15 @@
         if (action === "edit-mcp-market") return openMcpMarketModal(findById(state.mcpMarkets, id));
         if (action === "delete-mcp-market") return deleteWithConfirm("确认删除该 MCP 市场？", `/admin/mcp/markets/${id}`, loadMcpData).catch((error) => showToast(error.message, "danger"));
 
+        if (action === "reload-skill") return loadSkillData(false);
+        if (action === "edit-skill") return openSkillModal(findById(state.skills, id));
+        if (action === "delete-skill") return deleteWithConfirm("确认删除该 Skill？", `/admin/skills/${id}`, loadSkillData).catch((error) => showToast(error.message, "danger"));
+        if (action === "open-add-skill") return openSkillModal();
+        if (action === "edit-notification") return openNotificationChannelModal(findById(state.notificationChannels, id));
+        if (action === "delete-notification") return deleteWithConfirm("确认删除该通知渠道？", `/admin/notification-channels/${id}`, loadNotificationChannelData).catch((error) => showToast(error.message, "danger"));
+        if (action === "open-add-notification") return openNotificationChannelModal();
+        if (action === "reload-notification") return loadNotificationChannelData(false);
+
         if (action === "open-add-workflow") return openWorkflowModal();
         if (action === "reload-workflow") return loadWorkflowData(false);
         if (action === "edit-workflow") return openWorkflowModal(findById(state.workflows, id));
@@ -4864,6 +5106,8 @@
         loadKnowledgeData(true),
         loadConversationData(true),
         loadMcpData(true),
+        loadSkillData(true),
+        loadNotificationChannelData(true),
         loadWorkflowData(true)
       ]);
       renderOverview();

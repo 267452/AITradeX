@@ -6,6 +6,8 @@ import com.domain.request.KnowledgeBaseUpsertRequest;
 import com.domain.request.KnowledgeDocumentCreateRequest;
 import com.domain.request.McpMarketUpsertRequest;
 import com.domain.request.McpToolUpsertRequest;
+import com.domain.request.NotificationChannelUpsertRequest;
+import com.domain.request.SkillUpsertRequest;
 import com.domain.request.WorkflowDefinitionUpsertRequest;
 import com.domain.request.WorkflowGraphEdgeUpsertRequest;
 import com.domain.request.WorkflowGraphNodeUpsertRequest;
@@ -538,6 +540,107 @@ public class AdminModuleRepository {
         jdbcTemplate.update("DELETE FROM mcp_tool WHERE id = ?", id);
     }
 
+    public List<Map<String, Object>> listSkills() {
+        return jdbcTemplate.queryForList("""
+                SELECT id, name, description, icon, category, status, prompt_template,
+                       variables, tools, enabled_tools, run_count, last_run_at
+                FROM skill
+                ORDER BY last_run_at DESC NULLS LAST, id DESC
+                """);
+    }
+
+    public Map<String, Object> getSkill(long id) {
+        return jdbcTemplate.queryForMap("""
+                SELECT id, name, description, icon, category, status, prompt_template,
+                       variables, tools, enabled_tools, run_count, last_run_at
+                FROM skill WHERE id = ?
+                """, id);
+    }
+
+    public void createSkill(SkillUpsertRequest request) {
+        jdbcTemplate.update("""
+                INSERT INTO skill (name, description, icon, category, status, prompt_template,
+                                   variables, tools, enabled_tools, last_run_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?::jsonb, ?::jsonb, ?, NOW())
+                """,
+                request.name(),
+                defaultString(request.description()),
+                defaultString(request.icon(), "⚡"),
+                defaultString(request.category(), "general"),
+                defaultString(request.status(), "enabled"),
+                defaultString(request.promptTemplate()),
+                toJsonString(request.variables()),
+                toJsonString(request.tools()),
+                defaultString(request.enabledTools()));
+    }
+
+    public void updateSkill(long id, SkillUpsertRequest request) {
+        jdbcTemplate.update("""
+                UPDATE skill
+                SET name = ?, description = ?, icon = ?, category = ?, status = ?,
+                    prompt_template = ?, variables = ?::jsonb, tools = ?::jsonb,
+                    enabled_tools = ?, last_run_at = NOW()
+                WHERE id = ?
+                """,
+                request.name(),
+                defaultString(request.description()),
+                defaultString(request.icon(), "⚡"),
+                defaultString(request.category(), "general"),
+                defaultString(request.status(), "enabled"),
+                defaultString(request.promptTemplate()),
+                toJsonString(request.variables()),
+                toJsonString(request.tools()),
+                defaultString(request.enabledTools()),
+                id);
+    }
+
+    public void deleteSkill(long id) {
+        jdbcTemplate.update("DELETE FROM skill WHERE id = ?", id);
+    }
+
+    public List<Map<String, Object>> listNotificationChannels() {
+        return jdbcTemplate.queryForList("""
+                SELECT id, name, channel_type, config, enabled, created_at, updated_at
+                FROM notification_channel
+                ORDER BY id ASC
+                """);
+    }
+
+    public Map<String, Object> getNotificationChannel(long id) {
+        return jdbcTemplate.queryForMap("""
+                SELECT id, name, channel_type, config, enabled, created_at, updated_at
+                FROM notification_channel WHERE id = ?
+                """, id);
+    }
+
+    public void createNotificationChannel(NotificationChannelUpsertRequest request) {
+        jdbcTemplate.update("""
+                INSERT INTO notification_channel (name, channel_type, config, enabled)
+                VALUES (?, ?, ?::jsonb, ?)
+                """,
+                request.name(),
+                request.channelType(),
+                toJson(request.config()),
+                request.enabled() != null ? request.enabled() : true);
+    }
+
+    public void updateNotificationChannel(long id, NotificationChannelUpsertRequest request) {
+        jdbcTemplate.update("""
+                UPDATE notification_channel
+                SET name = ?, channel_type = ?, config = ?::jsonb, enabled = ?, updated_at = NOW()
+                WHERE id = ?
+                """,
+                request.name(),
+                request.channelType(),
+                toJson(request.config()),
+                request.enabled() != null ? request.enabled() : true,
+                id);
+    }
+
+    public void deleteNotificationChannel(long id) {
+        jdbcTemplate.update("DELETE FROM notification_channel WHERE id = ?", id);
+    }
+
     public void createMcpMarket(McpMarketUpsertRequest request) {
         jdbcTemplate.update("""
                 INSERT INTO mcp_market (name, package_count, visibility, status, refresh_note, last_refresh_at)
@@ -627,6 +730,17 @@ public class AdminModuleRepository {
             return objectMapper.writeValueAsString(value);
         } catch (JsonProcessingException e) {
             throw new BusinessException(500, "workflow_graph_json_serialize_failed");
+        }
+    }
+
+    private String toJsonString(String[] array) {
+        if (array == null || array.length == 0) {
+            return "[]";
+        }
+        try {
+            return objectMapper.writeValueAsString(array);
+        } catch (JsonProcessingException e) {
+            throw new BusinessException(500, "skill_json_serialize_failed");
         }
     }
 

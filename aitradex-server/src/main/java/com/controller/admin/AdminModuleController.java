@@ -6,6 +6,8 @@ import com.domain.request.KnowledgeBaseUpsertRequest;
 import com.domain.request.KnowledgeDocumentCreateRequest;
 import com.domain.request.McpMarketUpsertRequest;
 import com.domain.request.McpToolUpsertRequest;
+import com.domain.request.NotificationChannelUpsertRequest;
+import com.domain.request.SkillUpsertRequest;
 import com.domain.request.WorkflowDefinitionUpsertRequest;
 import com.domain.request.WorkflowGraphUpsertRequest;
 import com.repository.AdminModuleRepository;
@@ -182,6 +184,62 @@ public class AdminModuleController {
     @PutMapping("/workflows/{id}/graph")
     public ApiResponse<Void> updateWorkflowGraph(@PathVariable long id, @RequestBody WorkflowGraphUpsertRequest request) {
         adminModuleRepository.replaceWorkflowGraph(id, request);
+        return ApiResponse.success();
+    }
+
+    @GetMapping("/skills")
+    public ApiResponse<List<Map<String, Object>>> skills() {
+        return ApiResponse.success(adminModuleRepository.listSkills());
+    }
+
+    @GetMapping("/skills/{id}")
+    public ApiResponse<Map<String, Object>> skill(@PathVariable long id) {
+        return ApiResponse.success(adminModuleRepository.getSkill(id));
+    }
+
+    @PostMapping("/skills")
+    public ApiResponse<Void> createSkill(@RequestBody SkillUpsertRequest request) {
+        adminModuleRepository.createSkill(request);
+        return ApiResponse.success();
+    }
+
+    @PutMapping("/skills/{id}")
+    public ApiResponse<Void> updateSkill(@PathVariable long id, @RequestBody SkillUpsertRequest request) {
+        adminModuleRepository.updateSkill(id, request);
+        return ApiResponse.success();
+    }
+
+    @DeleteMapping("/skills/{id}")
+    public ApiResponse<Void> deleteSkill(@PathVariable long id) {
+        adminModuleRepository.deleteSkill(id);
+        return ApiResponse.success();
+    }
+
+    @GetMapping("/notification-channels")
+    public ApiResponse<List<Map<String, Object>>> notificationChannels() {
+        return ApiResponse.success(adminModuleRepository.listNotificationChannels());
+    }
+
+    @GetMapping("/notification-channels/{id}")
+    public ApiResponse<Map<String, Object>> notificationChannel(@PathVariable long id) {
+        return ApiResponse.success(adminModuleRepository.getNotificationChannel(id));
+    }
+
+    @PostMapping("/notification-channels")
+    public ApiResponse<Void> createNotificationChannel(@RequestBody NotificationChannelUpsertRequest request) {
+        adminModuleRepository.createNotificationChannel(request);
+        return ApiResponse.success();
+    }
+
+    @PutMapping("/notification-channels/{id}")
+    public ApiResponse<Void> updateNotificationChannel(@PathVariable long id, @RequestBody NotificationChannelUpsertRequest request) {
+        adminModuleRepository.updateNotificationChannel(id, request);
+        return ApiResponse.success();
+    }
+
+    @DeleteMapping("/notification-channels/{id}")
+    public ApiResponse<Void> deleteNotificationChannel(@PathVariable long id) {
+        adminModuleRepository.deleteNotificationChannel(id);
         return ApiResponse.success();
     }
 }

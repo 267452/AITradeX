@@ -101,8 +101,8 @@ public class AIService {
         return aiChatService.listSavedConfigs();
     }
 
-    public AiSwitchModelResponse switchModel(String provider, String modelName) {
+    public AiSwitchModelResponse switchModel(String provider, String modelName, String modelId) {
         String effectiveProvider = provider != null && !provider.isBlank() ? provider : aiChatService.getCurrentProviderId();
-        return aiChatService.switchModel(effectiveProvider, modelName);
+        return aiChatService.switchModel(effectiveProvider, modelName, modelId);
     }
 }

@@ -4,5 +4,6 @@ public record AiSwitchModelResponse(
         boolean success,
         String message,
         String provider,
-        String model) {
+        String model,
+        String modelId) {
 }

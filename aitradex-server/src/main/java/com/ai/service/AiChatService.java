@@ -270,9 +270,9 @@ public class AiChatService {
         return new AiModelsResponse(currentProviderId, currentModel, providers);
     }
     
-    public AiSwitchModelResponse switchModel(String provider, String model) {
+    public AiSwitchModelResponse switchModel(String provider, String model, String modelId) {
         if (!providerFactory.isProviderSupported(provider)) {
-            return new AiSwitchModelResponse(false, "模型不存在：" + provider, provider, model);
+            return new AiSwitchModelResponse(false, "模型不存在：" + provider, provider, model, modelId);
         }
 
         AiConfigEntity dbConfig = aiConfigRepository.getByProvider(provider);
@@ -280,6 +280,7 @@ public class AiChatService {
             AiModelConfig config = new AiModelConfig();
             config.setProvider(dbConfig.provider());
             config.setModel(dbConfig.model());
+            config.setModelId(modelId != null ? modelId : dbConfig.modelId());
             config.setApiKey(dbConfig.apiKeyEncrypted());
             config.setBaseUrl(dbConfig.baseUrl());
             config.setTemperature(dbConfig.temperature() != null ? dbConfig.temperature() : aiProperties.getDefaultTemperature());
@@ -293,7 +294,7 @@ public class AiChatService {
 
         aiConfigRepository.setActive(provider);
 
-        return new AiSwitchModelResponse(true, "已切换到模型：" + model, provider, model);
+        return new AiSwitchModelResponse(true, "已切换到模型：" + model + " (" + modelId + ")", provider, model, modelId);
     }
     
     private AiChatProvider resolveProvider(String provider) {

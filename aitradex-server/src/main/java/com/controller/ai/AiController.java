@@ -65,9 +65,9 @@ public class AiController {
     @PostMapping("/switch-model")
     public ApiResponse<AiSwitchModelResponse> switchAiModel(@RequestBody AiModelSwitchRequest request) {
         if (request.model() == null || request.model().isBlank()) {
-            return ApiResponse.success(new AiSwitchModelResponse(false, "模型名称不能为空", null, null));
+            return ApiResponse.success(new AiSwitchModelResponse(false, "模型名称不能为空", null, null, null));
         }
-        return ApiResponse.success(aiService.switchModel(request.provider(), request.model()));
+        return ApiResponse.success(aiService.switchModel(request.provider(), request.model(), request.modelId()));
     }
 
     @PostMapping("/chat")
