@@ -11,6 +11,7 @@ import com.domain.response.StrategySignalResult;
 import com.domain.response.TradeCommandParseResult;
 import com.repository.MarketDataRepository;
 import com.repository.TradeRepository;
+import com.service.RiskService;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.OffsetDateTime;
@@ -28,27 +29,30 @@ public class TradeService {
     private final MarketDataRepository marketDataRepository;
     private final AppProperties properties;
     private final BrokerService brokerService;
+    private final RiskService riskService;
 
     public TradeService(TradeRepository tradeRepository, MarketDataRepository marketDataRepository,
-                        AppProperties properties, BrokerService brokerService) {
+                        AppProperties properties, BrokerService brokerService, RiskService riskService) {
         this.tradeRepository = tradeRepository;
         this.marketDataRepository = marketDataRepository;
         this.properties = properties;
         this.brokerService = brokerService;
+        this.riskService = riskService;
     }
 
     public SignalProcessResponse processSignal(SignalRequest signal) {
         logger.info("Processing signal: strategy={}, symbol={}, side={}, qty={}, price={}", 
                     signal.strategyName(), signal.symbol(), signal.side(), signal.quantity(), signal.price());
         
-        RiskCheckResult risk = runRisk(signal);
+        RiskCheckResult risk = riskService.checkRisk(signal);
         logger.info("Risk check result: passed={}, reason={}", risk.passed(), risk.reason());
         
-        tradeRepository.insertRiskLog("basic_pre_trade_check", risk.passed(), risk.reason(), java.util.Map.of(
+        riskService.logRiskCheck("comprehensive_risk_check", risk.passed(), risk.reason(), java.util.Map.of(
                 "strategy_name", signal.strategyName(),
                 "symbol", signal.symbol(),
                 "side", signal.side(),
-                "quantity", signal.quantity()));
+                "quantity", signal.quantity(),
+                "price", signal.price()));
         
         if (!risk.passed()) {
             logger.warn("Signal rejected by risk check: symbol={}, reason={}", signal.symbol(), risk.reason());
@@ -74,23 +78,7 @@ public class TradeService {
         return new SignalProcessResponse(ids.signalId(), orderId, true, "signal accepted and order queued");
     }
 
-    public RiskCheckResult runRisk(SignalRequest signal) {
-        if (signal.quantity() > properties.getRiskMaxQty()) {
-            logger.warn("Risk check failed: quantity {} exceeds limit {}", signal.quantity(), properties.getRiskMaxQty());
-            return new RiskCheckResult(false, "quantity_exceeds_limit");
-        }
-        BigDecimal notional = signal.price().multiply(BigDecimal.valueOf(signal.quantity()));
-        if (notional.compareTo(properties.getRiskMaxNotional()) > 0) {
-            logger.warn("Risk check failed: notional {} exceeds limit {}", notional, properties.getRiskMaxNotional());
-            return new RiskCheckResult(false, "notional_exceeds_limit");
-        }
-        if ("sell".equals(signal.side()) && !properties.isRiskAllowShort() && signal.signalStrength().compareTo(BigDecimal.ZERO) >= 0) {
-            logger.warn("Risk check failed: short selling not allowed for symbol {}", signal.symbol());
-            return new RiskCheckResult(false, "short_not_allowed");
-        }
-        logger.debug("Risk check passed for symbol {}", signal.symbol());
-        return new RiskCheckResult(true, "passed");
-    }
+
 
     public TradeCommandParseResult parseTradeCommand(TradeCommandRequest req) {
         logger.debug("Parsing trade command: {}", req.command());

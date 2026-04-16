@@ -1,6 +1,6 @@
 # AITradeX Java Edition
 
-**AITradeX** - 智能量化交易终端，让 AI 驱动的量化交易更简单。
+**AITradeX** - 基于 Agent + Workflow + RAG 的 AI量化交易决策系统。
 
 ## 技术架构
 
@@ -46,33 +46,49 @@
 └─────────────────────────────────────────────────────────────┘
 ```
 
+## 项目亮点
+
+- 基于 FinancialAgent 构建 Agent 决策引擎，实现自然语言交易请求到执行反馈的闭环
+- 通过 Workflow Graph 实现 AI 决策路径编排，增强执行可控性与扩展性
+- 基于 LangChain4j + MCP Tool 实现模型能力与外部工具的动态集成
+- 结合 Milvus 向量数据库实现 RAG 检索增强，提升知识问答与策略解释能力
+
 ## 核心功能
 
-| 功能模块 | 说明 |
-|---------|------|
-| **决策交易引擎** | 基于工作流的 AI 决策交易，FinancialAgent 智能调度 |
-| **工作流引擎** | 可视化工作流设计，节点图结构管理 |
-| **Skill 管理** | AI 助手技能配置，提示词模板与工具绑定 |
-| **通知渠道** | 飞书、企业微信 Webhook 消息通知，支持交易信号推送 |
-| **券商管理** | paper / gtja / okx / usstock / real 多通道切换 |
-| **指令交易** | 中英文自然语言指令，买入/卖出/策略运行 |
-| **AI 智能助手** | 多服务商支持（OpenAI、MiniMax、Custom） |
-| **K 线图展示** | 多种时间周期，实时行情联动 |
-| **风控配置** | 最大持仓数量、最大交易金额、做空权限 |
-| **知识库** | PDF/文本文档向量化存储，Milvus 向量检索 |
-| **MCP 工具** | AI 工具扩展，支持自定义 MCP 工具注册 |
-| **数据大屏** | 专业可视化大屏，实时交易动态 |
+AITradeX 以 FinancialAgent 为核心，构建"模型 + 工作流 + 工具"的三层AI能力体系，实现从用户指令到交易执行的闭环。
+
+### 功能模块
+
+- **总览中心**：数据大屏、AI 驱动的监控
+- **业务流程**：工作流引擎、交易管理、指令交易
+- **AI核心**：模型管理、对话管理
+- **知识与工具**：知识管理、MCP 工具、Skill 管理
+- **系统管理**：通知渠道、风控规则
+
+### AI 能力
+
+- **自然语言理解**：解析交易指令，理解用户意图
+- **智能决策**：基于市场数据和历史表现，提供交易建议
+- **风险评估**：AI 驱动的实时风险分析和拦截
+- **知识检索**：向量数据库支持的智能文档问答
+- **工具调用**：AI 自主选择和使用工具完成复杂任务
 
 ## 决策交易流程
 
 ```
-┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
-│ 用户请求  │ ──▶ │ AI 理解   │ ──▶ │ 工作流节点 │ ──▶ │ 工具执行  │ ──▶ │ 结果反馈  │
-└──────────┘     └──────────┘     └──────────┘     └──────────┘     └──────────┘
-                      │                                                 ▲
-                      │                                                 │
-                      └─────────────────────────────────────────────────┘
-                                     (循环迭代最多 4 轮)
+用户输入
+   ↓
+意图识别 / 参数抽取
+   ↓
+FinancialAgent 调度
+   ↓
+Workflow 节点选择
+   ↓
+Tool / MCP 调用
+   ↓
+风控校验
+   ↓
+交易执行 / 结果反馈
 ```
 
 **FinancialAgent 工具集：**
@@ -119,15 +135,29 @@ AITradeX/
 ├── aitradex-server/          # Spring Boot 后端服务
 │   ├── src/main/java/
 │   │   └── com/
-│   │       ├── controller/    # 8 个控制器
-│   │       ├── service/       # 10 个服务类
-│   │       ├── repository/     # 8 个数据访问类
+│   │       ├── controller/    # 控制器层
+│   │       │   ├── admin/     # 管理接口
+│   │       │   ├── ai/        # AI 相关接口
+│   │       │   ├── broker/    # 交易管理接口
+│   │       │   ├── market/    # 行情接口
+│   │       │   ├── monitor/   # 监控接口
+│   │       │   ├── risk/      # 风控接口
+│   │       │   ├── trade/     # 交易接口
+│   │       │   └── user/      # 用户接口
+│   │       ├── service/       # 服务层
+│   │       │   ├── ai/        # AI 核心服务
+│   │       │   ├── broker/    # 交易管理服务
+│   │       │   ├── knowledge/ # 知识管理服务
+│   │       │   ├── market/    # 行情服务
+│   │       │   ├── risk/      # 风控服务
+│   │       │   ├── skill/     # Skill 管理服务
+│   │       │   └── trade/     # 交易服务
+│   │       ├── repository/     # 数据访问层
 │   │       ├── ai/            # AI 模块（Provider/Factory/Service）
 │   │       ├── config/        # 配置类
 │   │       ├── common/        # 异常处理、API 响应
 │   │       ├── system/        # 系统模块（用户/权限）
-│   │       └── domain/        │ 实体、请求、响应 DTO
-│   │                           │  (WorkflowDefinition/WorkflowGraph/McpTool)
+│   │       └── domain/        # 实体、请求、响应 DTO
 │   └── src/main/resources/
 │       ├── application.yml    # 应用配置
 │       └── logback-spring.xml # 日志配置
@@ -148,7 +178,8 @@ AITradeX/
 │   ├── 007_ai_admin_modules.sql
 │   ├── 008_ai_config.sql
 │   ├── 009_skill.sql
-│   └── 010_notification_channel.sql
+│   ├── 010_notification_channel.sql
+│   └── 011_risk_rule.sql     # 风控规则表
 │
 ├── docker-compose.yml         # 容器编排
 ├── .env                      # 环境变量配置
@@ -196,6 +227,8 @@ AITradeX/
 | `POST /api/ai/config` | POST | AI 配置 |
 | `GET /api/ai/models` | GET | 可用模型列表 |
 | `POST /api/ai/test` | POST | AI 连接测试 |
+
+
 
 ### 知识库（向量数据库）
 | 接口 | 方法 | 说明 |
@@ -318,9 +351,9 @@ tail -f aitradex-server/logs/aitradex.log
 tail -f aitradex-server/logs/aitradex-error.log
 ```
 
-## 项目质量指标
+## 工程化能力
 
-| 指标 | 状态 |
+| 能力 | 实现 |
 |------|------|
 | 分层架构 | ✅ Controller-Service-Repository |
 | 异常处理 | ✅ 全局异常处理器 + 统一响应 |
@@ -330,6 +363,27 @@ tail -f aitradex-server/logs/aitradex-error.log
 | AI 模块 | ✅ 策略模式 + 工厂模式 |
 | 向量数据库 | ✅ Milvus SDK 集成 |
 | 配置管理 | ✅ 环境变量优先 |
+
+## 项目特点
+
+- 支持 Docker Compose 一键启动，降低本地部署成本
+- 支持多券商模式切换与统一交易入口封装
+- 支持知识库、Skill、MCP Tool、通知渠道等模块化扩展
+- 后端采用分层架构，具备较好的可维护性与扩展性
+
+## 设计与技术挑战
+
+- **如何将大模型能力与交易系统解耦**  
+  → 通过 FinancialAgent + Workflow 实现调度与执行分离
+
+- **如何保证 AI 决策可控**  
+  → 引入 Workflow 节点限制执行路径，结合风控规则进行拦截
+
+- **如何扩展 AI 能力**  
+  → 基于 MCP Tool 机制，实现工具注册与动态调用
+
+- **如何提升策略解释性**  
+  → 结合知识库（Milvus）进行 RAG 检索增强
 
 ## License
 
