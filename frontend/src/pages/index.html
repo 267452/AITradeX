@@ -1,0 +1,4880 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AITradeX 控制台</title>
+  <style>
+    :root {
+      --bg-root: #0d1525;
+      --bg-sidebar: #0f1e33;
+      --bg-sidebar-elev: #142844;
+      --bg-panel: #111d31;
+      --bg-panel-soft: #15263f;
+      --bg-card: #f5f8fc;
+      --bg-card-soft: #ffffff;
+      --text-strong: #10243c;
+      --text-main: #2d4867;
+      --text-muted: #5f7793;
+      --text-light: #d7e6f7;
+      --line-dark: rgba(120, 182, 210, 0.2);
+      --line-soft: #dbe6f2;
+      --brand: #23b8a6;
+      --brand-strong: #1197a7;
+      --brand-soft: rgba(35, 184, 166, 0.12);
+      --good: #23b26f;
+      --warn: #eb9f31;
+      --bad: #df5a6a;
+      --info: #5f87c7;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --shadow-panel: 0 18px 40px rgba(5, 16, 30, 0.24);
+      --shadow-card: 0 12px 30px rgba(19, 40, 68, 0.08);
+      --sidebar-width: 246px;
+      --header-height: 92px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 12% -10%, rgba(35, 184, 166, 0.18), transparent 42%),
+        radial-gradient(circle at 90% -25%, rgba(17, 151, 167, 0.25), transparent 45%),
+        var(--bg-root);
+      color: var(--text-main);
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      display: flex;
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      background:
+        linear-gradient(180deg, rgba(13, 28, 47, 0.98), rgba(8, 20, 36, 0.98)),
+        var(--bg-sidebar);
+      border-right: 1px solid var(--line-dark);
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 16px 0 40px rgba(3, 9, 18, 0.32);
+    }
+
+    .sidebar-brand {
+      height: 84px;
+      padding: 20px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(140, 186, 223, 0.14);
+      flex-shrink: 0;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #22c8ae, #1889b7);
+      color: #f2fffb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      box-shadow: 0 10px 22px rgba(21, 157, 174, 0.45);
+    }
+
+    .brand-copy h1 {
+      margin: 0;
+      color: #f2f8ff;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .brand-copy p {
+      margin: 3px 0 0;
+      color: rgba(192, 217, 240, 0.78);
+      font-size: 12px;
+    }
+
+    .sidebar-scroll {
+      overflow-y: auto;
+      flex: 1;
+      padding: 16px 0 20px;
+    }
+
+    .nav-group + .nav-group {
+      margin-top: 12px;
+    }
+
+    .nav-title {
+      padding: 0 18px;
+      margin: 8px 0;
+      font-size: 11px;
+      letter-spacing: 0.7px;
+      color: rgba(183, 210, 236, 0.54);
+    }
+
+    .nav-item {
+      margin: 4px 10px;
+      padding: 11px 12px;
+      border-radius: 11px;
+      border: 1px solid transparent;
+      color: rgba(217, 235, 252, 0.78);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-item:hover {
+      background: rgba(33, 60, 95, 0.58);
+      border-color: rgba(133, 192, 224, 0.24);
+      color: #f0f8ff;
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(35, 184, 166, 0.22), rgba(24, 137, 183, 0.22));
+      border-color: rgba(61, 194, 187, 0.48);
+      color: #f1fffe;
+      box-shadow: 0 10px 24px rgba(16, 125, 137, 0.22);
+    }
+
+    .nav-icon {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      border-radius: 7px;
+      background: rgba(195, 228, 255, 0.16);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .nav-item.active .nav-icon {
+      background: rgba(201, 252, 243, 0.24);
+    }
+
+    .nav-text {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .sidebar-foot {
+      border-top: 1px solid rgba(140, 186, 223, 0.14);
+      padding: 12px 18px 16px;
+      color: rgba(182, 208, 233, 0.68);
+      font-size: 11px;
+      line-height: 1.5;
+      flex-shrink: 0;
+    }
+
+    .workspace {
+      margin-left: var(--sidebar-width);
+      width: calc(100% - var(--sidebar-width));
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-header {
+      height: var(--header-height);
+      padding: 14px 26px;
+      border-bottom: 1px solid rgba(137, 182, 217, 0.2);
+      background: linear-gradient(180deg, rgba(247, 252, 255, 0.97), rgba(241, 248, 254, 0.97));
+      backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 15;
+    }
+
+    .header-main {
+      min-width: 280px;
+    }
+
+    .header-path {
+      margin: 0;
+      font-size: 11px;
+      color: #6b829d;
+      letter-spacing: 0.3px;
+    }
+
+    .header-title {
+      margin: 5px 0 0;
+      color: #12304b;
+      font-size: 23px;
+      line-height: 1.25;
+    }
+
+    .header-desc {
+      margin: 4px 0 0;
+      color: #58718c;
+      font-size: 12px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .chip {
+      height: 36px;
+      border: 1px solid #d3e4f1;
+      border-radius: 10px;
+      padding: 0 12px;
+      background: #fcfeff;
+      color: #2f4e6c;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .chip .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px rgba(35, 178, 111, 0.18);
+      background: var(--good);
+    }
+
+    .chip.warning .dot {
+      background: var(--warn);
+      box-shadow: 0 0 0 4px rgba(235, 159, 49, 0.2);
+    }
+
+    .chip.danger .dot {
+      background: var(--bad);
+      box-shadow: 0 0 0 4px rgba(223, 90, 106, 0.2);
+    }
+
+    .chip-label {
+      color: #70869e;
+      font-weight: 500;
+    }
+
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 0 14px;
+      height: 36px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #20bca6, #178bb4);
+      color: #ecfffd;
+      box-shadow: 0 10px 18px rgba(24, 135, 179, 0.28);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 22px rgba(20, 122, 164, 0.32);
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: #2d5677;
+      border-color: #c9dbea;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      border-color: #82b0cf;
+      color: #164769;
+    }
+
+    .btn-danger-soft {
+      background: #fff7f8;
+      border-color: #f2c6cf;
+      color: #ba4e61;
+    }
+
+    .btn-danger-soft:hover:not(:disabled) {
+      border-color: #e48e9f;
+      color: #9f3f50;
+    }
+
+    .btn.small {
+      height: 32px;
+      padding: 0 12px;
+      font-size: 12px;
+    }
+
+    .account-menu {
+      position: relative;
+    }
+
+    .account-trigger {
+      width: 38px;
+      height: 38px;
+      border: 1px solid #caddeb;
+      border-radius: 11px;
+      background: #fff;
+      color: #19435f;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      padding: 0;
+    }
+
+    .account-trigger:hover {
+      border-color: #7db3d1;
+      box-shadow: 0 8px 20px rgba(29, 78, 112, 0.16);
+    }
+
+    .avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #1dbca4, #237eb6);
+      color: #f2fffd;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .account-dropdown {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      width: 236px;
+      border: 1px solid #d9e8f3;
+      border-radius: 13px;
+      background: #ffffff;
+      box-shadow: 0 20px 42px rgba(16, 34, 55, 0.18);
+      overflow: hidden;
+      display: none;
+      z-index: 50;
+    }
+
+    .account-dropdown.show {
+      display: block;
+    }
+
+    .account-head {
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid #e3edf5;
+      background: #f8fbfe;
+    }
+
+    .account-meta {
+      min-width: 0;
+    }
+
+    .account-name {
+      color: #12324f;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .account-mail {
+      color: #5f7892;
+      font-size: 12px;
+      line-height: 1.3;
+      word-break: break-all;
+    }
+
+    .menu-action {
+      width: 100%;
+      border: none;
+      border-top: 1px solid #edf3f8;
+      background: #ffffff;
+      padding: 11px 14px;
+      text-align: left;
+      color: #2d5677;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .menu-action:hover {
+      background: #f4fbfa;
+    }
+
+    .menu-action.danger {
+      color: #c05667;
+    }
+
+    .menu-action.danger:hover {
+      background: #fff6f7;
+    }
+
+    .main-panel {
+      flex: 1;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .page-view {
+      display: none;
+      gap: 16px;
+      flex-direction: column;
+    }
+
+    .page-view.active {
+      display: flex;
+    }
+
+    .panel {
+      background: var(--bg-card-soft);
+      border: 1px solid #d8e7f2;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 15px 18px;
+      border-bottom: 1px solid #e3edf6;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(180deg, #ffffff, #f7fbff);
+    }
+
+    .panel-head h3 {
+      margin: 0;
+      color: var(--text-strong);
+      font-size: 16px;
+      line-height: 1.3;
+    }
+
+    .panel-head p {
+      margin: 4px 0 0;
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .panel-body {
+      padding: 18px;
+    }
+
+    .hero-panel .panel-body {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      background:
+        linear-gradient(140deg, rgba(35, 184, 166, 0.12), rgba(24, 137, 183, 0.08)),
+        #fafdff;
+    }
+
+    .hero-title {
+      margin: 0;
+      color: #12314e;
+      font-size: 21px;
+      line-height: 1.35;
+    }
+
+    .hero-desc {
+      margin: 8px 0 0;
+      color: #4f6883;
+      font-size: 13px;
+      line-height: 1.65;
+      max-width: 620px;
+    }
+
+    .hero-tagline {
+      min-width: 210px;
+      border: 1px solid #c9deec;
+      border-radius: 12px;
+      padding: 12px 14px;
+      background: #ffffff;
+      color: #1f4865;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .hero-tagline strong {
+      display: block;
+      color: #11324f;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .stat-card {
+      border: 1px solid #d9e7f2;
+      border-radius: 14px;
+      background: #ffffff;
+      padding: 14px;
+      min-height: 114px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 8px 24px rgba(17, 39, 64, 0.06);
+    }
+
+    .stat-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #67829e;
+      font-weight: 600;
+    }
+
+    .stat-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: var(--brand-soft);
+      color: #0c7484;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .stat-value {
+      margin-top: 6px;
+      color: #12324f;
+      font-size: 26px;
+      line-height: 1.2;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+    }
+
+    .stat-meta {
+      font-size: 12px;
+      color: #6f869f;
+      margin-top: 5px;
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .span-2 {
+      grid-column: span 2;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 12px;
+      color: #5c7690;
+      font-weight: 600;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      border: 1px solid #ccdcea;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #1f4563;
+      font-size: 13px;
+      padding: 9px 10px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 112px;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: #6cb6cf;
+      box-shadow: 0 0 0 3px rgba(33, 166, 162, 0.12);
+    }
+
+    .command-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .result-box {
+      margin-top: 12px;
+      border-radius: 10px;
+      border: 1px solid #d9e6f0;
+      background: #f8fcff;
+      color: #2b5371;
+      padding: 11px 12px;
+      font-size: 13px;
+      line-height: 1.6;
+      min-height: 58px;
+      white-space: pre-wrap;
+    }
+
+    .result-box.success {
+      border-color: #bde8d1;
+      background: #f1fcf6;
+      color: #217c4f;
+    }
+
+    .result-box.warning {
+      border-color: #f4deba;
+      background: #fffaf0;
+      color: #95642e;
+    }
+
+    .result-box.danger {
+      border-color: #f1cad1;
+      background: #fff6f8;
+      color: #a04858;
+    }
+
+    .status-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .status-item {
+      border: 1px solid #d9e7f2;
+      border-radius: 11px;
+      background: #fbfdff;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-title {
+      color: #1e4362;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .status-desc {
+      margin-top: 3px;
+      color: #6d86a0;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .status-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--info);
+      box-shadow: 0 0 0 4px rgba(95, 135, 199, 0.18);
+    }
+
+    .status-dot.success {
+      background: var(--good);
+      box-shadow: 0 0 0 4px rgba(35, 178, 111, 0.18);
+    }
+
+    .status-dot.warning {
+      background: var(--warn);
+      box-shadow: 0 0 0 4px rgba(235, 159, 49, 0.18);
+    }
+
+    .status-dot.danger {
+      background: var(--bad);
+      box-shadow: 0 0 0 4px rgba(223, 90, 106, 0.2);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 56px;
+      height: 24px;
+      border-radius: 999px;
+      padding: 0 10px;
+      font-size: 11px;
+      letter-spacing: 0.3px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      text-transform: uppercase;
+    }
+
+    .badge.success {
+      background: #edf9f3;
+      color: #1e8753;
+      border-color: #b8e7ce;
+    }
+
+    .badge.warning {
+      background: #fff6e8;
+      color: #976633;
+      border-color: #f1d4a6;
+    }
+
+    .badge.danger {
+      background: #fff0f3;
+      color: #a34959;
+      border-color: #efc4cc;
+    }
+
+    .badge.info {
+      background: #eef3fb;
+      color: #46699d;
+      border-color: #c4d5ed;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .quick-action {
+      border: 1px solid #d4e4f1;
+      background: #fbfdff;
+      border-radius: 12px;
+      padding: 11px 12px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #214561;
+    }
+
+    .quick-action:hover {
+      border-color: #7ec1d6;
+      background: #ffffff;
+      box-shadow: 0 8px 22px rgba(25, 82, 111, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .quick-title {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .quick-desc {
+      margin-top: 4px;
+      color: #6e879f;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .search-row input {
+      flex: 1;
+      border: 1px solid #ccdcea;
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 13px;
+      color: #214561;
+      outline: none;
+    }
+
+    .list-box {
+      display: grid;
+      gap: 8px;
+    }
+
+    .list-item {
+      border: 1px solid #d9e7f2;
+      border-radius: 11px;
+      padding: 10px 12px;
+      background: #fbfdff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .item-title {
+      color: #1f4562;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .item-meta {
+      margin-top: 2px;
+      color: #6d879f;
+      font-size: 12px;
+      line-height: 1.3;
+    }
+
+    .empty {
+      border: 1px dashed #c8d9e7;
+      border-radius: 11px;
+      padding: 18px 12px;
+      color: #67819b;
+      text-align: center;
+      font-size: 13px;
+      background: #fafdff;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid #dde9f3;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+    }
+
+    th,
+    td {
+      padding: 11px 12px;
+      text-align: left;
+      border-bottom: 1px solid #e8f0f6;
+      font-size: 12px;
+      vertical-align: middle;
+    }
+
+    th {
+      font-size: 12px;
+      color: #56708b;
+      background: #f7fbff;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    td {
+      color: #254765;
+      line-height: 1.45;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .page-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-title {
+      color: #143452;
+      font-size: 18px;
+      margin: 0;
+    }
+
+    .toolbar-desc {
+      margin: 4px 0 0;
+      color: #5e7893;
+      font-size: 12px;
+    }
+
+    .action-row {
+      display: inline-flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .mini-btn {
+      border: 1px solid #c5d8e8;
+      background: #ffffff;
+      color: #2a4f6e;
+      border-radius: 8px;
+      padding: 4px 9px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .mini-btn:hover {
+      border-color: #7cb6d4;
+      color: #18496a;
+    }
+
+    .mini-btn.danger {
+      border-color: #ebcad1;
+      color: #b55362;
+      background: #fff8f9;
+    }
+
+    .mini-btn.danger:hover {
+      border-color: #df99a5;
+      color: #9f4150;
+    }
+
+    .value-strong {
+      color: #133655;
+      font-weight: 700;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .workflow-composer-panel .panel-body {
+      padding: 14px;
+    }
+
+    .workflow-head-actions {
+      align-items: center;
+    }
+
+    .workflow-select-wrap {
+      border: 1px solid #ccdeeb;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #2c4f6f;
+      height: 32px;
+      padding: 0 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .workflow-select-wrap select {
+      border: none;
+      background: transparent;
+      color: #1c4968;
+      font-size: 12px;
+      font-weight: 600;
+      outline: none;
+      min-width: 168px;
+    }
+
+    .workflow-composer {
+      display: grid;
+      grid-template-columns: 206px minmax(0, 1fr) 284px;
+      gap: 12px;
+      min-height: 560px;
+    }
+
+    .workflow-palette {
+      border: 1px solid #d7e5f0;
+      border-radius: 13px;
+      background: #f8fcff;
+      padding: 10px;
+      display: grid;
+      align-content: start;
+      gap: 9px;
+    }
+
+    .wf-palette-head {
+      color: #375877;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .wf-palette-item {
+      border: 1px solid #cbdcec;
+      border-radius: 11px;
+      background: #ffffff;
+      padding: 9px 9px 8px;
+      cursor: grab;
+      transition: all 0.2s ease;
+      user-select: none;
+      display: grid;
+      gap: 5px;
+    }
+
+    .wf-palette-item:hover {
+      border-color: #76b6cf;
+      box-shadow: 0 10px 20px rgba(23, 74, 104, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .wf-palette-item:active {
+      cursor: grabbing;
+    }
+
+    .wf-palette-title {
+      color: #133b58;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .wf-palette-desc {
+      color: #67839d;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .wf-palette-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 2px;
+    }
+
+    .wf-add-btn {
+      border: 1px solid #c8d9e8;
+      border-radius: 8px;
+      background: #fafdff;
+      color: #2c5676;
+      height: 24px;
+      font-size: 11px;
+      padding: 0 7px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .workflow-canvas-wrap {
+      border: 1px solid #d5e4f0;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    .workflow-canvas {
+      position: relative;
+      min-height: 560px;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(127, 166, 193, 0.1) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(127, 166, 193, 0.1) 1px, transparent 1px),
+        linear-gradient(180deg, #fbfdff, #f4f9fd);
+      background-size: 28px 28px, 28px 28px, 100% 100%;
+    }
+
+    .workflow-canvas.drag-over {
+      box-shadow: inset 0 0 0 2px rgba(35, 184, 166, 0.5);
+    }
+
+    .workflow-edges {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .workflow-nodes {
+      position: absolute;
+      inset: 0;
+    }
+
+    .workflow-canvas-hint {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border: 1px dashed #bfd6e6;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.86);
+      color: #65809a;
+      font-size: 13px;
+      padding: 12px 16px;
+      text-align: center;
+      pointer-events: none;
+      max-width: 80%;
+      line-height: 1.5;
+    }
+
+    .wf-node {
+      position: absolute;
+      width: 196px;
+      min-height: 92px;
+      border: 1px solid #c8d9e8;
+      border-radius: 12px;
+      background: #ffffff;
+      box-shadow: 0 10px 22px rgba(18, 51, 78, 0.14);
+      transition: box-shadow 0.2s ease, border-color 0.2s ease;
+      overflow: visible;
+    }
+
+    .wf-node.selected {
+      border-color: #39aaae;
+      box-shadow: 0 16px 28px rgba(20, 126, 144, 0.22);
+    }
+
+    .wf-node.connect-source {
+      border-color: #2679b2;
+      box-shadow: 0 16px 30px rgba(29, 101, 153, 0.24);
+    }
+
+    .wf-node-head {
+      height: 32px;
+      border-bottom: 1px solid #e3edf6;
+      border-radius: 12px 12px 0 0;
+      background: linear-gradient(180deg, #ffffff, #f6fbff);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 10px;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .wf-node-head:active {
+      cursor: grabbing;
+    }
+
+    .wf-node-title {
+      color: #153d5a;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.2;
+      max-width: 128px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .wf-node-type {
+      color: #5f7f9a;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+    }
+
+    .wf-node-note {
+      color: #607f98;
+      font-size: 11px;
+      line-height: 1.45;
+      padding: 8px 10px 11px;
+      min-height: 56px;
+      word-break: break-word;
+    }
+
+    .wf-handle {
+      position: absolute;
+      top: 50%;
+      width: 12px;
+      height: 12px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      background: #5b8db2;
+      transform: translateY(-50%);
+      cursor: pointer;
+      padding: 0;
+      z-index: 3;
+      box-shadow: 0 0 0 1px rgba(49, 86, 114, 0.28);
+    }
+
+    .wf-handle:hover {
+      background: #1f87a6;
+      box-shadow: 0 0 0 3px rgba(36, 155, 171, 0.2);
+    }
+
+    .wf-handle-in {
+      left: -7px;
+      background: #6a839a;
+    }
+
+    .wf-handle-out {
+      right: -7px;
+      background: #1f9a9f;
+    }
+
+    .workflow-inspector {
+      border: 1px solid #d7e5f0;
+      border-radius: 13px;
+      background: #fbfdff;
+      padding: 12px;
+      display: grid;
+      align-content: start;
+      gap: 10px;
+    }
+
+    .wf-inspector-empty {
+      border: 1px dashed #c6d8e6;
+      border-radius: 11px;
+      background: #ffffff;
+      color: #6a839d;
+      font-size: 12px;
+      line-height: 1.55;
+      padding: 12px;
+      min-height: 120px;
+    }
+
+    .wf-inspector-title {
+      color: #173d5b;
+      font-size: 14px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .wf-inspector-field {
+      display: grid;
+      gap: 5px;
+    }
+
+    .wf-inspector-field label {
+      color: #5f7b94;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .wf-inspector-field input,
+    .wf-inspector-field select,
+    .wf-inspector-field textarea {
+      border: 1px solid #cbdce8;
+      border-radius: 9px;
+      background: #ffffff;
+      color: #214561;
+      font-size: 12px;
+      padding: 8px 9px;
+      outline: none;
+      width: 100%;
+    }
+
+    .wf-inspector-field textarea {
+      min-height: 86px;
+      resize: vertical;
+    }
+
+    .wf-inspector-field input:focus,
+    .wf-inspector-field select:focus,
+    .wf-inspector-field textarea:focus {
+      border-color: #69b5cf;
+      box-shadow: 0 0 0 3px rgba(35, 169, 165, 0.12);
+    }
+
+    .wf-edge-list {
+      border: 1px solid #d8e7f2;
+      border-radius: 10px;
+      background: #ffffff;
+      padding: 8px;
+      display: grid;
+      gap: 6px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .wf-edge-item {
+      border: 1px solid #e2ecf5;
+      border-radius: 9px;
+      background: #f9fcff;
+      padding: 6px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: #315674;
+    }
+
+    .meta-card {
+      border: 1px solid #d7e6f1;
+      border-radius: 11px;
+      background: #fbfdff;
+      padding: 10px 11px;
+    }
+
+    .meta-label {
+      font-size: 12px;
+      color: #6a839d;
+    }
+
+    .meta-value {
+      margin-top: 4px;
+      font-size: 18px;
+      color: #173a58;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 15, 28, 0.56);
+      backdrop-filter: blur(3px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(740px, 100%);
+      max-height: 90vh;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid #d8e6f0;
+      background: #ffffff;
+      box-shadow: 0 28px 52px rgba(11, 27, 45, 0.3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-head {
+      padding: 16px 18px;
+      border-bottom: 1px solid #e1edf6;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      background: #f8fbff;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      color: #143451;
+      font-size: 18px;
+    }
+
+    .modal-head p {
+      margin: 4px 0 0;
+      color: #5f7893;
+      font-size: 12px;
+    }
+
+    .modal-close {
+      width: 30px;
+      height: 30px;
+      border: 1px solid #d5e4f0;
+      border-radius: 9px;
+      background: #ffffff;
+      color: #5f7893;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close:hover {
+      color: #254b68;
+      border-color: #9ec3da;
+    }
+
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      flex: 1;
+    }
+
+    .modal-body {
+      padding: 16px 18px;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      align-content: start;
+    }
+
+    .modal-body .field.full {
+      grid-column: span 2;
+    }
+
+    .modal-foot {
+      border-top: 1px solid #e1edf6;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      background: #f8fbff;
+    }
+
+    .modal-supplier-catalog {
+      border-top: 1px solid #e1edf6;
+      padding: 0 18px 12px;
+    }
+
+    .catalog-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      color: #5a7a8a;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 10px 0;
+    }
+
+    .catalog-toggle:hover {
+      color: #2c4f6f;
+    }
+
+    .catalog-arrow {
+      font-size: 10px;
+      transition: transform 0.2s;
+    }
+
+    .catalog-content {
+      display: none;
+      background: #f8fbff;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .catalog-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #e1edf6;
+    }
+
+    .catalog-item:last-child {
+      border-bottom: none;
+    }
+
+    .catalog-provider {
+      font-weight: 600;
+      color: #2c4f6f;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .catalog-models {
+      font-size: 11px;
+      color: #5a7a8a;
+      word-break: break-all;
+    }
+
+    .catalog-baseurl {
+      font-size: 10px;
+      color: #8aa8b8;
+      margin-top: 2px;
+      word-break: break-all;
+    }
+
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 300px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      max-height: 360px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 4px;
+    }
+
+    .chat-message {
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+      max-width: 85%;
+      word-break: break-word;
+    }
+
+    .chat-message.user {
+      background: #e8f4fd;
+      color: #1c4968;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-message.assistant {
+      background: #f0f4f8;
+      color: #2c4f6f;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-message.error {
+      background: #fef2f2;
+      color: #b91c1c;
+      align-self: flex-start;
+    }
+
+    .chat-message.loading {
+      background: #f0f4f8;
+      color: #5a7a8a;
+      align-self: flex-start;
+      font-style: italic;
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .chat-input-row textarea {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid #ccdeeb;
+      border-radius: 10px;
+      font-size: 13px;
+      resize: none;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .chat-input-row textarea:focus {
+      border-color: #5a9fd4;
+    }
+
+    .chat-input-row .btn {
+      height: 42px;
+      padding: 0 20px;
+    }
+
+    .toast-wrap {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 120;
+      display: grid;
+      gap: 8px;
+      width: min(360px, calc(100vw - 30px));
+    }
+
+    .toast {
+      border-radius: 11px;
+      border: 1px solid #d6e4f0;
+      background: #ffffff;
+      color: #234664;
+      padding: 10px 12px;
+      font-size: 12px;
+      box-shadow: 0 14px 34px rgba(15, 32, 51, 0.16);
+      animation: toastIn 0.22s ease;
+    }
+
+    .toast.success {
+      border-color: #b8e5ce;
+      background: #f4fcf8;
+      color: #1f7b4d;
+    }
+
+    .toast.warning {
+      border-color: #f0d3a5;
+      background: #fffaf1;
+      color: #976432;
+    }
+
+    .toast.danger {
+      border-color: #edc0c9;
+      background: #fff5f7;
+      color: #a64c5c;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1320px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .meta-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .workflow-composer {
+        grid-template-columns: 190px minmax(0, 1fr);
+      }
+
+      .workflow-inspector {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 1180px) {
+      :root {
+        --sidebar-width: 86px;
+      }
+
+      .brand-copy,
+      .nav-title,
+      .nav-text,
+      .sidebar-foot {
+        display: none;
+      }
+
+      .sidebar-brand {
+        justify-content: center;
+      }
+
+      .nav-item {
+        justify-content: center;
+      }
+
+      .overview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .span-2 {
+        grid-column: auto;
+      }
+    }
+
+    @media (max-width: 940px) {
+      .top-header {
+        height: auto;
+        align-items: flex-start;
+        padding: 14px 18px;
+      }
+
+      .header-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .main-panel {
+        padding: 14px;
+      }
+
+      .hero-panel .panel-body {
+        flex-direction: column;
+      }
+
+      .workflow-composer {
+        grid-template-columns: 1fr;
+      }
+
+      .workflow-canvas {
+        min-height: 500px;
+      }
+
+      .workflow-select-wrap select {
+        min-width: 130px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      :root {
+        --sidebar-width: 0px;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .workspace {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-body {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-body .field.full {
+        grid-column: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-mark">AT</div>
+        <div class="brand-copy">
+          <h1>AITradeX</h1>
+          <p>智能交易后台</p>
+        </div>
+      </div>
+
+      <div class="sidebar-scroll">
+        <div class="nav-group">
+          <div class="nav-title">总览</div>
+          <div class="nav-item active" data-page="overview">
+            <div class="nav-icon">总</div>
+            <div class="nav-text">总览中心</div>
+          </div>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-title">交易接入</div>
+          <div class="nav-item" data-page="broker">
+            <div class="nav-icon">接</div>
+            <div class="nav-text">接入管理</div>
+          </div>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-title">AI 模块</div>
+          <div class="nav-item" data-page="models">
+            <div class="nav-icon">模</div>
+            <div class="nav-text">模型管理</div>
+          </div>
+          <div class="nav-item" data-page="knowledge">
+            <div class="nav-icon">知</div>
+            <div class="nav-text">知识管理</div>
+          </div>
+          <div class="nav-item" data-page="conversation">
+            <div class="nav-icon">话</div>
+            <div class="nav-text">对话管理</div>
+          </div>
+          <div class="nav-item" data-page="mcp">
+            <div class="nav-icon">M</div>
+            <div class="nav-text">MCP 管理</div>
+          </div>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-title">编排</div>
+          <div class="nav-item" data-page="workflow">
+            <div class="nav-icon">流</div>
+            <div class="nav-text">工作流</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-foot">
+        AITradeX Console
+        <br>
+        2026
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="top-header">
+        <div class="header-main">
+          <p class="header-path" id="headerPath">AI 控制台 / 总览中心</p>
+          <h1 class="header-title" id="pageTitle">总览中心</h1>
+          <p class="header-desc" id="pageDesc">统一查看核心运行指标、接入状态和高频操作入口。</p>
+        </div>
+
+        <div class="header-actions">
+          <div class="chip" id="healthChip">
+            <span class="dot"></span>
+            <span id="healthText">系统正常</span>
+          </div>
+
+          <div class="chip">
+            <span class="chip-label">本地时间</span>
+            <span id="clockText">--:--:--</span>
+          </div>
+
+          <button class="btn btn-secondary" id="refreshBtn">刷新数据</button>
+
+          <div class="account-menu" id="accountMenu">
+            <button class="account-trigger" id="accountTrigger" aria-label="账户菜单">
+              <span class="avatar" id="accountAvatar">A</span>
+            </button>
+            <div class="account-dropdown" id="accountDropdown">
+              <div class="account-head">
+                <span class="avatar" id="accountAvatarPanel">A</span>
+                <div class="account-meta">
+                  <div class="account-name" id="accountName">admin</div>
+                  <div class="account-mail" id="accountEmail">admin@example.com</div>
+                </div>
+              </div>
+              <button class="menu-action danger" id="logoutBtn">退出登录</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="main-panel">
+        <section class="page-view active" id="page-overview">
+          <div class="stats-grid" id="overviewStats"></div>
+
+          <div class="overview-grid">
+            <article class="panel span-2">
+              <div class="panel-head">
+                <div>
+                  <h3>交易指挥台</h3>
+                  <p>自然语言交易指令与执行入口</p>
+                </div>
+                <span class="badge success">READY</span>
+              </div>
+              <div class="panel-body">
+                <div class="form-row">
+                  <div class="field">
+                    <label for="brokerModeSelect">交易模式</label>
+                    <select id="brokerModeSelect">
+                      <option value="paper">paper</option>
+                      <option value="gtja">gtja</option>
+                      <option value="real">real</option>
+                      <option value="okx">okx</option>
+                      <option value="usstock">usstock</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-secondary" id="applyBrokerModeBtn">切换交易模式</button>
+                  </div>
+                </div>
+
+                <div class="field" style="margin-top: 12px;">
+                  <label for="commandInput">交易指令</label>
+                  <textarea id="commandInput" placeholder="例如：买入 600519 100&#10;运行策略 BTC-USDT 50"></textarea>
+                </div>
+
+                <div class="command-actions">
+                  <button class="btn btn-primary" id="analyzeBtn">AI 分析</button>
+                  <button class="btn btn-primary" id="executeBtn">AI 分析并执行</button>
+                  <button class="btn btn-secondary" id="dryRunBtn">Dry Run</button>
+                </div>
+
+                <div class="result-box" id="commandResult">还没有执行交易命令。</div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <h3>模块接入状态</h3>
+                  <p>券商、交易所、AI、MCP 与工作流</p>
+                </div>
+                <span class="badge info">STATUS</span>
+              </div>
+              <div class="panel-body">
+                <div class="status-list" id="moduleStatusList"></div>
+              </div>
+            </article>
+          </div>
+
+          <div class="overview-grid">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <h3>行情检索</h3>
+                  <p>按代码或名称搜索可交易标的</p>
+                </div>
+                <span class="badge info">MARKET</span>
+              </div>
+              <div class="panel-body">
+                <div class="search-row">
+                  <input id="quoteQuery" type="text" placeholder="输入代码、股票名或 BTC-USDT">
+                  <button class="btn btn-secondary" id="searchBtn">搜索</button>
+                </div>
+                <div class="list-box" id="searchResults"></div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <h3>最新订单</h3>
+                  <p>最近交易与排队指令</p>
+                </div>
+                <span class="badge info" id="recentOrdersBadge">0</span>
+              </div>
+              <div class="panel-body">
+                <div class="list-box" id="recentOrdersList"></div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <h3>快捷操作</h3>
+                  <p>新增接入与配置入口</p>
+                </div>
+                <span class="badge success">ACTIONS</span>
+              </div>
+              <div class="panel-body">
+                <div class="quick-grid" id="quickActionList"></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="page-view" id="page-broker">
+          <div class="page-toolbar">
+            <div>
+              <h2 class="toolbar-title">接入管理</h2>
+              <p class="toolbar-desc">统一管理券商与交易所账户接入、激活状态和运行模式。</p>
+            </div>
+            <div class="action-row">
+              <button class="btn btn-primary small" data-action="open-add-broker">新增接入</button>
+              <button class="btn btn-secondary small" data-action="reload-broker">刷新列表</button>
+            </div>
+          </div>
+
+          <div class="meta-grid" id="brokerStats"></div>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>接入账户列表</h3>
+                <p>支持券商和交易所账户激活切换</p>
+              </div>
+            </div>
+            <div class="panel-body" id="brokerAccountsTable"></div>
+          </article>
+        </section>
+
+        <section class="page-view" id="page-models">
+          <div class="page-toolbar">
+            <div>
+              <h2 class="toolbar-title">模型管理</h2>
+              <p class="toolbar-desc">维护模型供应商配置、当前生效模型和连接测试。</p>
+            </div>
+            <div class="action-row">
+              <button class="btn btn-primary small" data-action="switch-ai-model">切换模型</button>
+              <button class="btn btn-secondary small" data-action="open-ai-config">编辑配置</button>
+              <button class="btn btn-secondary small" data-action="test-ai-config">测试连接</button>
+              <button class="btn btn-danger-soft small" data-action="clear-ai-config">清空配置</button>
+            </div>
+          </div>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>当前模型配置</h3>
+                <p>生效中的供应商、模型与密钥状态</p>
+              </div>
+            </div>
+            <div class="panel-body" id="modelConfigSummary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>已保存的配置</h3>
+                <p>选择一项配置进行快速切换</p>
+              </div>
+            </div>
+            <div class="panel-body" id="savedConfigList"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>AI 对话</h3>
+                <p>与当前配置的大模型进行实时对话</p>
+              </div>
+            </div>
+            <div class="panel-body chat-panel">
+              <div class="chat-messages" id="chatMessages"></div>
+              <div class="chat-input-row">
+                <textarea id="chatInput" placeholder="输入消息..." rows="2"></textarea>
+                <button class="btn btn-primary" id="chatSendBtn">发送</button>
+              </div>
+            </div>
+          </article>
+
+        </section>
+
+        <section class="page-view" id="page-knowledge">
+          <div class="page-toolbar">
+            <div>
+              <h2 class="toolbar-title">知识管理</h2>
+              <p class="toolbar-desc">知识库、文档切片与同步状态总览。</p>
+            </div>
+            <div class="action-row">
+              <button class="btn btn-primary small" data-action="open-add-knowledge">新增知识库</button>
+              <button class="btn btn-secondary small" data-action="open-add-knowledge-document">新增文档</button>
+              <button class="btn btn-secondary small" data-action="reload-knowledge">刷新</button>
+            </div>
+          </div>
+
+          <div class="meta-grid" id="knowledgeStatsCards"></div>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>知识库列表</h3>
+                <p>维护向量库、Embedding 与文档规模</p>
+              </div>
+            </div>
+            <div class="panel-body" id="knowledgeBasesTable"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>文档同步记录</h3>
+                <p>最新文档解析与写入状态</p>
+              </div>
+            </div>
+            <div class="panel-body" id="knowledgeDocumentsTable"></div>
+          </article>
+        </section>
+
+        <section class="page-view" id="page-conversation">
+          <div class="page-toolbar">
+            <div>
+              <h2 class="toolbar-title">对话管理</h2>
+              <p class="toolbar-desc">维护会话生命周期、工具调用与知识命中表现。</p>
+            </div>
+            <div class="action-row">
+              <button class="btn btn-primary small" data-action="open-add-conversation">新增会话</button>
+              <button class="btn btn-secondary small" data-action="reload-conversation">刷新</button>
+            </div>
+          </div>
+
+          <div class="meta-grid" id="conversationInsightCards"></div>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>会话列表</h3>
+                <p>会话状态、评分和交接次数</p>
+              </div>
+            </div>
+            <div class="panel-body" id="conversationSessionsTable"></div>
+          </article>
+        </section>
+
+        <section class="page-view" id="page-mcp">
+          <div class="page-toolbar">
+            <div>
+              <h2 class="toolbar-title">MCP 管理</h2>
+              <p class="toolbar-desc">管理 MCP 工具接入与市场分发状态。</p>
+            </div>
+            <div class="action-row">
+              <button class="btn btn-primary small" data-action="open-add-mcp-tool">新增工具</button>
+              <button class="btn btn-secondary small" data-action="open-add-mcp-market">新增市场</button>
+              <button class="btn btn-secondary small" data-action="reload-mcp">刷新</button>
+            </div>
+          </div>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>MCP 工具</h3>
+                <p>传输方式、端点、分类和测试状态</p>
+              </div>
+            </div>
+            <div class="panel-body" id="mcpToolsTable"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>MCP 市场</h3>
+                <p>市场包数量、可见性与刷新结果</p>
+              </div>
+            </div>
+            <div class="panel-body" id="mcpMarketsTable"></div>
+          </article>
+        </section>
+
+        <section class="page-view" id="page-workflow">
+          <div class="page-toolbar">
+            <div>
+              <h2 class="toolbar-title">工作流</h2>
+              <p class="toolbar-desc">可视化拖拽编排、连线关系与节点属性管理。</p>
+            </div>
+            <div class="action-row">
+              <button class="btn btn-primary small" data-action="open-add-workflow">新增工作流</button>
+              <button class="btn btn-secondary small" data-action="reload-workflow">刷新</button>
+            </div>
+          </div>
+
+          <article class="panel workflow-composer-panel">
+            <div class="panel-head">
+              <div>
+                <h3>可视化编排器</h3>
+                <p>拖拽创建节点，点击右侧输出点后再点击目标输入点完成连线。</p>
+              </div>
+              <div class="action-row workflow-head-actions">
+                <label class="workflow-select-wrap">
+                  <span>当前流程</span>
+                  <select id="workflowGraphSelector"></select>
+                </label>
+                <button class="btn btn-secondary small" data-action="reload-workflow-graph">回显</button>
+                <button class="btn btn-secondary small" data-action="undo-workflow-graph">撤销</button>
+                <button class="btn btn-secondary small" data-action="auto-layout-workflow-graph">自动排布</button>
+                <button class="btn btn-primary small" data-action="save-workflow-graph">保存拓扑</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="workflow-composer">
+                <aside class="workflow-palette" id="workflowPalette"></aside>
+                <section class="workflow-canvas-wrap">
+                  <div class="workflow-canvas" id="workflowCanvas">
+                    <svg class="workflow-edges" id="workflowEdgeSvg"></svg>
+                    <div class="workflow-nodes" id="workflowNodeLayer"></div>
+                    <div class="workflow-canvas-hint" id="workflowCanvasHint">请选择工作流并拖入节点开始编排</div>
+                  </div>
+                </section>
+                <aside class="workflow-inspector" id="workflowInspector"></aside>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>工作流定义</h3>
+                <p>版本、分类、运行次数与状态</p>
+              </div>
+            </div>
+            <div class="panel-body" id="workflowsTable"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>节点清单</h3>
+                <p>按流程展示节点顺序与配置说明</p>
+              </div>
+            </div>
+            <div class="panel-body" id="workflowNodesTable"></div>
+          </article>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="formModalOverlay">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <h3 id="formModalTitle">编辑</h3>
+          <p id="formModalDesc">请补充以下信息</p>
+        </div>
+        <button class="modal-close" id="formModalClose" aria-label="关闭">×</button>
+      </div>
+      <form class="modal-form" id="formModalForm">
+        <div class="modal-body" id="formModalFields"></div>
+        <div class="modal-supplier-catalog" id="formModalSupplierCatalog" style="display:none;">
+          <div class="catalog-toggle" id="supplierCatalogToggle">
+            <span>供应商目录</span>
+            <span class="catalog-arrow">▼</span>
+          </div>
+          <div class="catalog-content" id="supplierCatalogContent"></div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-secondary" id="formModalCancel">取消</button>
+          <button type="submit" class="btn btn-primary" id="formModalSubmit">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <script>
+    const API_BASE = "/api";
+
+    const PAGE_META = {
+      overview: {
+        title: "总览中心",
+        desc: "统一查看核心运行指标、接入状态和高频操作入口。"
+      },
+      broker: {
+        title: "接入管理",
+        desc: "券商与交易所接入配置、激活状态与模式切换。"
+      },
+      models: {
+        title: "模型管理",
+        desc: "维护模型供应商配置并测试连接可用性。"
+      },
+      knowledge: {
+        title: "知识管理",
+        desc: "知识库与文档切片的状态化管理。"
+      },
+      conversation: {
+        title: "对话管理",
+        desc: "追踪会话质量、工具调用与交接风险。"
+      },
+      mcp: {
+        title: "MCP 管理",
+        desc: "统一管理工具端点和市场分发状态。"
+      },
+      workflow: {
+        title: "工作流",
+        desc: "编排定义、版本状态和节点结构总览。"
+      }
+    };
+
+    const state = {
+      activePage: "overview",
+      modalConfig: null,
+      monitorSummary: null,
+      brokerMode: null,
+      brokerAccounts: [],
+      aiConfig: null,
+      aiModels: null,
+      knowledgeStats: null,
+      knowledgeBases: [],
+      knowledgeDocuments: [],
+      conversations: [],
+      conversationInsights: null,
+      mcpTools: [],
+      mcpMarkets: [],
+      workflows: [],
+      workflowNodes: [],
+      workflowGraphLoadedFor: null,
+      workflowGraphLoading: false,
+      workflowEditor: {
+        workflowId: null,
+        nodes: [],
+        edges: [],
+        selectedNodeId: null,
+        connectFromId: null,
+        history: []
+      }
+    };
+
+    const WORKFLOW_NODE_LIBRARY = [
+      { type: "start", label: "开始节点", desc: "流程入口，通常只保留一个。" },
+      { type: "condition", label: "条件判断", desc: "按规则路由到不同分支。" },
+      { type: "mcp_tool", label: "MCP 工具", desc: "调用行情、资讯或业务插件。" },
+      { type: "llm", label: "模型节点", desc: "执行提示词推理与内容生成。" },
+      { type: "end", label: "结束节点", desc: "流程收口并输出执行结果。" }
+    ];
+
+    let workflowDragState = null;
+
+    const $ = (id) => document.getElementById(id);
+
+    const UiComponents = {
+      Header(meta) {
+        $("headerPath").textContent = `AI 控制台 / ${meta.title}`;
+        $("pageTitle").textContent = meta.title;
+        $("pageDesc").textContent = meta.desc;
+      },
+      StatCard({ label, value, meta, icon }) {
+        return `
+          <article class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">${escapeHtml(label)}</span>
+              <span class="stat-icon">${escapeHtml(icon)}</span>
+            </div>
+            <div>
+              <div class="stat-value">${escapeHtml(value)}</div>
+              <div class="stat-meta">${escapeHtml(meta)}</div>
+            </div>
+          </article>
+        `;
+      },
+      StatusItem({ title, desc, tone, tag }) {
+        const dotTone = toneClass(tone);
+        const badgeTone = toneClass(tone);
+        return `
+          <div class="status-item">
+            <div>
+              <div class="status-title">${escapeHtml(title)}</div>
+              <div class="status-desc">${escapeHtml(desc)}</div>
+            </div>
+            <div class="status-meta">
+              <span class="status-dot ${dotTone}"></span>
+              <span class="badge ${badgeTone}">${escapeHtml(tag)}</span>
+            </div>
+          </div>
+        `;
+      },
+      QuickAction({ title, desc, action }) {
+        return `
+          <button class="quick-action" type="button" data-quick="${escapeHtml(action)}">
+            <div class="quick-title">${escapeHtml(title)}</div>
+            <div class="quick-desc">${escapeHtml(desc)}</div>
+          </button>
+        `;
+      }
+    };
+
+    function getToken() {
+      return localStorage.getItem("access_token");
+    }
+
+    function getUserInfo() {
+      const userText = localStorage.getItem("user_info");
+      if (!userText) {
+        return null;
+      }
+      try {
+        return JSON.parse(userText);
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function escapeHtml(value) {
+      const text = String(value ?? "");
+      return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("\"", "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function pick(obj, ...keys) {
+      for (const key of keys) {
+        if (obj && obj[key] !== undefined && obj[key] !== null) {
+          return obj[key];
+        }
+      }
+      return undefined;
+    }
+
+    const AI_PROVIDER_ORDER = ["minimax", "openai", "custom"];
+
+    function normalizeProviderId(value) {
+      return String(value || "").trim().toLowerCase();
+    }
+
+    function sortProvidersByOrder(items) {
+      const list = Array.isArray(items) ? [...items] : [];
+      list.sort((left, right) => {
+        const leftId = normalizeProviderId(pick(left, "id", "value", "name"));
+        const rightId = normalizeProviderId(pick(right, "id", "value", "name"));
+        const leftIndex = AI_PROVIDER_ORDER.indexOf(leftId);
+        const rightIndex = AI_PROVIDER_ORDER.indexOf(rightId);
+        const leftRank = leftIndex === -1 ? Number.MAX_SAFE_INTEGER : leftIndex;
+        const rightRank = rightIndex === -1 ? Number.MAX_SAFE_INTEGER : rightIndex;
+        if (leftRank !== rightRank) {
+          return leftRank - rightRank;
+        }
+        return leftId.localeCompare(rightId);
+      });
+      return list;
+    }
+
+    function toneClass(tone) {
+      if (tone === "success") return "success";
+      if (tone === "warning") return "warning";
+      if (tone === "danger") return "danger";
+      return "info";
+    }
+
+    function normalizeToneFromStatus(status) {
+      const value = String(status || "").toLowerCase();
+      if (["online", "enabled", "active", "published", "ready", "stable", "indexed", "true"].includes(value)) {
+        return "success";
+      }
+      if (["warning", "syncing", "follow_up", "beta", "draft", "queued", "pending"].includes(value)) {
+        return "warning";
+      }
+      if (["critical", "offline", "disabled", "archived", "failed", "error"].includes(value)) {
+        return "danger";
+      }
+      return "info";
+    }
+
+    function formatCurrency(value) {
+      if (value === null || value === undefined || value === "") {
+        return "--";
+      }
+      const number = Number(value);
+      if (Number.isNaN(number)) {
+        return String(value);
+      }
+      return new Intl.NumberFormat("zh-CN", {
+        style: "currency",
+        currency: "CNY",
+        minimumFractionDigits: 2
+      }).format(number);
+    }
+
+    function formatNumber(value) {
+      if (value === null || value === undefined || value === "") {
+        return "--";
+      }
+      const number = Number(value);
+      if (Number.isNaN(number)) {
+        return String(value);
+      }
+      return new Intl.NumberFormat("zh-CN").format(number);
+    }
+
+    function formatDateTime(value) {
+      if (!value) {
+        return "--";
+      }
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) {
+        return String(value);
+      }
+      return date.toLocaleString("zh-CN", { hour12: false });
+    }
+
+    function showToast(message, tone = "info") {
+      const wrap = $("toastWrap");
+      const toast = document.createElement("div");
+      toast.className = `toast ${toneClass(tone)}`;
+      toast.textContent = message;
+      wrap.appendChild(toast);
+      setTimeout(() => {
+        toast.remove();
+      }, 2600);
+    }
+
+    function updateHealthChip(tone, text) {
+      const chip = $("healthChip");
+      chip.className = `chip ${toneClass(tone)}`;
+      $("healthText").textContent = text;
+    }
+
+    async function apiRequest(path, options = {}) {
+      const token = getToken();
+      if (!token) {
+        logout();
+        throw new Error("未登录");
+      }
+      const init = {
+        method: options.method || "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          ...(options.headers || {})
+        }
+      };
+      if (options.body !== undefined) {
+        init.headers["Content-Type"] = "application/json";
+        init.body = JSON.stringify(options.body);
+      }
+      const response = await fetch(`${API_BASE}${path}`, init);
+      if (response.status === 401) {
+        logout();
+        throw new Error("登录态已失效，请重新登录");
+      }
+      let payload = null;
+      try {
+        payload = await response.json();
+      } catch (_) {
+        payload = null;
+      }
+
+      if (!response.ok) {
+        throw new Error(payload?.msg || `请求失败(${response.status})`);
+      }
+      if (payload && Object.prototype.hasOwnProperty.call(payload, "code")) {
+        if (payload.code !== 200) {
+          throw new Error(payload.msg || "请求失败");
+        }
+        return payload.data;
+      }
+      return payload;
+    }
+
+    function setButtonLoading(button, loading, loadingText, normalText) {
+      if (!button) return;
+      button.disabled = loading;
+      button.textContent = loading ? loadingText : normalText;
+    }
+
+    function initUserSection() {
+      const user = getUserInfo() || {};
+      const name = user.nickName || user.username || "admin";
+      const email = user.email || "admin@example.com";
+      const initial = name.trim().charAt(0).toUpperCase() || "A";
+      $("accountAvatar").textContent = initial;
+      $("accountAvatarPanel").textContent = initial;
+      $("accountName").textContent = name;
+      $("accountEmail").textContent = email;
+    }
+
+    function startClock() {
+      const renderClock = () => {
+        $("clockText").textContent = new Date().toLocaleTimeString("zh-CN", { hour12: false });
+      };
+      renderClock();
+      setInterval(renderClock, 1000);
+    }
+
+    function switchPage(page) {
+      if (!PAGE_META[page]) {
+        return;
+      }
+      state.activePage = page;
+      document.querySelectorAll(".nav-item").forEach((node) => {
+        node.classList.toggle("active", node.dataset.page === page);
+      });
+      document.querySelectorAll(".page-view").forEach((view) => {
+        view.classList.toggle("active", view.id === `page-${page}`);
+      });
+      UiComponents.Header(PAGE_META[page]);
+      loadPageData(page, true);
+    }
+
+    async function loadPageData(page, silent = false) {
+      if (page === "overview") {
+        await loadOverviewData(silent);
+        return;
+      }
+      if (page === "broker") {
+        await loadBrokerData(silent);
+        return;
+      }
+      if (page === "models") {
+        await loadModelData(silent);
+        return;
+      }
+      if (page === "knowledge") {
+        await loadKnowledgeData(silent);
+        return;
+      }
+      if (page === "conversation") {
+        await loadConversationData(silent);
+        return;
+      }
+      if (page === "mcp") {
+        await loadMcpData(silent);
+        return;
+      }
+      if (page === "workflow") {
+        await loadWorkflowData(silent);
+      }
+    }
+
+    async function refreshCurrentPage() {
+      await loadPageData(state.activePage, false);
+      if (state.activePage !== "overview") {
+        await loadOverviewData(true);
+      }
+      showToast("页面数据已刷新", "success");
+    }
+
+    async function loadOverviewData(silent = false) {
+      const requests = await Promise.allSettled([
+        apiRequest("/monitor/summary"),
+        apiRequest("/broker/mode"),
+        apiRequest("/broker/accounts?limit=100"),
+        apiRequest("/ai/config"),
+        apiRequest("/admin/knowledge/bases"),
+        apiRequest("/admin/conversations"),
+        apiRequest("/admin/mcp/tools"),
+        apiRequest("/admin/workflows")
+      ]);
+
+      if (requests[0].status === "fulfilled") state.monitorSummary = requests[0].value;
+      if (requests[1].status === "fulfilled") state.brokerMode = requests[1].value;
+      if (requests[2].status === "fulfilled") state.brokerAccounts = requests[2].value || [];
+      if (requests[3].status === "fulfilled") state.aiConfig = requests[3].value;
+      if (requests[4].status === "fulfilled") state.knowledgeBases = requests[4].value || [];
+      if (requests[5].status === "fulfilled") state.conversations = requests[5].value || [];
+      if (requests[6].status === "fulfilled") state.mcpTools = requests[6].value || [];
+      if (requests[7].status === "fulfilled") state.workflows = requests[7].value || [];
+
+      if (!silent) {
+        requests.forEach((result) => {
+          if (result.status === "rejected") {
+            showToast(result.reason?.message || "部分总览数据加载失败", "warning");
+          }
+        });
+      }
+
+      renderOverview();
+    }
+
+    async function loadBrokerData(silent = false) {
+      const requests = await Promise.allSettled([
+        apiRequest("/broker/mode"),
+        apiRequest("/broker/accounts?limit=100")
+      ]);
+
+      if (requests[0].status === "fulfilled") state.brokerMode = requests[0].value;
+      if (requests[1].status === "fulfilled") state.brokerAccounts = requests[1].value || [];
+      if (!silent) {
+        requests.forEach((result) => {
+          if (result.status === "rejected") {
+            showToast(result.reason?.message || "接入数据加载失败", "warning");
+          }
+        });
+      }
+      renderBrokerPage();
+    }
+
+    async function loadModelData(silent = false) {
+      const requests = await Promise.allSettled([
+        apiRequest("/ai/config"),
+        apiRequest("/ai/models"),
+        apiRequest("/ai/saved-configs")
+      ]);
+      if (requests[0].status === "fulfilled") state.aiConfig = requests[0].value;
+      if (requests[1].status === "fulfilled") state.aiModels = requests[1].value;
+      if (requests[2].status === "fulfilled") state.savedAiConfigs = requests[2].value;
+      if (!silent) {
+        requests.forEach((result) => {
+          if (result.status === "rejected") {
+            showToast(result.reason?.message || "模型数据加载失败", "warning");
+          }
+        });
+      }
+      renderModelPage();
+    }
+
+    function handleProviderChange(provider) {
+      const modelInput = $("modal-model");
+      const modelIdInput = $("modal-modelId");
+      const baseUrlInput = $("modal-baseUrl");
+      if (modelInput) modelInput.value = "";
+      if (modelIdInput) modelIdInput.value = "";
+      if (baseUrlInput) baseUrlInput.value = "";
+    }
+
+    async function sendChatMessage() {
+      const input = $("chatInput");
+      const message = input.value.trim();
+      if (!message) return;
+
+      const messagesContainer = $("chatMessages");
+      const userMsg = document.createElement("div");
+      userMsg.className = "chat-message user";
+      userMsg.textContent = message;
+      messagesContainer.appendChild(userMsg);
+      input.value = "";
+
+      const loadingMsg = document.createElement("div");
+      loadingMsg.className = "chat-message loading";
+      loadingMsg.textContent = "思考中...";
+      messagesContainer.appendChild(loadingMsg);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      try {
+        const response = await apiRequest("/ai/simple-chat", {
+          method: "POST",
+          body: { message }
+        });
+
+        messagesContainer.removeChild(loadingMsg);
+
+        if (pick(response, "success")) {
+          const assistantMsg = document.createElement("div");
+          assistantMsg.className = "chat-message assistant";
+          assistantMsg.textContent = pick(response, "content", "message") || "无响应";
+          messagesContainer.appendChild(assistantMsg);
+        } else {
+          const errorMsg = document.createElement("div");
+          errorMsg.className = "chat-message error";
+          errorMsg.textContent = pick(response, "message") || "请求失败";
+          messagesContainer.appendChild(errorMsg);
+        }
+      } catch (error) {
+        messagesContainer.removeChild(loadingMsg);
+        const errorMsg = document.createElement("div");
+        errorMsg.className = "chat-message error";
+        errorMsg.textContent = error.message || "请求失败";
+        messagesContainer.appendChild(errorMsg);
+      }
+
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    async function loadKnowledgeData(silent = false) {
+      const requests = await Promise.allSettled([
+        apiRequest("/admin/knowledge/stats"),
+        apiRequest("/admin/knowledge/bases"),
+        apiRequest("/admin/knowledge/documents")
+      ]);
+      if (requests[0].status === "fulfilled") state.knowledgeStats = requests[0].value;
+      if (requests[1].status === "fulfilled") state.knowledgeBases = requests[1].value || [];
+      if (requests[2].status === "fulfilled") state.knowledgeDocuments = requests[2].value || [];
+      if (!silent) {
+        requests.forEach((result) => {
+          if (result.status === "rejected") {
+            showToast(result.reason?.message || "知识数据加载失败", "warning");
+          }
+        });
+      }
+      renderKnowledgePage();
+    }
+
+    async function loadConversationData(silent = false) {
+      const requests = await Promise.allSettled([
+        apiRequest("/admin/conversations"),
+        apiRequest("/admin/conversations/insights")
+      ]);
+      if (requests[0].status === "fulfilled") state.conversations = requests[0].value || [];
+      if (requests[1].status === "fulfilled") state.conversationInsights = requests[1].value;
+      if (!silent) {
+        requests.forEach((result) => {
+          if (result.status === "rejected") {
+            showToast(result.reason?.message || "对话数据加载失败", "warning");
+          }
+        });
+      }
+      renderConversationPage();
+    }
+
+    async function loadMcpData(silent = false) {
+      const requests = await Promise.allSettled([
+        apiRequest("/admin/mcp/tools"),
+        apiRequest("/admin/mcp/markets")
+      ]);
+      if (requests[0].status === "fulfilled") state.mcpTools = requests[0].value || [];
+      if (requests[1].status === "fulfilled") state.mcpMarkets = requests[1].value || [];
+      if (!silent) {
+        requests.forEach((result) => {
+          if (result.status === "rejected") {
+            showToast(result.reason?.message || "MCP 数据加载失败", "warning");
+          }
+        });
+      }
+      renderMcpPage();
+    }
+
+    async function loadWorkflowData(silent = false) {
+      const requests = await Promise.allSettled([
+        apiRequest("/admin/workflows"),
+        apiRequest("/admin/workflows/nodes")
+      ]);
+      if (requests[0].status === "fulfilled") state.workflows = requests[0].value || [];
+      if (requests[1].status === "fulfilled") state.workflowNodes = requests[1].value || [];
+      if (!silent) {
+        requests.forEach((result) => {
+          if (result.status === "rejected") {
+            showToast(result.reason?.message || "工作流数据加载失败", "warning");
+          }
+        });
+      }
+      renderWorkflowPage();
+    }
+
+    function renderOverview() {
+      const summary = state.monitorSummary || {};
+      const ordersQueued = pick(summary, "orders_queued", "ordersQueued") ?? 0;
+      const ordersFilled = pick(summary, "orders_filled", "ordersFilled") ?? 0;
+      const positionsTotal = pick(summary, "positions_total", "positionsTotal") ?? 0;
+      const latestEquity = pick(summary, "latest_equity", "latestEquity");
+      const latestCash = pick(summary, "latest_cash", "latestCash");
+      const latestMarketValue = pick(summary, "latest_market_value", "latestMarketValue");
+
+      $("overviewStats").innerHTML = [
+        UiComponents.StatCard({
+          label: "Broker Mode",
+          value: String(pick(state.brokerMode, "broker") || "--").toUpperCase(),
+          meta: `来源: ${pick(state.brokerMode, "source") || "--"}`,
+          icon: "B"
+        }),
+        UiComponents.StatCard({
+          label: "Latest Equity",
+          value: formatCurrency(latestEquity),
+          meta: `现金 ${formatCurrency(latestCash)}`,
+          icon: "E"
+        }),
+        UiComponents.StatCard({
+          label: "Queued Orders",
+          value: formatNumber(ordersQueued),
+          meta: `已成交 ${formatNumber(ordersFilled)}`,
+          icon: "Q"
+        }),
+        UiComponents.StatCard({
+          label: "AI Provider",
+          value: (pick(state.aiConfig, "provider") || "--").toUpperCase(),
+          meta: `模型 ${pick(state.aiConfig, "model") || "--"}`,
+          icon: "A"
+        })
+      ].join("");
+
+      const hasBroker = state.brokerAccounts.length > 0;
+      const hasExchange = state.brokerAccounts.some((item) => {
+        const broker = String(pick(item, "broker") || "").toLowerCase();
+        return broker === "okx" || broker === "usstock";
+      });
+      const hasAi = Boolean(pick(state.aiConfig, "provider")) && Boolean(pick(state.aiConfig, "hasApiKey", "has_api_key"));
+      const hasMcp = state.mcpTools.length > 0;
+      const hasWorkflow = state.workflows.length > 0;
+
+      $("moduleStatusList").innerHTML = [
+        UiComponents.StatusItem({
+          title: "券商接入",
+          desc: hasBroker ? `${state.brokerAccounts.length} 个账户已配置` : "未发现可用账户",
+          tone: hasBroker ? "success" : "warning",
+          tag: hasBroker ? "READY" : "PENDING"
+        }),
+        UiComponents.StatusItem({
+          title: "交易所接入",
+          desc: hasExchange ? "包含 OKX / 美股交易所通道" : "建议补充交易所连接",
+          tone: hasExchange ? "success" : "warning",
+          tag: hasExchange ? "READY" : "BETA"
+        }),
+        UiComponents.StatusItem({
+          title: "模型服务",
+          desc: hasAi ? `${pick(state.aiConfig, "provider")} · ${pick(state.aiConfig, "model")}` : "尚未配置有效 API Key",
+          tone: hasAi ? "success" : "warning",
+          tag: hasAi ? "READY" : "BETA"
+        }),
+        UiComponents.StatusItem({
+          title: "MCP 工具",
+          desc: `${state.mcpTools.length} 个工具可见`,
+          tone: hasMcp ? "success" : "info",
+          tag: hasMcp ? "READY" : "INIT"
+        }),
+        UiComponents.StatusItem({
+          title: "工作流编排",
+          desc: `${state.workflows.length} 条流程定义`,
+          tone: hasWorkflow ? "success" : "info",
+          tag: hasWorkflow ? "READY" : "INIT"
+        })
+      ].join("");
+
+      $("quickActionList").innerHTML = [
+        UiComponents.QuickAction({ title: "新增接入账户", desc: "券商或交易所账号配置", action: "add-broker" }),
+        UiComponents.QuickAction({ title: "配置 AI 模型", desc: "供应商、模型与密钥设置", action: "ai-config" }),
+        UiComponents.QuickAction({ title: "新建知识库", desc: "录入向量库与文档规模", action: "add-knowledge" }),
+        UiComponents.QuickAction({ title: "新建工作流", desc: "定义编排节点与状态", action: "add-workflow" }),
+        UiComponents.QuickAction({ title: "策略回测", desc: "运行 SMA 回测任务", action: "run-backtest" }),
+        UiComponents.QuickAction({ title: "导入行情数据", desc: "通过 CSV 路径导入 Bars", action: "import-csv" })
+      ].join("");
+
+      const recentOrders = pick(summary, "recent_orders", "recentOrders") || [];
+      renderRecentOrders(recentOrders);
+
+      const healthTone = hasBroker && hasAi ? "success" : hasBroker || hasAi ? "warning" : "danger";
+      const healthText = healthTone === "success" ? "系统健康" : healthTone === "warning" ? "部分待配置" : "尚未就绪";
+      updateHealthChip(healthTone, healthText);
+
+      $("brokerModeSelect").value = String(pick(state.brokerMode, "broker") || "paper").toLowerCase();
+
+      if (!pick(summary, "orders_total", "ordersTotal") && !state.monitorSummary) {
+        $("recentOrdersList").innerHTML = "<div class=\"empty\">暂无订单数据</div>";
+      }
+    }
+
+    function renderRecentOrders(orders) {
+      $("recentOrdersBadge").textContent = formatNumber(orders.length);
+      if (!orders.length) {
+        $("recentOrdersList").innerHTML = "<div class=\"empty\">当前没有可展示的订单记录。</div>";
+        return;
+      }
+      $("recentOrdersList").innerHTML = orders.slice(0, 8).map((order) => {
+        const symbol = pick(order, "symbol") || "--";
+        const side = String(pick(order, "side") || "--").toUpperCase();
+        const quantity = pick(order, "quantity") ?? "--";
+        const status = String(pick(order, "status") || "--");
+        return `
+          <div class="list-item">
+            <div>
+              <div class="item-title">${escapeHtml(symbol)} · ${escapeHtml(side)}</div>
+              <div class="item-meta">数量 ${escapeHtml(quantity)} · ${escapeHtml(formatDateTime(pick(order, "created_at", "createdAt")))}</div>
+            </div>
+            <span class="badge ${toneClass(normalizeToneFromStatus(status))}">${escapeHtml(status.toUpperCase())}</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderBrokerPage() {
+      const mode = String(pick(state.brokerMode, "broker") || "--").toUpperCase();
+      const activeCount = state.brokerAccounts.filter((item) => Boolean(pick(item, "is_active", "active"))).length;
+      const exchangeCount = state.brokerAccounts.filter((item) => {
+        const broker = String(pick(item, "broker") || "").toLowerCase();
+        return broker === "okx" || broker === "usstock";
+      }).length;
+
+      $("brokerStats").innerHTML = [
+        `<div class="meta-card"><div class="meta-label">当前模式</div><div class="meta-value">${escapeHtml(mode)}</div></div>`,
+        `<div class="meta-card"><div class="meta-label">接入总数</div><div class="meta-value">${formatNumber(state.brokerAccounts.length)}</div></div>`,
+        `<div class="meta-card"><div class="meta-label">激活账户</div><div class="meta-value">${formatNumber(activeCount)}</div></div>`,
+        `<div class="meta-card"><div class="meta-label">交易所接入</div><div class="meta-value">${formatNumber(exchangeCount)}</div></div>`
+      ].join("");
+
+      renderTable("brokerAccountsTable", [
+        {
+          label: "账户",
+          render: (row) => `<span class="value-strong">${escapeHtml(pick(row, "account_name", "accountName") || "--")}</span><br><span class="item-meta">${escapeHtml(String(pick(row, "broker") || "--").toUpperCase())}</span>`
+        },
+        { label: "Base URL", render: (row) => escapeHtml(pick(row, "base_url", "baseUrl") || "--") },
+        { label: "API Key", render: (row) => escapeHtml(pick(row, "api_key_masked", "apiKeyMasked") || "--") },
+        {
+          label: "状态",
+          render: (row) => {
+            const enabled = Boolean(pick(row, "enabled"));
+            const active = Boolean(pick(row, "is_active", "active"));
+            if (active) return `<span class="badge success">ACTIVE</span>`;
+            if (enabled) return `<span class="badge info">ENABLED</span>`;
+            return `<span class="badge warning">DISABLED</span>`;
+          }
+        },
+        { label: "创建时间", render: (row) => escapeHtml(formatDateTime(pick(row, "created_at", "createdAt"))) },
+        {
+          label: "操作",
+          render: (row) => {
+            const active = Boolean(pick(row, "is_active", "active"));
+            const id = pick(row, "id");
+            if (active) {
+              return `<span class="badge success">已激活</span>`;
+            }
+            return `<button class="mini-btn" data-action="activate-account" data-id="${escapeHtml(id)}">激活</button>`;
+          }
+        }
+      ], state.brokerAccounts, "暂无接入账户，请先新增券商/交易所连接。");
+    }
+
+    function renderModelPage() {
+      const provider = pick(state.aiConfig, "provider") || "--";
+      const model = pick(state.aiConfig, "model") || "--";
+      const baseUrl = pick(state.aiConfig, "baseUrl", "base_url") || "--";
+      const hasApiKey = Boolean(pick(state.aiConfig, "hasApiKey", "has_api_key"));
+
+      const configSummary = $("modelConfigSummary");
+      if (configSummary) {
+        configSummary.innerHTML = `
+          <div class="meta-grid">
+            <div class="meta-card">
+              <div class="meta-label">供应商</div>
+              <div class="meta-value">${escapeHtml(String(provider).toUpperCase())}</div>
+            </div>
+            <div class="meta-card">
+              <div class="meta-label">模型</div>
+              <div class="meta-value">${escapeHtml(model)}</div>
+            </div>
+            <div class="meta-card">
+              <div class="meta-label">API Key</div>
+              <div class="meta-value">${hasApiKey ? "已配置" : "未配置"}</div>
+            </div>
+            <div class="meta-card">
+              <div class="meta-label">Base URL</div>
+              <div class="meta-value" style="font-size: 13px;">${escapeHtml(baseUrl)}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      const savedConfigList = $("savedConfigList");
+      if (savedConfigList) {
+        const configs = state.savedAiConfigs || [];
+        if (configs.length === 0) {
+          savedConfigList.innerHTML = "<div class=\"empty\">暂无已保存的配置。</div>";
+        } else {
+          savedConfigList.innerHTML = configs.map((cfg) => {
+            const isActive = cfg.active ? "active" : "";
+            const activateBtn = cfg.active
+              ? `<span class="badge success">使用中</span>`
+              : `<button class="btn btn-secondary small" data-action="switch-to-config" data-provider="${escapeHtml(cfg.provider)}">切换</button>`;
+            return `
+              <div class="list-item ${isActive}" style="align-items: center;">
+                <div>
+                  <div class="item-title">${escapeHtml(cfg.provider)} / ${escapeHtml(cfg.model)}</div>
+                  <div class="item-meta">${escapeHtml(cfg.baseUrl || "--")}</div>
+                </div>
+                ${activateBtn}
+              </div>
+            `;
+          }).join("");
+        }
+      }
+
+      const providers = sortProvidersByOrder(pick(state.aiModels, "providers") || []);
+      const catalogList = $("providerCatalogList");
+      if (!providers.length) {
+        if (catalogList) catalogList.innerHTML = "<div class=\"empty\">当前没有可展示的模型目录。</div>";
+        return;
+      }
+      if (catalogList) {
+        catalogList.innerHTML = providers.map((providerItem) => {
+          const models = providerItem.models || [];
+          const modelNames = models.slice(0, 8).map((item) => item.name || item.id || item.modelId || "--");
+          return `
+            <div class="list-item" style="align-items: flex-start;">
+              <div>
+                <div class="item-title">${escapeHtml(providerItem.name || providerItem.id || "--")}</div>
+                <div class="item-meta">${escapeHtml(providerItem.description || "无描述")}</div>
+                <div class="item-meta" style="margin-top: 6px;">
+                  ${modelNames.map((name) => `<span class="badge info" style="margin-right: 6px; margin-top: 4px;">${escapeHtml(name)}</span>`).join("")}
+                </div>
+              </div>
+              <span class="badge ${providerItem.enabled === false ? "warning" : "success"}">${providerItem.enabled === false ? "DISABLED" : "READY"}</span>
+            </div>
+          `;
+        }).join("");
+      }
+    }
+
+    function renderKnowledgePage() {
+      const stats = state.knowledgeStats || {};
+      $("knowledgeStatsCards").innerHTML = [
+        `<div class="meta-card"><div class="meta-label">知识库数量</div><div class="meta-value">${formatNumber(pick(stats, "base_count", "baseCount") || 0)}</div></div>`,
+        `<div class="meta-card"><div class="meta-label">文档总量</div><div class="meta-value">${formatNumber(pick(stats, "document_count", "documentCount") || 0)}</div></div>`,
+        `<div class="meta-card"><div class="meta-label">切片总量</div><div class="meta-value">${formatNumber(pick(stats, "slice_count", "sliceCount") || 0)}</div></div>`,
+        `<div class="meta-card"><div class="meta-label">Embedding 模型</div><div class="meta-value" style="font-size: 14px;">${escapeHtml(pick(stats, "embedding_model", "embeddingModel") || "--")}</div></div>`
+      ].join("");
+
+      renderTable("knowledgeBasesTable", [
+        {
+          label: "名称",
+          render: (row) => `<span class="value-strong">${escapeHtml(pick(row, "name") || "--")}</span><br><span class="item-meta">${escapeHtml(pick(row, "description") || "--")}</span>`
+        },
+        { label: "向量库", render: (row) => escapeHtml(pick(row, "vector_store", "vectorStore") || "--") },
+        { label: "Embedding", render: (row) => escapeHtml(pick(row, "embedding_model", "embeddingModel") || "--") },
+        { label: "文档数", render: (row) => formatNumber(pick(row, "document_count", "documentCount") || 0) },
+        { label: "切片数", render: (row) => formatNumber(pick(row, "slice_count", "sliceCount") || 0) },
+        {
+          label: "状态",
+          render: (row) => {
+            const rawStatus = String(pick(row, "status") || "--");
+            return `<span class="badge ${toneClass(normalizeToneFromStatus(rawStatus))}">${escapeHtml(rawStatus.toUpperCase())}</span>`;
+          }
+        },
+        { label: "最近同步", render: (row) => escapeHtml(formatDateTime(pick(row, "last_sync_at", "lastSyncAt"))) },
+        {
+          label: "操作",
+          render: (row) => `
+            <button class="mini-btn" data-action="edit-knowledge" data-id="${escapeHtml(pick(row, "id"))}">编辑</button>
+            <button class="mini-btn danger" data-action="delete-knowledge" data-id="${escapeHtml(pick(row, "id"))}">删除</button>
+          `
+        }
+      ], state.knowledgeBases, "暂无知识库数据。");
+
+      renderTable("knowledgeDocumentsTable", [
+        { label: "文件名", render: (row) => `<span class="value-strong">${escapeHtml(pick(row, "file_name", "fileName") || "--")}</span>` },
+        { label: "所属知识库", render: (row) => escapeHtml(pick(row, "knowledge_base_name", "knowledgeBaseName") || "--") },
+        {
+          label: "解析状态",
+          render: (row) => {
+            const status = String(pick(row, "parse_status", "parseStatus") || "--");
+            return `<span class="badge ${toneClass(normalizeToneFromStatus(status))}">${escapeHtml(status.toUpperCase())}</span>`;
+          }
+        },
+        { label: "Chunk", render: (row) => formatNumber(pick(row, "chunk_count", "chunkCount") || 0) },
+        { label: "Page", render: (row) => formatNumber(pick(row, "page_count", "pageCount") || 0) },
+        { label: "备注", render: (row) => escapeHtml(pick(row, "sync_note", "syncNote") || "--") },
+        { label: "最近同步", render: (row) => escapeHtml(formatDateTime(pick(row, "last_sync_at", "lastSyncAt"))) }
+      ], state.knowledgeDocuments, "暂无文档记录。");
+    }
+
+    function renderConversationPage() {
+      const insights = state.conversationInsights || {};
+      $("conversationInsightCards").innerHTML = [
+        `<div class="meta-card"><div class="meta-label">平均交接次数</div><div class="meta-value">${escapeHtml(pick(insights, "avg_handoff_count", "avgHandoffCount") ?? "0")}</div></div>`,
+        `<div class="meta-card"><div class="meta-label">平均知识命中率</div><div class="meta-value">${escapeHtml(pick(insights, "avg_knowledge_hit_rate", "avgKnowledgeHitRate") ?? "0")}%</div></div>`,
+        `<div class="meta-card"><div class="meta-label">工具调用总数</div><div class="meta-value">${formatNumber(pick(insights, "total_tool_calls", "totalToolCalls") || 0)}</div></div>`,
+        `<div class="meta-card"><div class="meta-label">风险会话</div><div class="meta-value">${formatNumber(pick(insights, "risk_sessions", "riskSessions") || 0)}</div></div>`
+      ].join("");
+
+      renderTable("conversationSessionsTable", [
+        {
+          label: "会话",
+          render: (row) => `<span class="value-strong">${escapeHtml(pick(row, "title") || "--")}</span><br><span class="item-meta">${escapeHtml(pick(row, "session_code", "sessionCode") || "--")}</span>`
+        },
+        { label: "渠道", render: (row) => escapeHtml(pick(row, "channel") || "--") },
+        { label: "模型", render: (row) => escapeHtml(pick(row, "model_name", "modelName") || "--") },
+        { label: "轮次", render: (row) => formatNumber(pick(row, "round_count", "roundCount") || 0) },
+        { label: "评分", render: (row) => escapeHtml(pick(row, "user_rating", "userRating") ?? "--") },
+        { label: "工具调用", render: (row) => formatNumber(pick(row, "tool_calls", "toolCalls") || 0) },
+        { label: "命中率", render: (row) => `${escapeHtml(pick(row, "knowledge_hit_rate", "knowledgeHitRate") ?? "--")}%` },
+        {
+          label: "状态",
+          render: (row) => {
+            const status = String(pick(row, "status") || "--");
+            return `<span class="badge ${toneClass(normalizeToneFromStatus(status))}">${escapeHtml(status.toUpperCase())}</span>`;
+          }
+        },
+        { label: "最近消息", render: (row) => escapeHtml(formatDateTime(pick(row, "last_message_at", "lastMessageAt"))) },
+        {
+          label: "操作",
+          render: (row) => `
+            <button class="mini-btn" data-action="edit-conversation" data-id="${escapeHtml(pick(row, "id"))}">编辑</button>
+            <button class="mini-btn danger" data-action="delete-conversation" data-id="${escapeHtml(pick(row, "id"))}">删除</button>
+          `
+        }
+      ], state.conversations, "暂无会话数据。");
+    }
+
+    function renderMcpPage() {
+      renderTable("mcpToolsTable", [
+        {
+          label: "工具",
+          render: (row) => `<span class="value-strong">${escapeHtml(pick(row, "name") || "--")}</span><br><span class="item-meta">${escapeHtml(pick(row, "category") || "--")}</span>`
+        },
+        { label: "传输", render: (row) => escapeHtml(pick(row, "transport_type", "transportType") || "--") },
+        { label: "Endpoint", render: (row) => escapeHtml(pick(row, "endpoint") || "--") },
+        {
+          label: "状态",
+          render: (row) => {
+            const status = String(pick(row, "status") || "--");
+            return `<span class="badge ${toneClass(normalizeToneFromStatus(status))}">${escapeHtml(status.toUpperCase())}</span>`;
+          }
+        },
+        { label: "最近测试", render: (row) => escapeHtml(formatDateTime(pick(row, "last_test_at", "lastTestAt"))) },
+        { label: "备注", render: (row) => escapeHtml(pick(row, "note") || "--") },
+        {
+          label: "操作",
+          render: (row) => `
+            <button class="mini-btn" data-action="edit-mcp-tool" data-id="${escapeHtml(pick(row, "id"))}">编辑</button>
+            <button class="mini-btn danger" data-action="delete-mcp-tool" data-id="${escapeHtml(pick(row, "id"))}">删除</button>
+          `
+        }
+      ], state.mcpTools, "暂无 MCP 工具。");
+
+      renderTable("mcpMarketsTable", [
+        {
+          label: "市场",
+          render: (row) => `<span class="value-strong">${escapeHtml(pick(row, "name") || "--")}</span>`
+        },
+        { label: "包数量", render: (row) => formatNumber(pick(row, "package_count", "packageCount") || 0) },
+        { label: "可见性", render: (row) => escapeHtml(pick(row, "visibility") || "--") },
+        {
+          label: "状态",
+          render: (row) => {
+            const status = String(pick(row, "status") || "--");
+            return `<span class="badge ${toneClass(normalizeToneFromStatus(status))}">${escapeHtml(status.toUpperCase())}</span>`;
+          }
+        },
+        { label: "刷新备注", render: (row) => escapeHtml(pick(row, "refresh_note", "refreshNote") || "--") },
+        { label: "最近刷新", render: (row) => escapeHtml(formatDateTime(pick(row, "last_refresh_at", "lastRefreshAt"))) },
+        {
+          label: "操作",
+          render: (row) => `
+            <button class="mini-btn" data-action="edit-mcp-market" data-id="${escapeHtml(pick(row, "id"))}">编辑</button>
+            <button class="mini-btn danger" data-action="delete-mcp-market" data-id="${escapeHtml(pick(row, "id"))}">删除</button>
+          `
+        }
+      ], state.mcpMarkets, "暂无 MCP 市场。");
+    }
+
+    function renderWorkflowPage() {
+      renderTable("workflowsTable", [
+        {
+          label: "流程",
+          render: (row) => `<span class="value-strong">${escapeHtml(pick(row, "name") || "--")}</span><br><span class="item-meta">${escapeHtml(pick(row, "description") || "--")}</span>`
+        },
+        { label: "版本", render: (row) => escapeHtml(pick(row, "version_no", "versionNo") ?? "--") },
+        {
+          label: "状态",
+          render: (row) => {
+            const status = String(pick(row, "status") || "--");
+            return `<span class="badge ${toneClass(normalizeToneFromStatus(status))}">${escapeHtml(status.toUpperCase())}</span>`;
+          }
+        },
+        { label: "分类", render: (row) => escapeHtml(pick(row, "category") || "--") },
+        { label: "运行次数", render: (row) => formatNumber(pick(row, "run_count", "runCount") || 0) },
+        { label: "最近运行", render: (row) => escapeHtml(formatDateTime(pick(row, "last_run_at", "lastRunAt"))) },
+        {
+          label: "操作",
+          render: (row) => `
+            <button class="mini-btn" data-action="edit-workflow" data-id="${escapeHtml(pick(row, "id"))}">编辑</button>
+            <button class="mini-btn danger" data-action="delete-workflow" data-id="${escapeHtml(pick(row, "id"))}">删除</button>
+          `
+        }
+      ], state.workflows, "暂无工作流定义。");
+
+      renderTable("workflowNodesTable", [
+        {
+          label: "流程",
+          render: (row) => `<span class="value-strong">${escapeHtml(pick(row, "workflow_name", "workflowName") || "--")}</span>`
+        },
+        { label: "节点名称", render: (row) => escapeHtml(pick(row, "node_name", "nodeName") || "--") },
+        { label: "节点类型", render: (row) => escapeHtml(pick(row, "node_type", "nodeType") || "--") },
+        { label: "顺序", render: (row) => escapeHtml(pick(row, "sort_order", "sortOrder") ?? "--") },
+        {
+          label: "配置说明",
+          render: (row) => escapeHtml(summarizeWorkflowNodeConfig(pick(row, "config_note", "configNote") || "--"))
+        }
+      ], state.workflowNodes, "暂无节点定义。");
+
+      renderWorkflowComposer();
+    }
+
+    function summarizeWorkflowNodeConfig(rawValue) {
+      const text = String(rawValue || "").trim();
+      if (!text || text === "--") {
+        return "--";
+      }
+      try {
+        const parsed = JSON.parse(text);
+        const note = String(parsed.note || parsed.config_note || "").trim();
+        const nextCount = Array.isArray(parsed.next) ? parsed.next.length : 0;
+        if (note && nextCount > 0) {
+          return `${note} · ${nextCount} 条连线`;
+        }
+        if (note) {
+          return note;
+        }
+        if (nextCount > 0) {
+          return `图配置 · ${nextCount} 条连线`;
+        }
+      } catch (error) {
+        return text;
+      }
+      return text;
+    }
+
+    function renderWorkflowComposer() {
+      syncWorkflowSelector();
+      renderWorkflowPalette();
+      renderWorkflowCanvas();
+      renderWorkflowInspector();
+    }
+
+    function syncWorkflowSelector() {
+      const selector = $("workflowGraphSelector");
+      if (!selector) {
+        return;
+      }
+      const currentId = Number(state.workflowEditor.workflowId);
+      const options = state.workflows.map((row) => {
+        const id = Number(pick(row, "id"));
+        const selected = currentId === id ? "selected" : "";
+        return `<option value="${id}" ${selected}>${escapeHtml(pick(row, "name") || `流程 #${id}`)}</option>`;
+      }).join("");
+      selector.innerHTML = options;
+
+      if (state.workflows.length === 0) {
+        state.workflowEditor.workflowId = null;
+        state.workflowEditor.nodes = [];
+        state.workflowEditor.edges = [];
+        state.workflowEditor.selectedNodeId = null;
+        state.workflowEditor.connectFromId = null;
+        state.workflowEditor.history = [];
+        state.workflowGraphLoadedFor = null;
+        return;
+      }
+
+      const hasCurrent = state.workflows.some((row) => Number(pick(row, "id")) === currentId);
+      if (!hasCurrent) {
+        const firstId = Number(pick(state.workflows[0], "id"));
+        state.workflowEditor.workflowId = firstId;
+        state.workflowGraphLoadedFor = null;
+      }
+      selector.value = String(state.workflowEditor.workflowId);
+    }
+
+    function renderWorkflowPalette() {
+      const container = $("workflowPalette");
+      if (!container) {
+        return;
+      }
+      container.innerHTML = `
+        <div class="wf-palette-head">节点库（可拖入画布）</div>
+        ${WORKFLOW_NODE_LIBRARY.map((item) => `
+          <div class="wf-palette-item" draggable="true" data-node-type="${escapeHtml(item.type)}">
+            <div class="wf-palette-title">${escapeHtml(item.label)}</div>
+            <div class="wf-palette-desc">${escapeHtml(item.desc)}</div>
+            <div class="wf-palette-actions">
+              <button class="wf-add-btn" data-action="workflow-add-node" data-node-type="${escapeHtml(item.type)}">添加</button>
+            </div>
+          </div>
+        `).join("")}
+      `;
+    }
+
+    function normalizeWorkflowGraphNode(node, index) {
+      const id = String(pick(node, "client_id", "clientId", "id") || `node-${index + 1}`);
+      return {
+        id,
+        name: String(pick(node, "node_name", "nodeName") || defaultWorkflowNodeName(pick(node, "node_type", "nodeType"), index + 1)),
+        type: normalizeWorkflowNodeType(pick(node, "node_type", "nodeType")),
+        x: Number(pick(node, "x")) || (120 + (index % 4) * 230),
+        y: Number(pick(node, "y")) || (72 + Math.floor(index / 4) * 138),
+        note: String(pick(node, "config_note", "configNote") || ""),
+        sortOrder: Number(pick(node, "sort_order", "sortOrder")) || (index + 1)
+      };
+    }
+
+    function normalizeWorkflowGraphPayload(payload) {
+      const rawNodes = Array.isArray(pick(payload, "nodes")) ? pick(payload, "nodes") : [];
+      const rawEdges = Array.isArray(pick(payload, "edges")) ? pick(payload, "edges") : [];
+
+      const nodes = rawNodes.map((node, index) => normalizeWorkflowGraphNode(node, index));
+      const nodeIds = new Set(nodes.map((node) => node.id));
+      const edges = rawEdges
+        .map((edge, index) => ({
+          id: String(pick(edge, "id") || `${pick(edge, "source")}->${pick(edge, "target")}#${index}`),
+          source: String(pick(edge, "source") || ""),
+          target: String(pick(edge, "target") || ""),
+          label: String(pick(edge, "label") || "")
+        }))
+        .filter((edge) => edge.source && edge.target)
+        .filter((edge) => nodeIds.has(edge.source) && nodeIds.has(edge.target));
+
+      return { nodes, edges };
+    }
+
+    async function loadWorkflowGraph(workflowId, silent = true) {
+      if (!workflowId) {
+        return;
+      }
+      state.workflowGraphLoading = true;
+      renderWorkflowCanvas();
+      try {
+        const payload = await apiRequest(`/admin/workflows/${workflowId}/graph`);
+        const graph = normalizeWorkflowGraphPayload(payload || {});
+        state.workflowEditor.workflowId = Number(workflowId);
+        state.workflowEditor.nodes = graph.nodes;
+        state.workflowEditor.edges = graph.edges;
+        state.workflowEditor.selectedNodeId = graph.nodes[0]?.id || null;
+        state.workflowEditor.connectFromId = null;
+        state.workflowEditor.history = [];
+        state.workflowGraphLoadedFor = Number(workflowId);
+      } catch (error) {
+        if (!silent) {
+          showToast(error.message || "工作流拓扑加载失败", "danger");
+        }
+      } finally {
+        state.workflowGraphLoading = false;
+        renderWorkflowCanvas();
+        renderWorkflowInspector();
+      }
+    }
+
+    function renderWorkflowCanvas() {
+      const canvas = $("workflowCanvas");
+      const nodeLayer = $("workflowNodeLayer");
+      const edgeSvg = $("workflowEdgeSvg");
+      const hint = $("workflowCanvasHint");
+      if (!canvas || !nodeLayer || !edgeSvg || !hint) {
+        return;
+      }
+
+      const workflowId = Number(state.workflowEditor.workflowId);
+      if (!workflowId) {
+        nodeLayer.innerHTML = "";
+        edgeSvg.innerHTML = "";
+        hint.style.display = "block";
+        hint.textContent = "请先创建并选择工作流";
+        return;
+      }
+
+      if (!state.workflowGraphLoading && Number(state.workflowGraphLoadedFor) !== workflowId) {
+        loadWorkflowGraph(workflowId, true).catch((error) => {
+          showToast(error.message || "工作流拓扑加载失败", "warning");
+        });
+      }
+
+      if (state.workflowGraphLoading) {
+        nodeLayer.innerHTML = "";
+        edgeSvg.innerHTML = "";
+        hint.style.display = "block";
+        hint.textContent = "正在加载流程拓扑...";
+        return;
+      }
+
+      const nodes = state.workflowEditor.nodes;
+      const edges = state.workflowEditor.edges;
+      hint.style.display = nodes.length === 0 ? "block" : "none";
+      hint.textContent = "从左侧拖入节点，或点击“添加”创建节点";
+
+      nodeLayer.innerHTML = nodes.map((node) => `
+        <article
+          class="wf-node ${state.workflowEditor.selectedNodeId === node.id ? "selected" : ""} ${state.workflowEditor.connectFromId === node.id ? "connect-source" : ""}"
+          style="left:${Math.round(node.x)}px; top:${Math.round(node.y)}px;"
+          data-node-id="${escapeHtml(node.id)}"
+        >
+          <button class="wf-handle wf-handle-in" data-action="workflow-connect-target" data-node-id="${escapeHtml(node.id)}" title="连接到此节点"></button>
+          <button class="wf-handle wf-handle-out" data-action="workflow-connect-source" data-node-id="${escapeHtml(node.id)}" title="从此节点发起连线"></button>
+          <div class="wf-node-head" data-node-id="${escapeHtml(node.id)}">
+            <span class="wf-node-title">${escapeHtml(node.name || "--")}</span>
+            <span class="wf-node-type">${escapeHtml(workflowNodeTypeLabel(node.type))}</span>
+          </div>
+          <div class="wf-node-note" data-action="workflow-select-node" data-node-id="${escapeHtml(node.id)}">
+            ${escapeHtml(node.note || "点击右侧面板补充配置说明")}
+          </div>
+        </article>
+      `).join("");
+
+      const canvasWidth = canvas.clientWidth || 900;
+      const canvasHeight = canvas.clientHeight || 560;
+      const nodeMap = new Map(nodes.map((node) => [node.id, node]));
+
+      const edgePaths = edges.map((edge) => {
+        const source = nodeMap.get(edge.source);
+        const target = nodeMap.get(edge.target);
+        if (!source || !target) {
+          return "";
+        }
+        const sx = source.x + 196;
+        const sy = source.y + 46;
+        const tx = target.x;
+        const ty = target.y + 46;
+        const c1x = sx + Math.max(42, Math.min(120, Math.abs(tx - sx) / 2));
+        const c2x = tx - Math.max(42, Math.min(120, Math.abs(tx - sx) / 2));
+        const path = `M ${sx} ${sy} C ${c1x} ${sy}, ${c2x} ${ty}, ${tx} ${ty}`;
+        const midX = (sx + tx) / 2;
+        const midY = (sy + ty) / 2 - 7;
+        const label = edge.label ? `<text x="${midX}" y="${midY}" fill="#567a98" font-size="10" text-anchor="middle">${escapeHtml(edge.label)}</text>` : "";
+        return `
+          <path d="${path}" stroke="#6e97b7" stroke-width="1.9" fill="none" marker-end="url(#wfArrow)" />
+          ${label}
+        `;
+      }).join("");
+
+      edgeSvg.setAttribute("viewBox", `0 0 ${canvasWidth} ${canvasHeight}`);
+      edgeSvg.innerHTML = `
+        <defs>
+          <marker id="wfArrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" fill="#6e97b7"></path>
+          </marker>
+        </defs>
+        ${edgePaths}
+      `;
+    }
+
+    function renderWorkflowInspector() {
+      const container = $("workflowInspector");
+      if (!container) {
+        return;
+      }
+
+      const workflowId = Number(state.workflowEditor.workflowId);
+      if (!workflowId) {
+        container.innerHTML = `<div class="wf-inspector-empty">当前没有可编辑流程。请先新增工作流。</div>`;
+        return;
+      }
+
+      const selectedNode = state.workflowEditor.nodes.find((node) => node.id === state.workflowEditor.selectedNodeId);
+      if (!selectedNode) {
+        container.innerHTML = `
+          <div class="wf-inspector-empty">
+            选择一个节点查看属性。<br>
+            操作提示：点击节点右侧圆点发起连线，再点击目标节点左侧圆点完成连接。
+          </div>
+        `;
+        return;
+      }
+
+      const outgoingEdges = state.workflowEditor.edges.filter((edge) => edge.source === selectedNode.id);
+
+      container.innerHTML = `
+        <h4 class="wf-inspector-title">节点属性</h4>
+        <div class="wf-inspector-field">
+          <label>节点名称</label>
+          <input type="text" data-workflow-field="name" value="${escapeHtml(selectedNode.name || "")}">
+        </div>
+        <div class="wf-inspector-field">
+          <label>节点类型</label>
+          <select data-workflow-field="type">
+            ${WORKFLOW_NODE_LIBRARY.map((item) => `
+              <option value="${escapeHtml(item.type)}" ${selectedNode.type === item.type ? "selected" : ""}>${escapeHtml(item.label)}</option>
+            `).join("")}
+          </select>
+        </div>
+        <div class="wf-inspector-field">
+          <label>配置说明</label>
+          <textarea data-workflow-field="note" placeholder="如：调用行情检索工具后进入模型总结。">${escapeHtml(selectedNode.note || "")}</textarea>
+        </div>
+        <div class="wf-inspector-field">
+          <label>已连出边</label>
+          <div class="wf-edge-list">
+            ${outgoingEdges.length === 0
+              ? `<div class="item-meta">暂无连线</div>`
+              : outgoingEdges.map((edge) => `
+                <div class="wf-edge-item">
+                  <span>${escapeHtml(edge.source)} → ${escapeHtml(edge.target)}</span>
+                  <button class="mini-btn danger" data-action="workflow-delete-edge" data-edge-id="${escapeHtml(edge.id)}">删除</button>
+                </div>
+              `).join("")
+            }
+          </div>
+        </div>
+        <div class="action-row">
+          <button class="btn btn-danger-soft small" data-action="workflow-delete-node">删除节点</button>
+        </div>
+      `;
+    }
+
+    function normalizeWorkflowNodeType(type) {
+      const value = String(type || "").trim().toLowerCase();
+      if (!value) return "llm";
+      if (WORKFLOW_NODE_LIBRARY.some((item) => item.type === value)) return value;
+      if (value === "end_node") return "end";
+      if (value === "start_node") return "start";
+      return value;
+    }
+
+    function workflowNodeTypeLabel(type) {
+      const normalized = normalizeWorkflowNodeType(type);
+      const found = WORKFLOW_NODE_LIBRARY.find((item) => item.type === normalized);
+      return found ? found.label : normalized.toUpperCase();
+    }
+
+    function defaultWorkflowNodeName(type, index) {
+      const normalized = normalizeWorkflowNodeType(type);
+      if (normalized === "start") return "开始节点";
+      if (normalized === "end") return "结束节点";
+      if (normalized === "condition") return "条件判断";
+      if (normalized === "mcp_tool") return "MCP 工具";
+      if (normalized === "llm") return "模型节点";
+      return `节点-${index}`;
+    }
+
+    function createWorkflowNodeId() {
+      return `node_${Math.random().toString(36).slice(2, 10)}`;
+    }
+
+    function cloneWorkflowGraph(nodes, edges) {
+      return {
+        nodes: JSON.parse(JSON.stringify(nodes || [])),
+        edges: JSON.parse(JSON.stringify(edges || []))
+      };
+    }
+
+    function pushWorkflowHistory() {
+      const snapshot = cloneWorkflowGraph(state.workflowEditor.nodes, state.workflowEditor.edges);
+      state.workflowEditor.history.push(snapshot);
+      if (state.workflowEditor.history.length > 30) {
+        state.workflowEditor.history.shift();
+      }
+    }
+
+    function undoWorkflowGraph() {
+      const history = state.workflowEditor.history;
+      if (!history.length) {
+        showToast("没有可撤销的操作", "warning");
+        return;
+      }
+      const previous = history.pop();
+      state.workflowEditor.nodes = previous.nodes;
+      state.workflowEditor.edges = previous.edges;
+      if (state.workflowEditor.selectedNodeId && !state.workflowEditor.nodes.some((node) => node.id === state.workflowEditor.selectedNodeId)) {
+        state.workflowEditor.selectedNodeId = state.workflowEditor.nodes[0]?.id || null;
+      }
+      state.workflowEditor.connectFromId = null;
+      renderWorkflowCanvas();
+      renderWorkflowInspector();
+    }
+
+    function addWorkflowNode(type, x = null, y = null) {
+      if (!state.workflowEditor.workflowId) {
+        showToast("请先选择工作流", "warning");
+        return;
+      }
+      pushWorkflowHistory();
+      const nextIndex = state.workflowEditor.nodes.length + 1;
+      let nodeId = createWorkflowNodeId();
+      while (state.workflowEditor.nodes.some((item) => item.id === nodeId)) {
+        nodeId = createWorkflowNodeId();
+      }
+      const nodeType = normalizeWorkflowNodeType(type);
+      const safeX = Number.isFinite(x) ? x : (120 + ((nextIndex - 1) % 4) * 230);
+      const safeY = Number.isFinite(y) ? y : (72 + Math.floor((nextIndex - 1) / 4) * 138);
+
+      state.workflowEditor.nodes.push({
+        id: nodeId,
+        name: defaultWorkflowNodeName(nodeType, nextIndex),
+        type: nodeType,
+        x: Math.max(10, safeX),
+        y: Math.max(10, safeY),
+        note: "",
+        sortOrder: nextIndex
+      });
+      state.workflowEditor.selectedNodeId = nodeId;
+      state.workflowEditor.connectFromId = null;
+      renderWorkflowCanvas();
+      renderWorkflowInspector();
+    }
+
+    function removeWorkflowNode(nodeId) {
+      const targetId = nodeId || state.workflowEditor.selectedNodeId;
+      if (!targetId) {
+        return;
+      }
+      pushWorkflowHistory();
+      state.workflowEditor.nodes = state.workflowEditor.nodes.filter((node) => node.id !== targetId);
+      state.workflowEditor.edges = state.workflowEditor.edges.filter((edge) => edge.source !== targetId && edge.target !== targetId);
+      state.workflowEditor.selectedNodeId = state.workflowEditor.nodes[0]?.id || null;
+      if (state.workflowEditor.connectFromId === targetId) {
+        state.workflowEditor.connectFromId = null;
+      }
+      renderWorkflowCanvas();
+      renderWorkflowInspector();
+    }
+
+    function removeWorkflowEdge(edgeId) {
+      if (!edgeId) {
+        return;
+      }
+      pushWorkflowHistory();
+      state.workflowEditor.edges = state.workflowEditor.edges.filter((edge) => edge.id !== edgeId);
+      renderWorkflowCanvas();
+      renderWorkflowInspector();
+    }
+
+    function connectWorkflowNodes(sourceId, targetId) {
+      if (!sourceId || !targetId || sourceId === targetId) {
+        state.workflowEditor.connectFromId = null;
+        renderWorkflowCanvas();
+        return;
+      }
+      const sourceExists = state.workflowEditor.nodes.some((node) => node.id === sourceId);
+      const targetExists = state.workflowEditor.nodes.some((node) => node.id === targetId);
+      if (!sourceExists || !targetExists) {
+        state.workflowEditor.connectFromId = null;
+        renderWorkflowCanvas();
+        return;
+      }
+      const duplicated = state.workflowEditor.edges.some((edge) => edge.source === sourceId && edge.target === targetId);
+      if (duplicated) {
+        state.workflowEditor.connectFromId = null;
+        renderWorkflowCanvas();
+        return;
+      }
+      pushWorkflowHistory();
+      state.workflowEditor.edges.push({
+        id: `${sourceId}->${targetId}#${Date.now()}`,
+        source: sourceId,
+        target: targetId,
+        label: ""
+      });
+      state.workflowEditor.connectFromId = null;
+      renderWorkflowCanvas();
+      renderWorkflowInspector();
+    }
+
+    function updateWorkflowSelectedNodeField(field, value) {
+      const selected = state.workflowEditor.nodes.find((node) => node.id === state.workflowEditor.selectedNodeId);
+      if (!selected) {
+        return;
+      }
+      if (field === "name") {
+        selected.name = String(value || "").trim() || defaultWorkflowNodeName(selected.type, 1);
+      } else if (field === "type") {
+        selected.type = normalizeWorkflowNodeType(value);
+      } else if (field === "note") {
+        selected.note = String(value || "");
+      }
+      renderWorkflowCanvas();
+    }
+
+    function autoLayoutWorkflowGraph() {
+      if (!state.workflowEditor.nodes.length) {
+        return;
+      }
+      pushWorkflowHistory();
+      const columns = 4;
+      const xStart = 56;
+      const yStart = 52;
+      const xGap = 228;
+      const yGap = 132;
+      state.workflowEditor.nodes.forEach((node, index) => {
+        const col = index % columns;
+        const row = Math.floor(index / columns);
+        node.x = xStart + (col * xGap);
+        node.y = yStart + (row * yGap);
+      });
+      renderWorkflowCanvas();
+      renderWorkflowInspector();
+    }
+
+    async function saveWorkflowGraph() {
+      const workflowId = Number(state.workflowEditor.workflowId);
+      if (!workflowId) {
+        showToast("请先选择流程后再保存", "warning");
+        return;
+      }
+      const nodes = state.workflowEditor.nodes.map((node, index) => ({
+        client_id: node.id,
+        node_name: node.name,
+        node_type: node.type,
+        x: Math.round(Number(node.x) || 0),
+        y: Math.round(Number(node.y) || 0),
+        sort_order: index + 1,
+        config_note: node.note || ""
+      }));
+      const edges = state.workflowEditor.edges.map((edge) => ({
+        source: edge.source,
+        target: edge.target,
+        label: edge.label || ""
+      }));
+      await apiRequest(`/admin/workflows/${workflowId}/graph`, {
+        method: "PUT",
+        body: { nodes, edges }
+      });
+      state.workflowEditor.history = [];
+      await loadWorkflowData(true);
+      await loadWorkflowGraph(workflowId, true);
+      showToast("工作流拓扑已保存", "success");
+    }
+
+    function beginWorkflowNodeDrag(nodeId, event) {
+      if (event.button !== 0) {
+        return;
+      }
+      const node = state.workflowEditor.nodes.find((item) => item.id === nodeId);
+      if (!node) {
+        return;
+      }
+      pushWorkflowHistory();
+      state.workflowEditor.selectedNodeId = nodeId;
+      state.workflowEditor.connectFromId = null;
+      workflowDragState = {
+        nodeId,
+        startClientX: event.clientX,
+        startClientY: event.clientY,
+        startX: Number(node.x) || 0,
+        startY: Number(node.y) || 0
+      };
+      event.preventDefault();
+      renderWorkflowCanvas();
+      renderWorkflowInspector();
+    }
+
+    function moveWorkflowNodeDrag(event) {
+      if (!workflowDragState) {
+        return;
+      }
+      const node = state.workflowEditor.nodes.find((item) => item.id === workflowDragState.nodeId);
+      const canvas = $("workflowCanvas");
+      if (!node || !canvas) {
+        return;
+      }
+      const dx = event.clientX - workflowDragState.startClientX;
+      const dy = event.clientY - workflowDragState.startClientY;
+      const maxX = Math.max(10, canvas.clientWidth - 210);
+      const maxY = Math.max(10, canvas.clientHeight - 96);
+      node.x = Math.max(10, Math.min(maxX, workflowDragState.startX + dx));
+      node.y = Math.max(10, Math.min(maxY, workflowDragState.startY + dy));
+      renderWorkflowCanvas();
+    }
+
+    function endWorkflowNodeDrag() {
+      workflowDragState = null;
+    }
+
+    function onWorkflowSelectorChange(value) {
+      const workflowId = Number(value);
+      if (!workflowId || workflowId === Number(state.workflowEditor.workflowId)) {
+        return;
+      }
+      state.workflowEditor.workflowId = workflowId;
+      state.workflowEditor.nodes = [];
+      state.workflowEditor.edges = [];
+      state.workflowEditor.selectedNodeId = null;
+      state.workflowEditor.connectFromId = null;
+      state.workflowEditor.history = [];
+      state.workflowGraphLoadedFor = null;
+      loadWorkflowGraph(workflowId, false).catch((error) => {
+        showToast(error.message || "工作流拓扑加载失败", "danger");
+      });
+    }
+
+    function onWorkflowCanvasDrop(event) {
+      event.preventDefault();
+      const canvas = $("workflowCanvas");
+      if (!canvas) {
+        return;
+      }
+      canvas.classList.remove("drag-over");
+      const nodeType = event.dataTransfer?.getData("application/x-workflow-node-type");
+      if (!nodeType) {
+        return;
+      }
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left - 98;
+      const y = event.clientY - rect.top - 40;
+      addWorkflowNode(nodeType, x, y);
+    }
+
+    function renderTable(containerId, columns, rows, emptyText) {
+      const container = $(containerId);
+      if (!container) {
+        return;
+      }
+      if (!rows || rows.length === 0) {
+        container.innerHTML = `<div class="empty">${escapeHtml(emptyText)}</div>`;
+        return;
+      }
+      const headHtml = columns.map((column) => `<th>${escapeHtml(column.label)}</th>`).join("");
+      const bodyHtml = rows.map((row) => {
+        const tds = columns.map((column) => `<td>${column.render(row)}</td>`).join("");
+        return `<tr>${tds}</tr>`;
+      }).join("");
+
+      container.innerHTML = `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>${headHtml}</tr>
+            </thead>
+            <tbody>
+              ${bodyHtml}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    async function handleSearchQuote() {
+      const query = $("quoteQuery").value.trim();
+      if (!query) {
+        showToast("请输入查询关键字", "warning");
+        return;
+      }
+      try {
+        const list = await apiRequest(`/market/quote/search?q=${encodeURIComponent(query)}&limit=10`);
+        if (!list || list.length === 0) {
+          $("searchResults").innerHTML = "<div class=\"empty\">未检索到匹配标的。</div>";
+          return;
+        }
+        $("searchResults").innerHTML = list.map((item) => {
+          const symbol = pick(item, "symbol") || "--";
+          const name = pick(item, "name") || "--";
+          const exchange = pick(item, "exchange", "market") || "--";
+          const price = pick(item, "price", "last", "lastPrice") ?? "--";
+          return `
+            <div class="list-item">
+              <div>
+                <div class="item-title">${escapeHtml(symbol)} · ${escapeHtml(name)}</div>
+                <div class="item-meta">${escapeHtml(exchange)}</div>
+              </div>
+              <span class="badge info">${escapeHtml(String(price))}</span>
+            </div>
+          `;
+        }).join("");
+      } catch (error) {
+        showToast(error.message || "行情检索失败", "danger");
+      }
+    }
+
+    function setCommandResult(text, tone = "info") {
+      const box = $("commandResult");
+      box.className = `result-box ${toneClass(tone)}`;
+      box.textContent = text;
+    }
+
+    async function handleAnalyze(execute = false) {
+      const command = $("commandInput").value.trim();
+      if (!command) {
+        setCommandResult("请输入交易指令", "warning");
+        return;
+      }
+      const button = execute ? $("executeBtn") : $("analyzeBtn");
+      const normalText = execute ? "AI 分析并执行" : "AI 分析";
+      const loadingText = execute ? "执行中..." : "分析中...";
+      setButtonLoading(button, true, loadingText, normalText);
+      try {
+        const endpoint = execute ? "/ai/chat-and-execute" : "/ai/chat";
+        const data = await apiRequest(endpoint, {
+          method: "POST",
+          body: {
+            message: command,
+            provider: pick(state.aiConfig, "provider") || null,
+            model: pick(state.aiConfig, "model") || null
+          }
+        });
+        const message = pick(data, "message", "result", "text") || JSON.stringify(data);
+        setCommandResult(typeof message === "string" ? message : JSON.stringify(message), "success");
+        await loadOverviewData(true);
+      } catch (error) {
+        setCommandResult(error.message || "命令处理失败", "danger");
+      } finally {
+        setButtonLoading(button, false, loadingText, normalText);
+      }
+    }
+
+    async function handleDryRun() {
+      const command = $("commandInput").value.trim();
+      if (!command) {
+        setCommandResult("请输入交易指令", "warning");
+        return;
+      }
+      const button = $("dryRunBtn");
+      setButtonLoading(button, true, "模拟中...", "Dry Run");
+      try {
+        const data = await apiRequest("/trade/trade/command", {
+          method: "POST",
+          body: {
+            command,
+            dry_run: true
+          }
+        });
+        const message = pick(data, "message") || JSON.stringify(data);
+        setCommandResult(String(message), "info");
+      } catch (error) {
+        setCommandResult(error.message || "Dry run 失败", "danger");
+      } finally {
+        setButtonLoading(button, false, "模拟中...", "Dry Run");
+      }
+    }
+
+    async function applyBrokerMode() {
+      const broker = $("brokerModeSelect").value;
+      const btn = $("applyBrokerModeBtn");
+      setButtonLoading(btn, true, "切换中...", "切换交易模式");
+      try {
+        await apiRequest("/broker/switch", {
+          method: "POST",
+          body: { broker }
+        });
+        showToast(`已切换到 ${broker} 模式`, "success");
+        await loadBrokerData(true);
+        await loadOverviewData(true);
+      } catch (error) {
+        showToast(error.message || "切换模式失败", "danger");
+      } finally {
+        setButtonLoading(btn, false, "切换中...", "切换交易模式");
+      }
+    }
+
+    function openFormModal(config) {
+      state.modalConfig = config;
+      $("formModalTitle").textContent = config.title;
+      $("formModalDesc").textContent = config.desc || "请补充以下信息";
+      $("formModalSubmit").textContent = config.submitText || "保存";
+      $("formModalFields").innerHTML = config.fields.map((field) => renderModalField(field)).join("");
+      
+      const catalogSection = $("formModalSupplierCatalog");
+      if (catalogSection) {
+        if (config.showAiCatalog && state.aiModels && state.aiModels.providers) {
+          catalogSection.style.display = "block";
+          renderSupplierCatalogContent();
+        } else {
+          catalogSection.style.display = "none";
+        }
+      }
+      
+      $("formModalOverlay").classList.add("show");
+      document.body.classList.add("modal-open");
+    }
+
+    function renderModalField(field) {
+      const fullClass = field.full ? "field full" : "field";
+      const required = field.required ? "required" : "";
+      const value = field.value ?? "";
+      if (field.type === "select") {
+        const options = (field.options || []).map((option) => {
+          const selected = String(option.value) === String(value) ? "selected" : "";
+          return `<option value="${escapeHtml(option.value)}" ${selected}>${escapeHtml(option.label)}</option>`;
+        }).join("");
+        const changeHandler = field.onChange ? `onchange="${escapeHtml(field.onChange)}"` : "";
+        return `
+          <div class="${fullClass}">
+            <label for="modal-${escapeHtml(field.name)}">${escapeHtml(field.label)}</label>
+            <select id="modal-${escapeHtml(field.name)}" name="${escapeHtml(field.name)}" ${required} ${changeHandler}>${options}</select>
+          </div>
+        `;
+      }
+      if (field.type === "textarea") {
+        return `
+          <div class="${fullClass}">
+            <label for="modal-${escapeHtml(field.name)}">${escapeHtml(field.label)}</label>
+            <textarea id="modal-${escapeHtml(field.name)}" name="${escapeHtml(field.name)}" placeholder="${escapeHtml(field.placeholder || "")}" ${required}>${escapeHtml(value)}</textarea>
+          </div>
+        `;
+      }
+      const inputType = field.type === "number" ? "number" : field.type === "password" ? "password" : "text";
+      const minAttr = field.min !== undefined ? `min="${field.min}"` : "";
+      const stepAttr = field.step !== undefined ? `step="${field.step}"` : "";
+      const autoComplete = field.type === "password" ? "autocomplete=\"new-password\"" : "autocomplete=\"off\"";
+      return `
+        <div class="${fullClass}">
+          <label for="modal-${escapeHtml(field.name)}">${escapeHtml(field.label)}</label>
+          <input id="modal-${escapeHtml(field.name)}" type="${inputType}" name="${escapeHtml(field.name)}" value="${escapeHtml(value)}" placeholder="${escapeHtml(field.placeholder || "")}" ${required} ${minAttr} ${stepAttr} ${autoComplete}>
+        </div>
+      `;
+    }
+
+    function closeFormModal() {
+      state.modalConfig = null;
+      $("formModalOverlay").classList.remove("show");
+      document.body.classList.remove("modal-open");
+      $("formModalFields").innerHTML = "";
+    }
+
+    function renderSupplierCatalogContent() {
+      const container = $("supplierCatalogContent");
+      if (!container) return;
+      const providers = sortProvidersByOrder(pick(state.aiModels, "providers") || []);
+      if (!providers.length) {
+        container.innerHTML = "<div class=\"empty\">当前没有可展示的供应商目录。</div>";
+        return;
+      }
+      container.innerHTML = providers.map((providerItem) => {
+        const models = providerItem.models || [];
+        const modelNames = models.slice(0, 8).map((item) => item.name || item.id || item.modelId || "--").join("、");
+        const baseUrl = providerItem.baseUrl || "--";
+        return `
+          <div class="catalog-item">
+            <div class="catalog-provider">${escapeHtml(providerItem.name || providerItem.id)}</div>
+            <div class="catalog-models">${escapeHtml(modelNames)}${models.length > 8 ? "..." : ""}</div>
+            <div class="catalog-baseurl">${escapeHtml(baseUrl)}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function toggleSupplierCatalog() {
+      const content = $("supplierCatalogContent");
+      const toggle = $("supplierCatalogToggle");
+      if (!content || !toggle) return;
+      const arrow = toggle.querySelector(".catalog-arrow");
+      if (content.style.display === "none") {
+        content.style.display = "block";
+        arrow.textContent = "▲";
+      } else {
+        content.style.display = "none";
+        arrow.textContent = "▼";
+      }
+    }
+
+    async function handleModalSubmit(event) {
+      event.preventDefault();
+      const config = state.modalConfig;
+      if (!config) {
+        return;
+      }
+      const submitButton = $("formModalSubmit");
+      setButtonLoading(submitButton, true, "提交中...", config.submitText || "保存");
+      try {
+        const formData = new FormData($("formModalForm"));
+        const payload = {};
+        config.fields.forEach((field) => {
+          let value = formData.get(field.name);
+          if (field.cast === "int" && field.type !== "number") {
+            value = value === null || value === "" ? null : Number.parseInt(String(value), 10);
+          }
+          if (field.type === "number") {
+            if (value === "" || value === null) {
+              value = null;
+            } else {
+              value = Number(value);
+              if (field.cast === "int") value = Math.trunc(value);
+            }
+          } else if (field.cast === "boolean") {
+            value = String(value) === "true";
+          } else {
+            value = value === null ? "" : String(value).trim();
+          }
+          if (field.optional && (value === "" || value === null)) {
+            value = null;
+          }
+          payload[field.name] = value;
+        });
+        await config.onSubmit(payload);
+        closeFormModal();
+        showToast(config.successText || "操作成功", "success");
+      } catch (error) {
+        showToast(error.message || "操作失败", "danger");
+      } finally {
+        setButtonLoading(submitButton, false, "提交中...", config.submitText || "保存");
+      }
+    }
+
+    function openBrokerModal() {
+      openFormModal({
+        title: "新增接入账户",
+        desc: "支持券商和交易所接入，新增后可一键激活。",
+        submitText: "保存接入",
+        successText: "接入账户已新增",
+        fields: [
+          {
+            name: "broker",
+            label: "接入类型",
+            type: "select",
+            required: true,
+            value: "paper",
+            options: [
+              { label: "paper", value: "paper" },
+              { label: "gtja", value: "gtja" },
+              { label: "real", value: "real" },
+              { label: "okx", value: "okx" },
+              { label: "usstock", value: "usstock" }
+            ]
+          },
+          { name: "account_name", label: "账户名称", type: "text", required: true, placeholder: "例如：主交易账户" },
+          { name: "base_url", label: "Base URL", type: "text", optional: true, placeholder: "可选，示例 https://api.xxx.com" },
+          { name: "api_key", label: "API Key", type: "password", required: true, placeholder: "输入 API Key" },
+          { name: "api_secret", label: "API Secret", type: "password", optional: true, placeholder: "可选" },
+          { name: "access_token", label: "Access Token", type: "password", optional: true, placeholder: "可选" }
+        ],
+        onSubmit: async (payload) => {
+          await apiRequest("/broker/accounts", { method: "POST", body: payload });
+          await loadBrokerData(true);
+          await loadOverviewData(true);
+        }
+      });
+    }
+
+    function openAiConfigModal(mode = "save") {
+      const providers = sortProvidersByOrder(pick(state.aiModels, "providers") || []).map((item) => ({
+        label: item.name || item.id,
+        value: item.id || item.name
+      }));
+      if (!providers.length) {
+        providers.push(
+          { label: "MiniMax", value: "minimax" },
+          { label: "OpenAI", value: "openai" },
+          { label: "自定义 OpenAI 兼容接口", value: "custom" }
+        );
+      }
+      const initialProvider = pick(state.aiConfig, "provider") || providers[0].value;
+
+      openFormModal({
+        title: mode === "save" ? "编辑模型配置" : "测试模型连接",
+        desc: mode === "save" ? "保存后将覆盖当前 AI 配置。": "使用填写的配置进行即时连通性测试。",
+        submitText: mode === "save" ? "保存配置" : "开始测试",
+        successText: mode === "save" ? "模型配置已更新" : "连接测试完成",
+        showAiCatalog: true,
+        fields: [
+          { name: "provider", label: "供应商", type: "select", required: true, value: initialProvider, options: providers, onChange: "handleProviderChange(this.value)" },
+          { name: "model", label: "模型名称", type: "text", optional: true, value: pick(state.aiConfig, "model") || "", placeholder: "例如 MiniMax M2.7 高速版（可选）" },
+          { name: "modelId", label: "模型ID", type: "text", required: true, value: pick(state.aiConfig, "modelId") || "", placeholder: "例如 MiniMax-M2.7-highspeed（必填）" },
+          { name: "baseUrl", label: "Base URL", type: "text", optional: true, value: pick(state.aiConfig, "baseUrl", "base_url") || "", placeholder: "可选" },
+          { name: "apiKey", label: "API Key", type: "password", optional: mode !== "save", placeholder: "输入 API Key", value: pick(state.aiConfig, "hasApiKey") ? "••••••••" : "" }
+        ],
+        onSubmit: async (payload) => {
+          if (pick(state.aiConfig, "hasApiKey") && (!payload.apiKey || payload.apiKey === "••••••••")) {
+            delete payload.apiKey;
+          }
+          if (mode === "save") {
+            await apiRequest("/ai/config", { method: "POST", body: payload });
+          } else {
+            const result = await apiRequest("/ai/test", { method: "POST", body: payload });
+            const message = pick(result, "message") || "连接测试已执行";
+            showToast(message, pick(result, "success") ? "success" : "warning");
+          }
+          await loadModelData(true);
+          await loadOverviewData(true);
+        }
+      });
+    }
+
+    function openSwitchModelModal() {
+      const savedConfigs = state.savedAiConfigs || [];
+      if (savedConfigs.length === 0) {
+        showToast("暂无已保存的配置", "warning");
+        return;
+      }
+
+      const providerOptions = savedConfigs.map((cfg) => ({
+        label: cfg.provider + " - " + cfg.model,
+        value: cfg.provider
+      }));
+      const initialProvider = pick(state.aiConfig, "provider") || savedConfigs[0].provider;
+
+      openFormModal({
+        title: "切换模型",
+        desc: "从已保存的配置中选择",
+        submitText: "确认切换",
+        successText: "模型已切换",
+        fields: [
+          { name: "provider", label: "已保存的配置", type: "select", required: true, value: initialProvider, options: providerOptions, onChange: "handleSwitchProviderChange(this.value)" },
+          { name: "model", label: "模型名称", type: "text", required: true, value: pick(state.aiConfig, "model") || "", placeholder: "例如 gpt-4.1" }
+        ],
+        onSubmit: async (payload) => {
+          await apiRequest("/ai/switch-model", { method: "POST", body: payload });
+          await loadModelData(true);
+          await loadOverviewData(true);
+        }
+      });
+
+      setTimeout(() => {
+        const modelInput = $("modal-model");
+        const cfg = savedConfigs.find((c) => c.provider === initialProvider);
+        if (modelInput && cfg) {
+          modelInput.value = cfg.model || "";
+        }
+      }, 0);
+    }
+
+    function handleSwitchProviderChange(provider) {
+      const modelInput = $("modal-model");
+      const savedConfigs = state.savedAiConfigs || [];
+      const cfg = savedConfigs.find((c) => c.provider === provider);
+      if (modelInput) {
+        modelInput.value = cfg ? (cfg.model || "") : "";
+      }
+    }
+
+    async function switchToConfig(provider) {
+      const cfg = (state.savedAiConfigs || []).find((c) => c.provider === provider);
+      if (!cfg) {
+        showToast("未找到配置", "warning");
+        return;
+      }
+      await apiRequest("/ai/switch-model", {
+        method: "POST",
+        body: { provider: cfg.provider, model: cfg.model }
+      });
+      await loadModelData(true);
+      await loadOverviewData(true);
+      showToast("已切换到: " + cfg.provider + " / " + cfg.model, "success");
+    }
+
+    function openKnowledgeModal(record = null) {
+      const isEdit = Boolean(record);
+      openFormModal({
+        title: isEdit ? "编辑知识库" : "新增知识库",
+        desc: "维护知识库描述、向量库与切片规模。",
+        submitText: isEdit ? "保存修改" : "新增知识库",
+        successText: isEdit ? "知识库已更新" : "知识库已创建",
+        fields: [
+          { name: "name", label: "知识库名称", type: "text", required: true, value: pick(record, "name") || "" },
+          { name: "status", label: "状态", type: "select", required: true, value: pick(record, "status") || "draft", options: [
+            { label: "online", value: "online" },
+            { label: "syncing", value: "syncing" },
+            { label: "draft", value: "draft" }
+          ] },
+          { name: "description", label: "描述", type: "textarea", full: true, optional: true, value: pick(record, "description") || "" },
+          { name: "vectorStore", label: "向量库", type: "text", optional: true, value: pick(record, "vector_store", "vectorStore") || "Milvus" },
+          { name: "embeddingModel", label: "Embedding 模型", type: "text", optional: true, value: pick(record, "embedding_model", "embeddingModel") || "bge-m3" },
+          { name: "documentCount", label: "文档数", type: "number", cast: "int", optional: true, value: pick(record, "document_count", "documentCount") || 0, min: 0 },
+          { name: "sliceCount", label: "切片数", type: "number", cast: "int", optional: true, value: pick(record, "slice_count", "sliceCount") || 0, min: 0 }
+        ],
+        onSubmit: async (payload) => {
+          if (isEdit) {
+            await apiRequest(`/admin/knowledge/bases/${pick(record, "id")}`, { method: "PUT", body: payload });
+          } else {
+            await apiRequest("/admin/knowledge/bases", { method: "POST", body: payload });
+          }
+          await loadKnowledgeData(true);
+          await loadOverviewData(true);
+        }
+      });
+    }
+
+    function openKnowledgeDocumentModal() {
+      if (!state.knowledgeBases.length) {
+        showToast("请先创建知识库，再新增文档", "warning");
+        return;
+      }
+      const baseOptions = state.knowledgeBases.map((row) => ({
+        label: `${pick(row, "name") || "--"} (#${pick(row, "id")})`,
+        value: String(pick(row, "id"))
+      }));
+      openFormModal({
+        title: "新增文档同步记录",
+        desc: "新增 PDF/Markdown 等文档元数据，并提交解析状态。",
+        submitText: "新增文档",
+        successText: "文档记录已创建",
+        fields: [
+          {
+            name: "knowledge_base_id",
+            label: "所属知识库",
+            type: "select",
+            cast: "int",
+            required: true,
+            value: baseOptions[0].value,
+            options: baseOptions
+          },
+          {
+            name: "file_name",
+            label: "文档文件名",
+            type: "text",
+            required: true,
+            placeholder: "例如：2026Q2-策略复盘.pdf"
+          },
+          {
+            name: "parse_status",
+            label: "解析状态",
+            type: "select",
+            value: "queued",
+            options: [
+              { label: "queued", value: "queued" },
+              { label: "pending", value: "pending" },
+              { label: "indexed", value: "indexed" },
+              { label: "failed", value: "failed" }
+            ]
+          },
+          {
+            name: "page_count",
+            label: "页数",
+            type: "number",
+            cast: "int",
+            optional: true,
+            value: 0,
+            min: 0
+          },
+          {
+            name: "chunk_count",
+            label: "切片数",
+            type: "number",
+            cast: "int",
+            optional: true,
+            value: 0,
+            min: 0
+          },
+          {
+            name: "trigger_parse",
+            label: "提交解析任务",
+            type: "select",
+            cast: "boolean",
+            value: "true",
+            options: [
+              { label: "是", value: "true" },
+              { label: "否", value: "false" }
+            ]
+          },
+          {
+            name: "source_path",
+            label: "本地文件路径",
+            type: "text",
+            optional: true,
+            full: true,
+            placeholder: "/data/docs/2026Q2-策略复盘.pdf"
+          },
+          {
+            name: "sync_note",
+            label: "同步备注",
+            type: "textarea",
+            optional: true,
+            full: true,
+            placeholder: "例如：待解析后写入 Milvus"
+          }
+        ],
+        onSubmit: async (payload) => {
+          await apiRequest("/admin/knowledge/documents", {
+            method: "POST",
+            body: payload
+          });
+          await loadKnowledgeData(true);
+          await loadOverviewData(true);
+        }
+      });
+    }
+
+    function openConversationModal(record = null) {
+      const isEdit = Boolean(record);
+      openFormModal({
+        title: isEdit ? "编辑会话" : "新增会话",
+        desc: "维护会话基本信息、评分和命中指标。",
+        submitText: isEdit ? "保存修改" : "新增会话",
+        successText: isEdit ? "会话已更新" : "会话已创建",
+        fields: [
+          { name: "sessionCode", label: "会话编码", type: "text", required: true, value: pick(record, "session_code", "sessionCode") || "" },
+          { name: "title", label: "会话标题", type: "text", required: true, value: pick(record, "title") || "" },
+          { name: "channel", label: "渠道", type: "text", optional: true, value: pick(record, "channel") || "Web" },
+          { name: "modelName", label: "模型名称", type: "text", required: true, value: pick(record, "model_name", "modelName") || "" },
+          { name: "status", label: "状态", type: "select", value: pick(record, "status") || "active", options: [
+            { label: "active", value: "active" },
+            { label: "follow_up", value: "follow_up" },
+            { label: "stable", value: "stable" },
+            { label: "archived", value: "archived" }
+          ] },
+          { name: "roundCount", label: "轮次", type: "number", cast: "int", optional: true, value: pick(record, "round_count", "roundCount") || 0, min: 0 },
+          { name: "userRating", label: "评分", type: "number", optional: true, step: 0.1, value: pick(record, "user_rating", "userRating") || "" },
+          { name: "toolCalls", label: "工具调用", type: "number", cast: "int", optional: true, value: pick(record, "tool_calls", "toolCalls") || 0, min: 0 },
+          { name: "handoffCount", label: "交接次数", type: "number", cast: "int", optional: true, value: pick(record, "handoff_count", "handoffCount") || 0, min: 0 },
+          { name: "knowledgeHitRate", label: "知识命中率", type: "number", optional: true, step: 0.01, value: pick(record, "knowledge_hit_rate", "knowledgeHitRate") || "" }
+        ],
+        onSubmit: async (payload) => {
+          if (isEdit) {
+            await apiRequest(`/admin/conversations/${pick(record, "id")}`, { method: "PUT", body: payload });
+          } else {
+            await apiRequest("/admin/conversations", { method: "POST", body: payload });
+          }
+          await loadConversationData(true);
+          await loadOverviewData(true);
+        }
+      });
+    }
+
+    function openMcpToolModal(record = null) {
+      const isEdit = Boolean(record);
+      openFormModal({
+        title: isEdit ? "编辑 MCP 工具" : "新增 MCP 工具",
+        desc: "维护工具端点、传输方式和启用状态。",
+        submitText: isEdit ? "保存修改" : "新增工具",
+        successText: isEdit ? "工具已更新" : "工具已创建",
+        fields: [
+          { name: "name", label: "工具名称", type: "text", required: true, value: pick(record, "name") || "" },
+          { name: "transportType", label: "传输方式", type: "select", required: true, value: pick(record, "transport_type", "transportType") || "REMOTE_HTTP", options: [
+            { label: "REMOTE_HTTP", value: "REMOTE_HTTP" },
+            { label: "REMOTE_SSE", value: "REMOTE_SSE" },
+            { label: "LOCAL_STDIO", value: "LOCAL_STDIO" }
+          ] },
+          { name: "endpoint", label: "Endpoint", type: "text", required: true, value: pick(record, "endpoint") || "" },
+          { name: "category", label: "分类", type: "text", optional: true, value: pick(record, "category") || "general" },
+          { name: "status", label: "状态", type: "select", value: pick(record, "status") || "enabled", options: [
+            { label: "enabled", value: "enabled" },
+            { label: "warning", value: "warning" },
+            { label: "gray", value: "gray" },
+            { label: "disabled", value: "disabled" }
+          ] },
+          { name: "note", label: "备注", type: "textarea", full: true, optional: true, value: pick(record, "note") || "" }
+        ],
+        onSubmit: async (payload) => {
+          if (isEdit) {
+            await apiRequest(`/admin/mcp/tools/${pick(record, "id")}`, { method: "PUT", body: payload });
+          } else {
+            await apiRequest("/admin/mcp/tools", { method: "POST", body: payload });
+          }
+          await loadMcpData(true);
+          await loadOverviewData(true);
+        }
+      });
+    }
+
+    function openMcpMarketModal(record = null) {
+      const isEdit = Boolean(record);
+      openFormModal({
+        title: isEdit ? "编辑 MCP 市场" : "新增 MCP 市场",
+        desc: "维护市场可见性、包数量和刷新说明。",
+        submitText: isEdit ? "保存修改" : "新增市场",
+        successText: isEdit ? "市场已更新" : "市场已创建",
+        fields: [
+          { name: "name", label: "市场名称", type: "text", required: true, value: pick(record, "name") || "" },
+          { name: "packageCount", label: "包数量", type: "number", cast: "int", optional: true, value: pick(record, "package_count", "packageCount") || 0, min: 0 },
+          { name: "visibility", label: "可见性", type: "select", value: pick(record, "visibility") || "public", options: [
+            { label: "public", value: "public" },
+            { label: "private", value: "private" },
+            { label: "beta", value: "beta" }
+          ] },
+          { name: "status", label: "状态", type: "select", value: pick(record, "status") || "online", options: [
+            { label: "online", value: "online" },
+            { label: "warning", value: "warning" },
+            { label: "offline", value: "offline" }
+          ] },
+          { name: "refreshNote", label: "刷新备注", type: "textarea", full: true, optional: true, value: pick(record, "refresh_note", "refreshNote") || "" }
+        ],
+        onSubmit: async (payload) => {
+          if (isEdit) {
+            await apiRequest(`/admin/mcp/markets/${pick(record, "id")}`, { method: "PUT", body: payload });
+          } else {
+            await apiRequest("/admin/mcp/markets", { method: "POST", body: payload });
+          }
+          await loadMcpData(true);
+          await loadOverviewData(true);
+        }
+      });
+    }
+
+    function openWorkflowModal(record = null) {
+      const isEdit = Boolean(record);
+      openFormModal({
+        title: isEdit ? "编辑工作流" : "新增工作流",
+        desc: "维护流程描述、版本与运行状态。",
+        submitText: isEdit ? "保存修改" : "新增工作流",
+        successText: isEdit ? "工作流已更新" : "工作流已创建",
+        fields: [
+          { name: "name", label: "流程名称", type: "text", required: true, value: pick(record, "name") || "" },
+          { name: "description", label: "描述", type: "textarea", full: true, optional: true, value: pick(record, "description") || "" },
+          { name: "versionNo", label: "版本号", type: "number", cast: "int", optional: true, value: pick(record, "version_no", "versionNo") || 1, min: 1 },
+          { name: "status", label: "状态", type: "select", value: pick(record, "status") || "draft", options: [
+            { label: "draft", value: "draft" },
+            { label: "published", value: "published" },
+            { label: "critical", value: "critical" }
+          ] },
+          { name: "runCount", label: "运行次数", type: "number", cast: "int", optional: true, value: pick(record, "run_count", "runCount") || 0, min: 0 },
+          { name: "category", label: "分类", type: "text", optional: true, value: pick(record, "category") || "general" }
+        ],
+        onSubmit: async (payload) => {
+          if (isEdit) {
+            await apiRequest(`/admin/workflows/${pick(record, "id")}`, { method: "PUT", body: payload });
+          } else {
+            await apiRequest("/admin/workflows", { method: "POST", body: payload });
+          }
+          await loadWorkflowData(true);
+          await loadOverviewData(true);
+        }
+      });
+    }
+
+    function openBacktestModal() {
+      openFormModal({
+        title: "策略回测",
+        desc: "提交 SMA 回测任务并返回结果摘要。",
+        submitText: "提交回测",
+        fields: [
+          { name: "strategy_name", label: "策略名称", type: "text", required: true, value: "SMA-Cross" },
+          { name: "symbol", label: "交易标的", type: "text", required: true, value: "600519" },
+          { name: "timeframe", label: "时间周期", type: "text", required: true, value: "1d" },
+          { name: "short_window", label: "短周期", type: "number", cast: "int", required: true, value: 5, min: 1 },
+          { name: "long_window", label: "长周期", type: "number", cast: "int", required: true, value: 20, min: 2 },
+          { name: "initial_cash", label: "初始资金", type: "number", required: true, value: 100000, min: 0 }
+        ],
+        onSubmit: async (payload) => {
+          const result = await apiRequest("/trade/backtest/sma", {
+            method: "POST",
+            body: payload
+          });
+          showToast(`回测完成: ${JSON.stringify(result).slice(0, 80)}...`, "success");
+        }
+      });
+    }
+
+    function openImportModal() {
+      openFormModal({
+        title: "导入行情数据",
+        desc: "通过 CSV 文件路径导入 bars 数据。",
+        submitText: "开始导入",
+        fields: [
+          { name: "csv_path", label: "CSV 路径", type: "text", required: true, placeholder: "/Users/xxx/data.csv" },
+          { name: "timeframe", label: "周期", type: "text", optional: true, value: "1m" },
+          {
+            name: "has_header",
+            label: "包含表头",
+            type: "select",
+            cast: "boolean",
+            value: "true",
+            options: [
+              { label: "是", value: "true" },
+              { label: "否", value: "false" }
+            ]
+          }
+        ],
+        onSubmit: async (payload) => {
+          await apiRequest("/market/bars/import-csv", { method: "POST", body: payload });
+          showToast("导入任务已提交", "success");
+        }
+      });
+    }
+
+    function findById(list, id) {
+      return list.find((item) => Number(pick(item, "id")) === Number(id));
+    }
+
+    async function deleteWithConfirm(message, endpoint, reloadFn) {
+      const ok = window.confirm(message);
+      if (!ok) return;
+      await apiRequest(endpoint, { method: "DELETE" });
+      await reloadFn(true);
+      await loadOverviewData(true);
+      showToast("删除成功", "success");
+    }
+
+    async function activateAccount(id) {
+      await apiRequest(`/broker/accounts/${id}/activate`, { method: "POST" });
+      await loadBrokerData(true);
+      await loadOverviewData(true);
+      showToast("账户已激活", "success");
+    }
+
+    async function clearAiConfig() {
+      const ok = window.confirm("确认清空当前 AI 配置吗？");
+      if (!ok) return;
+      await apiRequest("/ai/config", { method: "DELETE" });
+      await loadModelData(true);
+      await loadOverviewData(true);
+      showToast("模型配置已清空", "success");
+    }
+
+    function handleQuickAction(action) {
+      if (action === "add-broker") return openBrokerModal();
+      if (action === "ai-config") return openAiConfigModal("save");
+      if (action === "add-knowledge") return openKnowledgeModal();
+      if (action === "add-workflow") return openWorkflowModal();
+      if (action === "run-backtest") return openBacktestModal();
+      if (action === "import-csv") return openImportModal();
+    }
+
+    function bindEvents() {
+      document.querySelectorAll(".nav-item").forEach((item) => {
+        item.addEventListener("click", () => switchPage(item.dataset.page));
+      });
+
+      $("refreshBtn").addEventListener("click", () => {
+        refreshCurrentPage().catch((error) => {
+          showToast(error.message || "刷新失败", "danger");
+        });
+      });
+
+      $("analyzeBtn").addEventListener("click", () => handleAnalyze(false));
+      $("executeBtn").addEventListener("click", () => handleAnalyze(true));
+      $("dryRunBtn").addEventListener("click", handleDryRun);
+      $("searchBtn").addEventListener("click", handleSearchQuote);
+      $("quoteQuery").addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          handleSearchQuote();
+        }
+      });
+      $("applyBrokerModeBtn").addEventListener("click", applyBrokerMode);
+
+      $("accountTrigger").addEventListener("click", (event) => {
+        event.stopPropagation();
+        $("accountDropdown").classList.toggle("show");
+      });
+      document.addEventListener("click", () => {
+        $("accountDropdown").classList.remove("show");
+      });
+      $("accountDropdown").addEventListener("click", (event) => {
+        event.stopPropagation();
+      });
+
+      $("logoutBtn").addEventListener("click", logout);
+
+      $("chatSendBtn").addEventListener("click", sendChatMessage);
+      $("chatInput").addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          sendChatMessage();
+        }
+      });
+
+      $("formModalClose").addEventListener("click", closeFormModal);
+      $("formModalCancel").addEventListener("click", closeFormModal);
+      $("supplierCatalogToggle").addEventListener("click", toggleSupplierCatalog);
+      $("formModalOverlay").addEventListener("click", (event) => {
+        if (event.target === $("formModalOverlay")) {
+          closeFormModal();
+        }
+      });
+      $("formModalForm").addEventListener("submit", handleModalSubmit);
+
+      const workflowCanvas = $("workflowCanvas");
+      if (workflowCanvas) {
+        workflowCanvas.addEventListener("dragover", (event) => {
+          event.preventDefault();
+          workflowCanvas.classList.add("drag-over");
+        });
+        workflowCanvas.addEventListener("dragleave", () => {
+          workflowCanvas.classList.remove("drag-over");
+        });
+        workflowCanvas.addEventListener("drop", onWorkflowCanvasDrop);
+        workflowCanvas.addEventListener("click", (event) => {
+          if (event.target === workflowCanvas || event.target === $("workflowNodeLayer") || event.target === $("workflowEdgeSvg")) {
+            state.workflowEditor.selectedNodeId = null;
+            state.workflowEditor.connectFromId = null;
+            renderWorkflowCanvas();
+            renderWorkflowInspector();
+          }
+        });
+      }
+
+      document.addEventListener("dragstart", (event) => {
+        const paletteNode = event.target.closest(".wf-palette-item");
+        if (!paletteNode || !event.dataTransfer) {
+          return;
+        }
+        event.dataTransfer.effectAllowed = "copy";
+        event.dataTransfer.setData("application/x-workflow-node-type", paletteNode.dataset.nodeType || "");
+      });
+
+      document.addEventListener("change", (event) => {
+        if (event.target.id === "workflowGraphSelector") {
+          onWorkflowSelectorChange(event.target.value);
+          return;
+        }
+        const field = event.target.dataset.workflowField;
+        if (field) {
+          updateWorkflowSelectedNodeField(field, event.target.value);
+        }
+      });
+
+      document.addEventListener("input", (event) => {
+        const field = event.target.dataset.workflowField;
+        if (field) {
+          updateWorkflowSelectedNodeField(field, event.target.value);
+        }
+      });
+
+      document.addEventListener("mousedown", (event) => {
+        const nodeHead = event.target.closest(".wf-node-head");
+        if (!nodeHead) {
+          return;
+        }
+        beginWorkflowNodeDrag(nodeHead.dataset.nodeId, event);
+      });
+      window.addEventListener("mousemove", moveWorkflowNodeDrag);
+      window.addEventListener("mouseup", endWorkflowNodeDrag);
+
+      document.addEventListener("click", (event) => {
+        const quickTarget = event.target.closest("[data-quick]");
+        if (quickTarget) {
+          handleQuickAction(quickTarget.dataset.quick);
+          return;
+        }
+
+        const actionTarget = event.target.closest("[data-action]");
+        if (!actionTarget) return;
+        const action = actionTarget.dataset.action;
+        const id = actionTarget.dataset.id;
+
+        if (action === "open-add-broker") return openBrokerModal();
+        if (action === "reload-broker") return loadBrokerData(false);
+        if (action === "activate-account") return activateAccount(id).catch((error) => showToast(error.message, "danger"));
+
+        if (action === "open-ai-config") return openAiConfigModal("save");
+        if (action === "switch-ai-model") return openSwitchModelModal();
+        if (action === "switch-to-config") return switchToConfig(provider).catch((error) => showToast(error.message, "danger"));
+        if (action === "test-ai-config") return openAiConfigModal("test");
+        if (action === "clear-ai-config") return clearAiConfig().catch((error) => showToast(error.message, "danger"));
+
+        if (action === "open-add-knowledge") return openKnowledgeModal();
+        if (action === "open-add-knowledge-document") return openKnowledgeDocumentModal();
+        if (action === "reload-knowledge") return loadKnowledgeData(false);
+        if (action === "edit-knowledge") return openKnowledgeModal(findById(state.knowledgeBases, id));
+        if (action === "delete-knowledge") return deleteWithConfirm("确认删除该知识库？", `/admin/knowledge/bases/${id}`, loadKnowledgeData).catch((error) => showToast(error.message, "danger"));
+
+        if (action === "open-add-conversation") return openConversationModal();
+        if (action === "reload-conversation") return loadConversationData(false);
+        if (action === "edit-conversation") return openConversationModal(findById(state.conversations, id));
+        if (action === "delete-conversation") return deleteWithConfirm("确认删除该会话？", `/admin/conversations/${id}`, loadConversationData).catch((error) => showToast(error.message, "danger"));
+
+        if (action === "open-add-mcp-tool") return openMcpToolModal();
+        if (action === "open-add-mcp-market") return openMcpMarketModal();
+        if (action === "reload-mcp") return loadMcpData(false);
+        if (action === "edit-mcp-tool") return openMcpToolModal(findById(state.mcpTools, id));
+        if (action === "delete-mcp-tool") return deleteWithConfirm("确认删除该 MCP 工具？", `/admin/mcp/tools/${id}`, loadMcpData).catch((error) => showToast(error.message, "danger"));
+        if (action === "edit-mcp-market") return openMcpMarketModal(findById(state.mcpMarkets, id));
+        if (action === "delete-mcp-market") return deleteWithConfirm("确认删除该 MCP 市场？", `/admin/mcp/markets/${id}`, loadMcpData).catch((error) => showToast(error.message, "danger"));
+
+        if (action === "open-add-workflow") return openWorkflowModal();
+        if (action === "reload-workflow") return loadWorkflowData(false);
+        if (action === "edit-workflow") return openWorkflowModal(findById(state.workflows, id));
+        if (action === "delete-workflow") return deleteWithConfirm("确认删除该工作流？", `/admin/workflows/${id}`, loadWorkflowData).catch((error) => showToast(error.message, "danger"));
+        if (action === "workflow-add-node") return addWorkflowNode(actionTarget.dataset.nodeType);
+        if (action === "workflow-connect-source") {
+          const nodeId = actionTarget.dataset.nodeId;
+          state.workflowEditor.connectFromId = state.workflowEditor.connectFromId === nodeId ? null : nodeId;
+          state.workflowEditor.selectedNodeId = nodeId;
+          renderWorkflowCanvas();
+          renderWorkflowInspector();
+          return;
+        }
+        if (action === "workflow-connect-target") {
+          const targetId = actionTarget.dataset.nodeId;
+          const sourceId = state.workflowEditor.connectFromId;
+          if (!sourceId) {
+            showToast("先点击起点节点右侧连线点", "warning");
+            return;
+          }
+          return connectWorkflowNodes(sourceId, targetId);
+        }
+        if (action === "workflow-select-node") {
+          state.workflowEditor.selectedNodeId = actionTarget.dataset.nodeId;
+          state.workflowEditor.connectFromId = null;
+          renderWorkflowCanvas();
+          renderWorkflowInspector();
+          return;
+        }
+        if (action === "workflow-delete-node") {
+          if (!state.workflowEditor.selectedNodeId) {
+            return;
+          }
+          const ok = window.confirm("确认删除当前选中节点？");
+          if (!ok) {
+            return;
+          }
+          return removeWorkflowNode(state.workflowEditor.selectedNodeId);
+        }
+        if (action === "workflow-delete-edge") return removeWorkflowEdge(actionTarget.dataset.edgeId);
+        if (action === "undo-workflow-graph") return undoWorkflowGraph();
+        if (action === "auto-layout-workflow-graph") return autoLayoutWorkflowGraph();
+        if (action === "reload-workflow-graph") {
+          const workflowId = Number(state.workflowEditor.workflowId);
+          if (!workflowId) {
+            showToast("请先选择流程", "warning");
+            return;
+          }
+          return loadWorkflowGraph(workflowId, false).catch((error) => showToast(error.message, "danger"));
+        }
+        if (action === "save-workflow-graph") return saveWorkflowGraph().catch((error) => showToast(error.message, "danger"));
+      });
+    }
+
+    function logout() {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("user_info");
+      window.location.href = "/login";
+    }
+
+    async function init() {
+      if (!getToken()) {
+        window.location.href = "/login";
+        return;
+      }
+      initUserSection();
+      bindEvents();
+      startClock();
+      UiComponents.Header(PAGE_META.overview);
+      updateHealthChip("info", "数据加载中");
+      $("searchResults").innerHTML = "<div class=\"empty\">输入代码后开始检索行情。</div>";
+      $("recentOrdersList").innerHTML = "<div class=\"empty\">订单数据加载中...</div>";
+      setCommandResult("还没有执行交易命令。");
+
+      await Promise.allSettled([
+        loadOverviewData(true),
+        loadBrokerData(true),
+        loadModelData(true),
+        loadKnowledgeData(true),
+        loadConversationData(true),
+        loadMcpData(true),
+        loadWorkflowData(true)
+      ]);
+      renderOverview();
+      showToast("控制台已就绪", "success");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      init().catch((error) => {
+        showToast(error.message || "初始化失败", "danger");
+      });
+    });
+  </script>
+</body>
+</html>

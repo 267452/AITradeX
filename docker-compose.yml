@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: aitradex-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-aitradex}
+      POSTGRES_USER: ${POSTGRES_USER:-aitradex}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-aitradex}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aitradex} -d ${POSTGRES_DB:-aitradex}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: aitradex-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: ./aitradex-server
+    container_name: aitradex-api
+    env_file:
+      - .env
+    environment:
+      JDBC_DATABASE_URL: ${JDBC_DATABASE_URL:-jdbc:postgresql://postgres:5432/aitradex}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://aitradex:aitradex@postgres:5432/aitradex}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      APP_HOST: ${APP_HOST:-0.0.0.0}
+      APP_PORT: ${APP_PORT:-8000}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      PGSSLMODE: disable
+      HOME: /tmp
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "${APP_PORT:-8000}:8000"
+
+volumes:
+  postgres_data:
+  redis_data:

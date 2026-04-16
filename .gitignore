@@ -1,0 +1,37 @@
+# Environment
+.env
+*.local
+
+# Java
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+*.pid
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Build
+out/
+dist/
+build/
+
+# Python (legacy)
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/

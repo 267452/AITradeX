@@ -1,0 +1,61 @@
+server:
+  address: ${APP_HOST:0.0.0.0}
+  port: ${APP_PORT:8000}
+
+jwt:
+  secret: ${JWT_SECRET:aitradex-jwt-secret-key-must-be-at-least-256-bits-long-for-security}
+  expire-in: ${JWT_EXPIRE_IN:604800}
+
+spring:
+  application:
+    name: aitradex
+  datasource:
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/aibuy}
+    username: ${POSTGRES_USER:aibuy}
+    password: ${POSTGRES_PASSWORD:aibuy}
+    driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      mode: never
+  jackson:
+    time-zone: Asia/Shanghai
+
+logging:
+  level:
+    root: INFO
+    com.aitradex: DEBUG
+
+app:
+  broker-mode: ${BROKER_MODE:paper}
+  quote-provider: ${QUOTE_PROVIDER:auto}
+  gtja-quote-base-url: ${GTJA_QUOTE_BASE_URL:}
+  gtja-quote-endpoint: ${GTJA_QUOTE_ENDPOINT:/quote}
+  gtja-quote-token: ${GTJA_QUOTE_TOKEN:}
+  gtja-quote-timeout-sec: ${GTJA_QUOTE_TIMEOUT_SEC:5}
+  credentials-fernet-key: ${CREDENTIALS_FERNET_KEY:}
+  redis-url: ${REDIS_URL:redis://localhost:6379/0}
+  risk-max-qty: ${RISK_MAX_QTY:100000}
+  risk-max-notional: ${RISK_MAX_NOTIONAL:2000000}
+  risk-allow-short: ${RISK_ALLOW_SHORT:false}
+  knowledge-milvus-host: ${KNOWLEDGE_MILVUS_HOST:localhost}
+  knowledge-milvus-port: ${KNOWLEDGE_MILVUS_PORT:19530}
+  knowledge-milvus-collection: ${KNOWLEDGE_MILVUS_COLLECTION:knowledge_document_chunks}
+  knowledge-embedding-dim: ${KNOWLEDGE_EMBEDDING_DIM:384}
+  knowledge-chunk-size: ${KNOWLEDGE_CHUNK_SIZE:500}
+  knowledge-chunk-overlap: ${KNOWLEDGE_CHUNK_OVERLAP:80}
+  ai:
+    default-provider: ${AI_DEFAULT_PROVIDER:openai}
+    default-model: ${AI_DEFAULT_MODEL:gpt-3.5-turbo}
+    default-temperature: ${AI_DEFAULT_TEMPERATURE:0.3}
+    default-max-tokens: ${AI_DEFAULT_MAX_TOKENS:2000}
+    providers:
+      openai:
+        api-key: ${OPENAI_API_KEY:}
+        base-url: ${OPENAI_BASE_URL:}
+        model: ${OPENAI_MODEL_NAME:gpt-3.5-turbo}
+        enabled: ${OPENAI_ENABLED:true}
+      minimax:
+        api-key: ${MINIMAX_API_KEY:}
+        base-url: ${MINIMAX_BASE_URL:https://api.minimaxi.com/v1}
+        model: ${MINIMAX_MODEL_NAME:MiniMax-M2.7}
+        enabled: ${MINIMAX_ENABLED:false}
