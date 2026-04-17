@@ -70,7 +70,8 @@ public class QuoteService {
     }
 
     public String normalizeOkxInstId(String raw) {
-        String s = raw.trim().toUpperCase(Locale.ROOT).replace("/", "-");
+        String s = raw == null ? "" : raw.trim().toUpperCase(Locale.ROOT).replace("/", "-");
+        if (s.isBlank()) return "";
         if (s.startsWith("OKX:")) s = s.substring(4);
         if (s.contains("-")) return s;
         for (String suffix : OKX_QUOTE_SUFFIXES) {
@@ -169,13 +170,14 @@ public class QuoteService {
         if (priceRaw == null || "-".equals(String.valueOf(priceRaw))) throw new IllegalStateException("eastmoney_quote_not_found");
         String code = String.valueOf(data.getOrDefault("f57", normalizeSymbol(symbol).substring(0, 6)));
         String market = normalizeSymbol(symbol).endsWith(".BJ") || code.startsWith("8") || code.startsWith("4") || code.startsWith("9") ? ".BJ" : (secid.startsWith("1.") ? ".SH" : ".SZ");
-        return Map.of(
-                "provider", "eastmoney",
-                "symbol", code + market,
-                "price", new BigDecimal(String.valueOf(priceRaw)),
-                "bid", data.get("f45") == null || "-".equals(String.valueOf(data.get("f45"))) ? null : new BigDecimal(String.valueOf(data.get("f45"))),
-                "ask", data.get("f44") == null || "-".equals(String.valueOf(data.get("f44"))) ? null : new BigDecimal(String.valueOf(data.get("f44"))),
-                "ts", OffsetDateTime.now(ZoneOffset.UTC));
+        Map<String, Object> quote = new LinkedHashMap<>();
+        quote.put("provider", "eastmoney");
+        quote.put("symbol", code + market);
+        quote.put("price", new BigDecimal(String.valueOf(priceRaw)));
+        quote.put("bid", data.get("f45") == null || "-".equals(String.valueOf(data.get("f45"))) ? null : new BigDecimal(String.valueOf(data.get("f45"))));
+        quote.put("ask", data.get("f44") == null || "-".equals(String.valueOf(data.get("f44"))) ? null : new BigDecimal(String.valueOf(data.get("f44"))));
+        quote.put("ts", OffsetDateTime.now(ZoneOffset.UTC));
+        return quote;
     }
 
     private Map<String, Object> getUsQuote(String symbol) {
@@ -208,13 +210,14 @@ public class QuoteService {
         if (last.isBlank()) throw new IllegalStateException("okx_quote_price_missing");
         OffsetDateTime ts = OffsetDateTime.now(ZoneOffset.UTC);
         try { ts = Instant.ofEpochMilli(Long.parseLong(String.valueOf(first.get("ts")))).atOffset(ZoneOffset.UTC); } catch (Exception ignored) {}
-        return Map.of(
-                "provider", "okx",
-                "symbol", String.valueOf(first.getOrDefault("instId", instId)),
-                "price", new BigDecimal(last),
-                "bid", first.get("bidPx") == null || String.valueOf(first.get("bidPx")).isBlank() ? null : new BigDecimal(String.valueOf(first.get("bidPx"))),
-                "ask", first.get("askPx") == null || String.valueOf(first.get("askPx")).isBlank() ? null : new BigDecimal(String.valueOf(first.get("askPx"))),
-                "ts", ts);
+        Map<String, Object> quote = new LinkedHashMap<>();
+        quote.put("provider", "okx");
+        quote.put("symbol", String.valueOf(first.getOrDefault("instId", instId)));
+        quote.put("price", new BigDecimal(last));
+        quote.put("bid", first.get("bidPx") == null || String.valueOf(first.get("bidPx")).isBlank() ? null : new BigDecimal(String.valueOf(first.get("bidPx"))));
+        quote.put("ask", first.get("askPx") == null || String.valueOf(first.get("askPx")).isBlank() ? null : new BigDecimal(String.valueOf(first.get("askPx"))));
+        quote.put("ts", ts);
+        return quote;
     }
 
     private List<Map<String, Object>> searchCn(String query, int limit, boolean allowFallbackByCode) {

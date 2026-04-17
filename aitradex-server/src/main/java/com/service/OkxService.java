@@ -132,12 +132,17 @@ public class OkxService {
             try {
                 Map<String, Object> tickerResp = requestPublic(credentials.baseUrl(), "/api/v5/market/ticker", Map.of("instId", instId));
                 Map<String, Object> first = firstRow(tickerResp);
-                tickers.put(ccy, Map.of(
-                        "inst_id", first.getOrDefault("instId", instId),
-                        "last", String.valueOf(first.getOrDefault("last", "")),
-                        "ts", toUtcIso(String.valueOf(first.get("ts")))));
+                Map<String, Object> ticker = new LinkedHashMap<>();
+                ticker.put("inst_id", first.getOrDefault("instId", instId));
+                ticker.put("last", String.valueOf(first.getOrDefault("last", "")));
+                ticker.put("ts", toUtcIso(String.valueOf(first.get("ts"))));
+                tickers.put(ccy, ticker);
             } catch (Exception ex) {
-                tickers.put(ccy, Map.of("inst_id", instId, "last", "", "ts", null));
+                Map<String, Object> fallbackTicker = new LinkedHashMap<>();
+                fallbackTicker.put("inst_id", instId);
+                fallbackTicker.put("last", "");
+                fallbackTicker.put("ts", null);
+                tickers.put(ccy, fallbackTicker);
             }
         }
         return Map.of(

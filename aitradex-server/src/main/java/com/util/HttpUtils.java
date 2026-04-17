@@ -37,8 +37,10 @@ public final class HttpUtils {
                 throw new IllegalStateException("http_error:" + response.statusCode());
             }
             return mapper.readValue(response.body(), new TypeReference<>() {});
-        } catch (IOException | InterruptedException e) {
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+            throw new IllegalStateException("network_error", e);
+        } catch (IOException e) {
             throw new IllegalStateException("network_error", e);
         }
     }

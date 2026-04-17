@@ -347,18 +347,33 @@ public class AiChatService {
     
     private String resolveApiKeyForProvider(String requestedApiKey, String provider) {
         String normalized = normalize(requestedApiKey);
-        log.info("resolveApiKeyForProvider: requestedApiKey={}, isMasked={}, provider={}", requestedApiKey, MASKED_API_KEY.equals(normalized), provider);
-        if (MASKED_API_KEY.equals(normalized)) {
-            AiModelConfig config = currentConfigs.get(provider);
-            log.info("resolveApiKeyForProvider: config from currentConfigs for '{}' = {}", provider, config);
-            if (config != null) {
-                log.info("resolveApiKeyForProvider: returning stored apiKey, length={}", config.getApiKey() != null ? config.getApiKey().length() : 0);
-                return config.getApiKey();
+        boolean shouldReuseStoredApiKey = normalized == null || normalized.isBlank() || MASKED_API_KEY.equals(normalized);
+        log.info("resolveApiKeyForProvider: provider={}, shouldReuseStoredApiKey={}", provider, shouldReuseStoredApiKey);
+        if (shouldReuseStoredApiKey) {
+            String storedApiKey = findStoredApiKey(provider);
+            if (storedApiKey != null && !storedApiKey.isBlank()) {
+                return storedApiKey;
             }
-            log.warn("resolveApiKeyForProvider: config is null for provider {}", provider);
-            return null;
         }
         return normalized;
+    }
+
+    private String findStoredApiKey(String provider) {
+        if (provider == null || provider.isBlank()) {
+            return null;
+        }
+
+        AiModelConfig inMemoryConfig = currentConfigs.get(provider);
+        if (inMemoryConfig != null && inMemoryConfig.getApiKey() != null && !inMemoryConfig.getApiKey().isBlank()) {
+            return inMemoryConfig.getApiKey();
+        }
+
+        AiConfigEntity dbConfig = aiConfigRepository.getByProvider(provider);
+        if (dbConfig != null && dbConfig.apiKeyEncrypted() != null && !dbConfig.apiKeyEncrypted().isBlank()) {
+            return dbConfig.apiKeyEncrypted();
+        }
+
+        return null;
     }
     
     private String normalize(String value) {

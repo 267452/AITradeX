@@ -3,7 +3,6 @@ package com.controller.market;
 import com.common.api.ApiResponse;
 import com.domain.request.ImportCsvRequest;
 import com.domain.request.SimulateBarsRequest;
-import com.service.BrokerService;
 import com.service.MarketBarService;
 import com.service.QuoteService;
 import java.io.IOException;
@@ -20,25 +19,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/market")
 public class MarketController {
-    private final BrokerService brokerService;
     private final QuoteService quoteService;
     private final MarketBarService marketBarService;
 
-    public MarketController(BrokerService brokerService, QuoteService quoteService, MarketBarService marketBarService) {
-        this.brokerService = brokerService;
+    public MarketController(QuoteService quoteService, MarketBarService marketBarService) {
         this.quoteService = quoteService;
         this.marketBarService = marketBarService;
     }
 
     @GetMapping("/quote/search")
-    public ApiResponse<List<Map<String, Object>>> marketQuoteSearch(@RequestParam String q, @RequestParam(defaultValue = "10") int limit) {
-        String broker = String.valueOf(brokerService.currentBrokerInfo().get("broker"));
-        String channel = switch (broker) {
-            case "okx" -> "okx";
-            case "usstock" -> "us";
-            default -> "cn";
-        };
-        return ApiResponse.success(quoteService.searchPublicQuotes(q, limit, channel));
+    public ApiResponse<List<Map<String, Object>>> marketQuoteSearch(@RequestParam String q,
+                                                                     @RequestParam String market,
+                                                                     @RequestParam(defaultValue = "10") int limit) {
+        return ApiResponse.success(quoteService.searchPublicQuotesByMarket(q, limit, market));
     }
 
     @GetMapping("/quote/{symbol}")

@@ -846,6 +846,7 @@
       margin-bottom: 10px;
     }
 
+    .search-row select,
     .search-row input {
       flex: 1;
       border: 1px solid #ccdcea;
@@ -854,6 +855,11 @@
       font-size: 13px;
       color: #214561;
       outline: none;
+    }
+
+    .search-row select {
+      flex: 0 0 156px;
+      background: #ffffff;
     }
 
     .list-box {
@@ -1967,6 +1973,14 @@
               </div>
               <div class="panel-body">
                 <div class="search-row">
+                  <select id="quoteMarket">
+                    <option value="cn_stock">A股</option>
+                    <option value="cn_convertible">可转债</option>
+                    <option value="crypto">区块链</option>
+                    <option value="futures">期货</option>
+                    <option value="hk_stock">港股</option>
+                    <option value="us_stock">美股</option>
+                  </select>
                   <input id="quoteQuery" type="text" placeholder="输入代码、股票名或 BTC-USDT">
                   <button class="btn btn-secondary" id="searchBtn">搜索</button>
                 </div>
@@ -2823,9 +2837,11 @@
       const modelInput = $("modal-model");
       const modelIdInput = $("modal-modelId");
       const baseUrlInput = $("modal-baseUrl");
+      const apiKeyInput = $("modal-apiKey");
       if (modelInput) modelInput.value = "";
       if (modelIdInput) modelIdInput.value = "";
       if (baseUrlInput) baseUrlInput.value = "";
+      if (apiKeyInput) apiKeyInput.value = "";
     }
 
     async function sendChatMessage() {
@@ -4088,14 +4104,19 @@
 
     async function handleSearchQuote() {
       const query = $("quoteQuery").value.trim();
+      const market = $("quoteMarket").value;
       if (!query) {
         showToast("请输入查询关键字", "warning");
         return;
       }
+      if (!market) {
+        showToast("请先选择检索市场", "warning");
+        return;
+      }
       try {
-        const list = await apiRequest(`/market/quote/search?q=${encodeURIComponent(query)}&limit=10`);
+        const list = await apiRequest(`/market/quote/search?q=${encodeURIComponent(query)}&market=${encodeURIComponent(market)}&limit=10`);
         if (!list || list.length === 0) {
-          $("searchResults").innerHTML = "<div class=\"empty\">未检索到匹配标的。</div>";
+          $("searchResults").innerHTML = "<div class=\"empty\">未在所选市场检索到匹配代码。</div>";
           return;
         }
         $("searchResults").innerHTML = list.map((item) => {
@@ -4405,9 +4426,6 @@
           { name: "apiKey", label: "API Key", type: "password", optional: mode !== "save", placeholder: "输入 API Key", value: pick(state.aiConfig, "hasApiKey") ? "••••••••" : "" }
         ],
         onSubmit: async (payload) => {
-          if (pick(state.aiConfig, "hasApiKey") && (!payload.apiKey || payload.apiKey === "••••••••")) {
-            delete payload.apiKey;
-          }
           if (mode === "save") {
             await apiRequest("/ai/config", { method: "POST", body: payload });
           } else {
@@ -4696,8 +4714,14 @@
       });
     }
 
-    function openSkillModal(record = null) {
+    async function openSkillModal(record = null) {
       const isEdit = Boolean(record);
+      if (isEdit) {
+        const detail = await apiRequest(`/admin/skills/${record.id}/detail`);
+        if (detail) {
+          record = { ...record, ...detail };
+        }
+      }
       openFormModal({
         title: isEdit ? "编辑 Skill" : "新增 Skill",
         desc: "配置技能名称、提示词模板与可用工具。",
@@ -4715,13 +4739,22 @@
             { label: "disabled", value: "disabled" }
           ] },
           { name: "promptTemplate", label: "提示词模板", type: "textarea", full: true, optional: true, value: record?.prompt_template || record?.promptTemplate || "" },
+          { name: "promptContent", label: "Prompt 文档 (prompt.md)", type: "textarea", full: true, optional: true, value: record?.promptTemplate || "" },
+          { name: "scriptContent", label: "Python 脚本 (script.py)", type: "textarea", full: true, optional: true, value: record?.scriptContent || "" },
           { name: "enabledTools", label: "可用工具 (逗号分隔)", type: "text", optional: true, value: record?.enabled_tools || record?.enabledTools || "" }
         ],
         onSubmit: async (payload) => {
+          if (payload.promptContent !== undefined) {
+            await apiRequest(`/admin/skills/${record.id}/prompt`, { method: "PUT", body: payload.promptContent });
+          }
+          if (payload.scriptContent !== undefined) {
+            await apiRequest(`/admin/skills/${record.id}/script`, { method: "PUT", body: payload.scriptContent });
+          }
+          const { promptContent, scriptContent, ...skillPayload } = payload;
           if (isEdit) {
-            await apiRequest(`/admin/skills/${record.id}`, { method: "PUT", body: payload });
+            await apiRequest(`/admin/skills/${record.id}`, { method: "PUT", body: skillPayload });
           } else {
-            await apiRequest("/admin/skills", { method: "POST", body: payload });
+            await apiRequest("/admin/skills", { method: "POST", body: skillPayload });
           }
           await loadSkillData(true);
         }
@@ -5154,7 +5187,7 @@
       startClock();
       UiComponents.Header(PAGE_META.overview);
       updateHealthChip("info", "数据加载中");
-      $("searchResults").innerHTML = "<div class=\"empty\">输入代码后开始检索行情。</div>";
+      $("searchResults").innerHTML = "<div class=\"empty\">先选择市场，再输入代码检索行情。</div>";
       $("recentOrdersList").innerHTML = "<div class=\"empty\">订单数据加载中...</div>";
       setCommandResult("还没有执行交易命令。");
 
@@ -5178,7 +5211,7 @@
     async function loadRiskRuleData(force = false) {
       if (force || !state.riskRules) {
         try {
-          state.riskRules = await apiRequest("/api/admin/risk/rules");
+          state.riskRules = await apiRequest("/admin/risk/rules");
           renderRiskRulesTable();
           renderRiskStats();
         } catch (error) {
@@ -5295,9 +5328,9 @@
 
       try {
         if (id) {
-          await apiRequest(`/api/admin/risk/rules/${id}`, { method: "PUT", body: payload });
+          await apiRequest(`/admin/risk/rules/${id}`, { method: "PUT", body: payload });
         } else {
-          await apiRequest("/api/admin/risk/rules", { method: "POST", body: payload });
+          await apiRequest("/admin/risk/rules", { method: "POST", body: payload });
         }
         closeRiskRuleModal();
         await loadRiskRuleData(true);
@@ -5309,7 +5342,7 @@
 
     async function toggleRiskRule(id, enabled) {
       try {
-        await apiRequest(`/api/admin/risk/rules/${id}/toggle`, { method: "PUT", body: { enabled } });
+        await apiRequest(`/admin/risk/rules/${id}/toggle`, { method: "PUT", body: { enabled } });
         await loadRiskRuleData(true);
         showToast(enabled ? "规则已启用" : "规则已禁用", "success");
       } catch (error) {
@@ -5322,7 +5355,7 @@
         return;
       }
       try {
-        await apiRequest(`/api/admin/risk/rules/${id}`, { method: "DELETE" });
+        await apiRequest(`/admin/risk/rules/${id}`, { method: "DELETE" });
         await loadRiskRuleData(true);
         showToast("规则已删除", "success");
       } catch (error) {

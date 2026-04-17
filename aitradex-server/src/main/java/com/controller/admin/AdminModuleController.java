@@ -12,6 +12,7 @@ import com.domain.request.WorkflowDefinitionUpsertRequest;
 import com.domain.request.WorkflowGraphUpsertRequest;
 import com.repository.AdminModuleRepository;
 import com.service.KnowledgeDocumentService;
+import com.service.SkillService;
 import java.util.List;
 import java.util.Map;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -28,12 +30,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminModuleController {
     private final AdminModuleRepository adminModuleRepository;
     private final KnowledgeDocumentService knowledgeDocumentService;
+    private final SkillService skillService;
 
     public AdminModuleController(
             AdminModuleRepository adminModuleRepository,
-            KnowledgeDocumentService knowledgeDocumentService) {
+            KnowledgeDocumentService knowledgeDocumentService,
+            SkillService skillService) {
         this.adminModuleRepository = adminModuleRepository;
         this.knowledgeDocumentService = knowledgeDocumentService;
+        this.skillService = skillService;
     }
 
     @GetMapping("/knowledge/stats")
@@ -189,29 +194,56 @@ public class AdminModuleController {
 
     @GetMapping("/skills")
     public ApiResponse<List<Map<String, Object>>> skills() {
-        return ApiResponse.success(adminModuleRepository.listSkills());
+        return ApiResponse.success(skillService.listSkills());
     }
 
     @GetMapping("/skills/{id}")
     public ApiResponse<Map<String, Object>> skill(@PathVariable long id) {
-        return ApiResponse.success(adminModuleRepository.getSkill(id));
+        return ApiResponse.success(skillService.getSkill(id));
+    }
+
+    @GetMapping("/skills/{id}/detail")
+    public ApiResponse<Map<String, Object>> skillDetail(@PathVariable long id) {
+        return ApiResponse.success(skillService.getSkillDetail(id));
     }
 
     @PostMapping("/skills")
     public ApiResponse<Void> createSkill(@RequestBody SkillUpsertRequest request) {
-        adminModuleRepository.createSkill(request);
+        skillService.createSkill(request);
         return ApiResponse.success();
     }
 
     @PutMapping("/skills/{id}")
     public ApiResponse<Void> updateSkill(@PathVariable long id, @RequestBody SkillUpsertRequest request) {
-        adminModuleRepository.updateSkill(id, request);
+        skillService.updateSkill(id, request);
         return ApiResponse.success();
     }
 
     @DeleteMapping("/skills/{id}")
     public ApiResponse<Void> deleteSkill(@PathVariable long id) {
-        adminModuleRepository.deleteSkill(id);
+        skillService.deleteSkill(id);
+        return ApiResponse.success();
+    }
+
+    @GetMapping("/skills/{id}/prompt")
+    public ApiResponse<String> skillPrompt(@PathVariable long id) {
+        return ApiResponse.success(skillService.readPrompt(id));
+    }
+
+    @PutMapping("/skills/{id}/prompt")
+    public ApiResponse<Void> updateSkillPrompt(@PathVariable long id, @RequestBody String content) {
+        skillService.writePrompt(id, content);
+        return ApiResponse.success();
+    }
+
+    @GetMapping("/skills/{id}/script")
+    public ApiResponse<String> skillScript(@PathVariable long id) {
+        return ApiResponse.success(skillService.readScript(id));
+    }
+
+    @PutMapping("/skills/{id}/script")
+    public ApiResponse<Void> updateSkillScript(@PathVariable long id, @RequestBody String content) {
+        skillService.writeScript(id, content);
         return ApiResponse.success();
     }
 
