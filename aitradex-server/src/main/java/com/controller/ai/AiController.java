@@ -75,7 +75,13 @@ public class AiController {
         if (request.message() == null || request.message().trim().isEmpty()) {
             return ApiResponse.success(Map.of("success", false, "message", "消息不能为空"));
         }
-        return ApiResponse.success(financialAgentService.handle(request.message(), request.provider(), request.model(), false));
+        return ApiResponse.success(financialAgentService.handle(
+                request.message(),
+                request.provider(),
+                request.model(),
+                request.conversationId(),
+                request.workflowId(),
+                false));
     }
 
     @PostMapping("/simple-chat")
@@ -91,6 +97,12 @@ public class AiController {
         if (request.message() == null || request.message().trim().isEmpty()) {
             return ApiResponse.success(Map.of("success", false, "message", "消息不能为空"));
         }
-        return ApiResponse.success(financialAgentService.handle(request.message(), request.provider(), request.model(), true));
+        return ApiResponse.success(financialAgentService.handle(
+                request.message(),
+                request.provider(),
+                request.model(),
+                request.conversationId(),
+                request.workflowId(),
+                true));
     }
 }
