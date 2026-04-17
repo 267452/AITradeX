@@ -1,110 +1,133 @@
 # AITradeX Java Edition
 
-**AITradeX** - 基于 Agent + Workflow + RAG 的 AI量化交易决策系统。
+AITradeX 是一个基于 `Agent + Workflow + RAG` 的 AI 量化交易决策系统，提供从自然语言请求到风控校验、下单执行、通知回传、监控总览的闭环能力。
 
-![img_1.png](i![img.png](img.png)mg_1.png)
-## 技术架构
+![AITradeX Dashboard](img.png)
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        前端 (frontend/)                      │
-│    login.html / register.html / index.html (dashboard)      │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                   Spring Boot 后端服务                       │
-│                    aitradex-server/                          │
-│                                                              │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
-│  │ Controller  │  │  Service    │  │    AI Module       │  │
-│  │   Layer     │  │   Layer     │  │ (LangChain4j)      │  │
-│  └─────────────┘  └─────────────┘  └─────────────────────┘  │
-│         │               │                    │              │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │              Repository Layer (JDBC)                 │    │
-│  └─────────────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────────┘
-         │                                    │
-         ▼                                    ▼
-┌─────────────────┐                ┌─────────────────────────┐
-│   PostgreSQL    │                │        Redis           │
-│  (业务数据)      │                │      (缓存)            │
-└─────────────────┘                └─────────────────────────┘
-         │
-         ▼
-┌─────────────────┐
-│     Milvus      │
-│  (向量数据库)     │
-└─────────────────┘
+## 项目定位
 
-┌─────────────────────────────────────────────────────────────┐
-│                    决策交易引擎 (FinancialAgent)              │
-│                                                              │
-│   用户请求 → AI 理解 → 工作流节点选择 → 工具执行 → 结果反馈     │
-│                                                              │
-│   工作流定义存储在 PostgreSQL，运行时由 FinancialAgent 调度     │
-└─────────────────────────────────────────────────────────────┘
+- 面向交易场景的 AI 助手与执行中台
+- 支持模型管理、知识库、MCP 工具、Skill、工作流可视化编排
+- 支持纸面交易与多券商模式统一接入
+- 支持风控规则管理与执行前拦截
+
+## 核心特性
+
+- FinancialAgent 多轮规划与工具调用
+- 工作流图可视化编排与拓扑持久化
+- 行情检索支持 A 股、可转债、港股、美股、期货、区块链
+- 交易链路完整：信号 -> 风控 -> 订单 -> 成交 -> 持仓/账户快照
+- 知识文档解析 + 向量化写入（Milvus）
+- 通知渠道（飞书/企业微信 Webhook）
+
+## 系统架构
+
+### 技术架构图
+
+```mermaid
+flowchart TB
+  UI["前端 Dashboard\nfrontend/src/pages"] --> API["Spring Boot API\naitradex-server"]
+  API --> PG[(PostgreSQL)]
+  API --> Redis[(Redis)]
+  API --> Milvus[(Milvus 可选)]
+
+  subgraph API["Spring Boot API"]
+    C[Controller]
+    S[Service]
+    R[Repository JDBC]
+    AI[AI Module\nProvider/Factory/Agent]
+    C --> S --> R
+    S --> AI
+  end
 ```
 
-## 项目亮点
+### 模块总图
 
-- 基于 FinancialAgent 构建 Agent 决策引擎，实现自然语言交易请求到执行反馈的闭环
-- 通过 Workflow Graph 实现 AI 决策路径编排，增强执行可控性与扩展性
-- 基于 LangChain4j + MCP Tool 实现模型能力与外部工具的动态集成
-- 结合 Milvus 向量数据库实现 RAG 检索增强，提升知识问答与策略解释能力
+```mermaid
+flowchart LR
+U["用户请求"] --> C["对话管理 (conversation_id)"]
+U --> W["工作流选择 (workflow_id)"]
+C --> X["工作流执行器 (run_id)"]
+W --> X
 
-## 核心功能
+X --> M["模型管理 (LLM)"]
+X --> K["知识管理 (RAG)"]
+X --> P["MCP 管理 (工具)"]
+X --> S["Skill 管理 (策略模板)"]
 
-AITradeX 以 FinancialAgent 为核心，构建"模型 + 工作流 + 工具"的三层AI能力体系，实现从用户指令到交易执行的闭环。
+M --> D["决策草案"]
+K --> D
+P --> D
+S --> D
 
-### 功能模块
+D --> R["风控规则"]
+R -->|通过| T["交易管理 (order_id)"]
+R -->|拒绝| N["通知渠道"]
 
-- **总览中心**：数据大屏、AI 驱动的监控
-- **业务流程**：工作流引擎、交易管理、指令交易
-- **AI核心**：模型管理、对话管理
-- **知识与工具**：知识管理、MCP 工具、Skill 管理
-- **系统管理**：通知渠道、风控规则
-
-### AI 能力
-
-- **自然语言理解**：解析交易指令，理解用户意图
-- **智能决策**：基于市场数据和历史表现，提供交易建议
-- **风险评估**：AI 驱动的实时风险分析和拦截
-- **知识检索**：向量数据库支持的智能文档问答
-- **工具调用**：AI 自主选择和使用工具完成复杂任务
-
-## 决策交易流程
-
-```
-用户输入
-   ↓
-意图识别 / 参数抽取
-   ↓
-FinancialAgent 调度
-   ↓
-Workflow 节点选择
-   ↓
-Tool / MCP 调用
-   ↓
-风控校验
-   ↓
-交易执行 / 结果反馈
+T --> N
+X --> O["总览中心"]
+T --> O
+N --> O
+C --> O
 ```
 
-**FinancialAgent 工具集：**
-- `get_broker_mode` - 查看当前券商模式
-- `get_risk_rules` - 查看风险规则
-- `get_monitor_summary` - 查看账户与订单总览
-- `get_active_account` - 查看当前激活账户
-- `search_market_quote` - 搜索标的
-- `get_market_quote` - 查询单个标的行情
-- `get_market_kline` - 查询 K 线
-- `get_okx_portfolio` - 查看 OKX 持仓
-- `run_trade_command` - 执行或解析交易指令
-- `run_strategy` - 执行策略
+### 一次执行时序
 
-## 快速启动
+```mermaid
+sequenceDiagram
+participant UI as 前端
+participant AI as /api/ai/chat-and-execute
+participant WF as WorkflowExecutor
+participant CAP as 模型/知识/MCP/Skill
+participant RISK as RiskService
+participant TRADE as TradeService
+participant NOTI as NotificationService
+participant MON as 总览
+
+UI->>AI: message + conversation_id + workflow_id
+AI->>WF: 创建 run_id，写 workflow_run
+WF->>CAP: 按节点执行能力
+CAP-->>WF: 决策草案/工具结果
+WF->>RISK: 风控校验(run_id, conversation_id)
+alt 风控通过
+RISK-->>WF: pass
+WF->>TRADE: 下单(run_id, conversation_id)
+TRADE-->>WF: signal_id + order_id
+WF->>NOTI: 发送成交/风控通知
+else 风控拒绝
+RISK-->>WF: reject(reason)
+WF->>NOTI: 发送拒绝通知
+end
+WF-->>AI: result + run_id + order_id?
+AI-->>UI: 可追踪响应
+UI->>MON: 按 run_id/order_id 拉总览
+```
+
+## 当前实现说明
+
+- 工作流模块当前已实现定义管理、节点拓扑编辑与存储。
+- AI 执行入口已基于 FinancialAgent 实现多轮规划与工具调用。
+- 知识文档 `trigger_parse=true` 时会尝试写入 Milvus；未启用解析时不依赖 Milvus。
+- 风控存在两套视角：
+  - `/api/admin/risk/*`：规则配置管理（`risk_rule` 表）
+  - `/api/monitor/risk/rules`：运行时阈值快照（来自 `app.*` 配置）
+
+## 功能模块（与前端侧边栏对应）
+
+- 总览中心：系统状态、订单与资产摘要
+- 业务流程：工作流、交易管理
+- AI 核心：模型管理、对话管理
+- 知识与工具：知识库、MCP、Skill
+- 系统管理：通知渠道、风控规则
+
+## 快速开始
+
+### 前置要求
+
+- JDK 17+
+- Maven 3.8+
+- Docker + Docker Compose
+- 可选：Milvus（仅在文档解析入库时需要）
 
 ### 方式一：Docker Compose 一键启动
 
@@ -113,278 +136,230 @@ cp .env.example .env
 docker compose up --build -d
 ```
 
-### 方式二：本地运行（依赖 Docker 中的数据库）
+访问地址：`http://localhost:8000/`
+
+### 方式二：本地运行 API（依赖 Docker 数据库）
 
 ```bash
-# 先启动数据库
+cp .env.example .env
+
 docker compose up -d postgres redis
 
-# 编译后端
 cd aitradex-server
 mvn clean package -DskipTests
-
-# 启动服务
 java -jar target/aitradex-java-1.0.0.jar
 ```
 
-访问控制台：**http://localhost:8000/**
+健康检查：
+
+```bash
+curl http://localhost:8000/api/system/health
+```
+
+## 配置说明
+
+主要环境变量（见 `.env.example` 与 `application.yml`）：
+
+| 变量 | 默认值 | 说明 |
+|---|---|---|
+| `APP_HOST` | `0.0.0.0` | 服务监听地址 |
+| `APP_PORT` | `8000` | 服务端口 |
+| `JDBC_DATABASE_URL` | `jdbc:postgresql://localhost:5432/aibuy` | PostgreSQL JDBC 地址 |
+| `POSTGRES_USER` | `aibuy` | 数据库用户 |
+| `POSTGRES_PASSWORD` | `aibuy` | 数据库密码 |
+| `REDIS_URL` | `redis://localhost:6379/0` | Redis 连接地址 |
+| `BROKER_MODE` | `paper` | 默认券商模式 |
+| `RISK_MAX_QTY` | `100000` | 风控：最大数量 |
+| `RISK_MAX_NOTIONAL` | `2000000` | 风控：最大金额 |
+| `RISK_ALLOW_SHORT` | `false` | 风控：是否允许做空 |
+| `OPENAI_API_KEY` | 空 | OpenAI API Key |
+| `OPENAI_BASE_URL` | 空 | OpenAI Base URL |
+| `MINIMAX_API_KEY` | 空 | MiniMax API Key |
+| `MINIMAX_BASE_URL` | `https://api.minimaxi.com/v1` | MiniMax Base URL |
+| `KNOWLEDGE_MILVUS_HOST` | `localhost` | Milvus 主机 |
+| `KNOWLEDGE_MILVUS_PORT` | `19530` | Milvus 端口 |
 
 ## 目录结构
 
-```
+```text
 AITradeX/
-├── aitradex-server/          # Spring Boot 后端服务
-│   ├── src/main/java/
-│   │   └── com/
-│   │       ├── controller/    # 控制器层
-│   │       │   ├── admin/     # 管理接口
-│   │       │   ├── ai/        # AI 相关接口
-│   │       │   ├── broker/    # 交易管理接口
-│   │       │   ├── market/    # 行情接口
-│   │       │   ├── monitor/   # 监控接口
-│   │       │   ├── risk/      # 风控接口
-│   │       │   ├── trade/     # 交易接口
-│   │       │   └── user/      # 用户接口
-│   │       ├── service/       # 服务层
-│   │       │   ├── ai/        # AI 核心服务
-│   │       │   ├── broker/    # 交易管理服务
-│   │       │   ├── knowledge/ # 知识管理服务
-│   │       │   ├── market/    # 行情服务
-│   │       │   ├── risk/      # 风控服务
-│   │       │   ├── skill/     # Skill 管理服务
-│   │       │   └── trade/     # 交易服务
-│   │       ├── repository/     # 数据访问层
-│   │       ├── ai/            # AI 模块（Provider/Factory/Service）
-│   │       ├── config/        # 配置类
-│   │       ├── common/        # 异常处理、API 响应
-│   │       ├── system/        # 系统模块（用户/权限）
-│   │       └── domain/        # 实体、请求、响应 DTO
+├── aitradex-server/                # Spring Boot 后端
+│   ├── src/main/java/com/
+│   │   ├── controller/             # API 路由层
+│   │   ├── service/                # 业务逻辑层
+│   │   ├── repository/             # JDBC 数据访问层
+│   │   ├── ai/                     # AI Provider/Factory/Agent
+│   │   ├── domain/                 # DTO / Entity
+│   │   ├── config/                 # 配置与拦截器
+│   │   └── common/                 # 统一响应、异常处理
 │   └── src/main/resources/
-│       ├── application.yml    # 应用配置
-│       └── logback-spring.xml # 日志配置
-│
-├── frontend/src/              # 前端源码
-│   └── pages/
-│       ├── index.html        # 主控台/Dashboard
-│       ├── login.html        # 登录页面
-│       └── register.html     # 注册页面
-│
-├── infra/postgres/init/      # 数据库初始化脚本
-│   ├── 001_init.sql
-│   ├── 002_market_data.sql
-│   ├── 003_backtest_report.sql
-│   ├── 004_broker_account.sql
-│   ├── 005_system_setting.sql
-│   ├── 006_sys_user.sql
-│   ├── 007_ai_admin_modules.sql
-│   ├── 008_ai_config.sql
-│   ├── 009_skill.sql
-│   ├── 010_notification_channel.sql
-│   └── 011_risk_rule.sql     # 风控规则表
-│
-├── docker-compose.yml         # 容器编排
-├── .env                      # 环境变量配置
+│       └── application.yml
+├── frontend/src/pages/             # login/register/dashboard 页面
+├── infra/postgres/init/            # PostgreSQL 初始化脚本
+├── docker-compose.yml
+├── .env.example
 └── README.md
 ```
 
-## 核心接口
+## API 总览（按模块）
 
-### 认证接口
-| 接口 | 方法 | 说明 |
-|------|------|------|
-| `/login` | GET | 登录页面 |
-| `/register` | GET | 注册页面 |
-| `POST /api/auth/login` | POST | 用户登录 |
-| `POST /api/auth/register` | POST | 用户注册 |
+统一前缀：`/api`
 
-### 券商管理
-| 接口 | 方法 | 说明 |
-|------|------|------|
-| `GET /api/broker/mode` | GET | 获取当前券商模式 |
-| `POST /api/broker/switch` | POST | 切换券商通道 |
-| `POST /api/broker/accounts` | POST | 创建券商账户 |
-| `GET /api/broker/accounts` | GET | 获取券商账户列表 |
-| `GET /api/broker/okx/portfolio` | GET | OKX 真实持仓查询 |
+### 认证与系统
 
-### 行情与交易
-| 接口 | 方法 | 说明 |
-|------|------|------|
-| `GET /api/market/quote/{symbol}` | GET | 实时行情 |
-| `GET /api/market/kline/{symbol}` | GET | K 线数据 |
-| `POST /api/trade/command` | POST | 交易指令执行 |
-| `GET /api/trade/orders` | GET | 历史订单查询 |
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| `POST` | `/auth/login` | 登录 |
+| `POST` | `/auth/register` | 注册 |
+| `POST` | `/auth/logout` | 退出 |
+| `GET` | `/auth/userinfo` | 当前用户信息 |
+| `GET` | `/system/health` | 系统健康检查 |
 
-### 监控与风控
-| 接口 | 方法 | 说明 |
-|------|------|------|
-| `GET /api/monitor/summary` | GET | 监控总览 |
-| `GET /api/monitor/orders` | GET | 订单监控 |
-| `GET /api/risk/rules` | GET | 风控规则 |
+### 券商与账户
 
-### AI 功能
-| 接口 | 方法 | 说明 |
-|------|------|------|
-| `POST /api/ai/chat` | POST | AI 对话 |
-| `POST /api/ai/config` | POST | AI 配置 |
-| `GET /api/ai/models` | GET | 可用模型列表 |
-| `POST /api/ai/test` | POST | AI 连接测试 |
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| `GET` | `/broker/mode` | 当前券商模式 |
+| `POST` | `/broker/switch` | 切换券商模式 |
+| `POST` | `/broker/accounts` | 创建账户 |
+| `GET` | `/broker/accounts` | 账户列表 |
+| `POST` | `/broker/accounts/{accountId}/activate` | 激活账户 |
+| `GET` | `/broker/accounts/active` | 当前激活账户 |
+| `GET` | `/broker/okx/real-data` | OKX 实盘数据 |
+| `GET` | `/broker/okx/portfolio` | OKX 持仓快照 |
 
+### 行情
 
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| `GET` | `/market/quote/search` | 标的检索（需 `q`、`market`） |
+| `GET` | `/market/quote/{symbol}` | 单标的行情 |
+| `GET` | `/market/kline/{symbol}` | K 线数据 |
+| `POST` | `/market/bars/import-csv` | 导入 CSV 行情 |
+| `POST` | `/market/bars/simulate` | 生成模拟行情 |
 
-### 知识库（向量数据库）
-| 接口 | 方法 | 说明 |
-|------|------|------|
-| `POST /api/admin/knowledge/document` | POST | 创建知识文档 |
-| `GET /api/admin/knowledge/document/{id}` | GET | 获取文档详情 |
-| `POST /api/admin/knowledge/base` | POST | 创建知识库 |
-| `GET /api/admin/knowledge/base` | GET | 获取知识库列表 |
+`market` 支持值：`cn_stock`、`cn_convertible`、`crypto`、`futures`、`hk_stock`、`us_stock`
 
-### 工作流引擎
-| 接口 | 方法 | 说明 |
-|------|------|------|
-| `GET /api/admin/workflows` | GET | 获取工作流列表 |
-| `POST /api/admin/workflows` | POST | 创建工作流 |
-| `PUT /api/admin/workflows/{id}` | PUT | 更新工作流 |
-| `DELETE /api/admin/workflows/{id}` | DELETE | 删除工作流 |
-| `GET /api/admin/workflows/nodes` | GET | 获取工作流节点列表 |
-| `GET /api/admin/workflows/{id}/graph` | GET | 获取工作流图结构 |
-| `PUT /api/admin/workflows/{id}/graph` | PUT | 更新工作流图结构 |
+### 交易与回测
 
-### MCP 工具管理
-| 接口 | 方法 | 说明 |
-|------|------|------|
-| `GET /api/admin/mcp/tools` | GET | 获取 MCP 工具列表 |
-| `POST /api/admin/mcp/tools` | POST | 创建 MCP 工具 |
-| `PUT /api/admin/mcp/tools/{id}` | PUT | 更新 MCP 工具 |
-| `DELETE /api/admin/mcp/tools/{id}` | DELETE | 删除 MCP 工具 |
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| `POST` | `/trade/signals` | 直接提交交易信号 |
+| `GET` | `/trade/orders/{orderId}` | 查询订单详情 |
+| `POST` | `/trade/trade/command` | 自然语言交易指令解析/执行 |
+| `POST` | `/trade/strategy/run` | 执行策略并尝试下单 |
+| `POST` | `/trade/backtest/sma` | SMA 回测 |
+| `GET` | `/trade/backtest/reports` | 回测报告列表 |
 
-### Skill 管理
-| 接口 | 方法 | 说明 |
-|------|------|------|
-| `GET /api/admin/skills` | GET | 获取 Skill 列表 |
-| `GET /api/admin/skills/{id}` | GET | 获取 Skill 详情 |
-| `POST /api/admin/skills` | POST | 创建 Skill |
-| `PUT /api/admin/skills/{id}` | PUT | 更新 Skill |
-| `DELETE /api/admin/skills/{id}` | DELETE | 删除 Skill |
+### 监控
 
-### 通知渠道管理
-| 接口 | 方法 | 说明 |
-|------|------|------|
-| `GET /api/admin/notification-channels` | GET | 获取通知渠道列表 |
-| `GET /api/admin/notification-channels/{id}` | GET | 获取通知渠道详情 |
-| `POST /api/admin/notification-channels` | POST | 创建通知渠道 |
-| `PUT /api/admin/notification-channels/{id}` | PUT | 更新通知渠道 |
-| `DELETE /api/admin/notification-channels/{id}` | DELETE | 删除通知渠道 |
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| `GET` | `/monitor/summary` | 监控摘要 |
+| `GET` | `/monitor/orders` | 订单分页 |
+| `GET` | `/monitor/risk/rules` | 运行时风控阈值快照 |
 
-## 环境变量配置
+### AI
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| `GET` | `/ai/models` | 供应商/模型目录 |
+| `GET` | `/ai/config` | 当前配置 |
+| `GET` | `/ai/saved-configs` | 已保存配置 |
+| `POST` | `/ai/config` | 保存模型配置 |
+| `DELETE` | `/ai/config` | 清空当前配置 |
+| `POST` | `/ai/test` | 连通性测试 |
+| `POST` | `/ai/switch-model` | 切换模型 |
+| `POST` | `/ai/chat` | AI 分析（不执行） |
+| `POST` | `/ai/simple-chat` | 简单聊天 |
+| `POST` | `/ai/chat-and-execute` | AI 分析并执行 |
+
+### 管理后台（知识、对话、MCP、工作流、Skill、通知）
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| `GET` | `/admin/knowledge/stats` | 知识统计 |
+| `GET/POST` | `/admin/knowledge/bases` | 知识库列表/创建 |
+| `PUT/DELETE` | `/admin/knowledge/bases/{id}` | 知识库更新/删除 |
+| `GET/POST` | `/admin/knowledge/documents` | 文档列表/创建 |
+| `GET/POST` | `/admin/conversations` | 对话列表/创建 |
+| `PUT/DELETE` | `/admin/conversations/{id}` | 对话更新/删除 |
+| `GET` | `/admin/conversations/insights` | 对话洞察 |
+| `GET/POST` | `/admin/mcp/tools` | MCP 工具列表/创建 |
+| `PUT/DELETE` | `/admin/mcp/tools/{id}` | MCP 工具更新/删除 |
+| `GET/POST` | `/admin/mcp/markets` | MCP 市场列表/创建 |
+| `PUT/DELETE` | `/admin/mcp/markets/{id}` | MCP 市场更新/删除 |
+| `GET/POST` | `/admin/workflows` | 工作流列表/创建 |
+| `PUT/DELETE` | `/admin/workflows/{id}` | 工作流更新/删除 |
+| `GET` | `/admin/workflows/nodes` | 工作流节点列表 |
+| `GET/PUT` | `/admin/workflows/{id}/graph` | 工作流拓扑读取/保存 |
+| `GET/POST` | `/admin/skills` | Skill 列表/创建 |
+| `GET/PUT/DELETE` | `/admin/skills/{id}` | Skill 详情/更新/删除 |
+| `GET` | `/admin/skills/{id}/detail` | Skill 聚合详情 |
+| `GET/PUT` | `/admin/skills/{id}/prompt` | Skill Prompt 读写 |
+| `GET/PUT` | `/admin/skills/{id}/script` | Skill Script 读写 |
+| `GET/POST` | `/admin/notification-channels` | 通知渠道列表/创建 |
+| `GET/PUT/DELETE` | `/admin/notification-channels/{id}` | 通知渠道详情/更新/删除 |
+
+### 风控规则管理
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| `GET` | `/admin/risk/rules` | 风控规则列表 |
+| `GET` | `/admin/risk/rules/{id}` | 风控规则详情 |
+| `POST` | `/admin/risk/rules` | 创建风控规则 |
+| `PUT` | `/admin/risk/rules/{id}` | 更新风控规则 |
+| `PUT` | `/admin/risk/rules/{id}/toggle?enabled=true|false` | 启停规则 |
+| `DELETE` | `/admin/risk/rules/{id}` | 删除规则 |
+
+## 数据模型（核心表）
+
+- 交易域：`strategy_signal`、`trade_order`、`trade_fill`、`position_snapshot`、`account_snapshot`
+- 风控域：`risk_rule`、`risk_check_log`
+- AI 配置：`ai_config`
+- 工作流域：`workflow_definition`、`workflow_node_definition`
+- 知识域：`knowledge_base`、`knowledge_document`
+- 对话域：`conversation_session`
+- 工具域：`mcp_tool`、`mcp_market`、`skill`
+- 系统域：`notification_channel`、`broker_account`、`system_setting`、`sys_user`
+
+## 开发与排障
+
+### 常用命令
 
 ```bash
-# 数据库
-POSTGRES_DB=aitradex
-POSTGRES_USER=aitradex
-POSTGRES_PASSWORD=aitradex
-JDBC_DATABASE_URL=jdbc:postgresql://localhost:5432/aitradex
-
-# Redis
-REDIS_URL=redis://localhost:6379/0
-
-# 服务
-APP_HOST=0.0.0.0
-APP_PORT=8000
-
-# 券商模式 (paper/real)
-BROKER_MODE=paper
-
-# AI 配置
-AI_DEFAULT_PROVIDER=openai
-AI_DEFAULT_MODEL=gpt-3.5-turbo
-OPENAI_API_KEY=your_openai_key
-OPENAI_BASE_URL=https://api.openai.com/v1
-MINIMAX_API_KEY=your_minimax_key
-
-# JWT
-JWT_SECRET=your-256-bit-secret-key
-JWT_EXPIRE_IN=604800
-
-# 向量数据库 (Milvus)
-KNOWLEDGE_MILVUS_HOST=localhost
-KNOWLEDGE_MILVUS_PORT=19530
-KNOWLEDGE_EMBEDDING_DIM=384
-```
-
-## 技术栈
-
-| 层级 | 技术 | 版本 |
-|------|------|------|
-| 后端框架 | Spring Boot | 3.3.5 |
-| 编程语言 | Java | 17 |
-| 构建工具 | Maven | 3.8+ |
-| 数据库 | PostgreSQL | 16 |
-| 缓存 | Redis | 7 |
-| 向量数据库 | Milvus | 2.4 |
-| AI 框架 | LangChain4j | 0.35.0 |
-| 前端 | HTML/CSS/JS | - |
-| 容器 | Docker Compose | - |
-
-## 开发说明
-
-### 环境要求
-- JDK 17+
-- Maven 3.8+
-- Docker & Docker Compose
-- PostgreSQL 16
-- Redis 7
-
-### 编译打包
-```bash
+# 编译
 cd aitradex-server
 mvn clean package -DskipTests
-```
 
-### 启动服务
-```bash
+# 本地运行
 java -jar target/aitradex-java-1.0.0.jar
-```
 
-### 查看日志
-```bash
+# 查看日志
 tail -f aitradex-server/logs/aitradex.log
 tail -f aitradex-server/logs/aitradex-error.log
 ```
 
-## 工程化能力
+### 典型检查点
 
-| 能力 | 实现 |
-|------|------|
-| 分层架构 | ✅ Controller-Service-Repository |
-| 异常处理 | ✅ 全局异常处理器 + 统一响应 |
-| 日志系统 | ✅ Logback 多级别日志分类 |
-| 密码加密 | ✅ BCrypt |
-| JWT 认证 | ✅ Token 验证 |
-| AI 模块 | ✅ 策略模式 + 工厂模式 |
-| 向量数据库 | ✅ Milvus SDK 集成 |
-| 配置管理 | ✅ 环境变量优先 |
+- 无法登录：检查 `JWT_SECRET`、数据库用户表初始化与浏览器 token
+- 行情检索失败：确认 `market` 参数与标的代码格式
+- AI 无响应：确认模型配置与 API Key
+- 文档解析失败：`trigger_parse=true` 时确认 Milvus 可用
+- 通知未发送：确认渠道 `enabled=true` 且 webhook 配置有效
 
-## 项目特点
+## 技术栈
 
-- 支持 Docker Compose 一键启动，降低本地部署成本
-- 支持多券商模式切换与统一交易入口封装
-- 支持知识库、Skill、MCP Tool、通知渠道等模块化扩展
-- 后端采用分层架构，具备较好的可维护性与扩展性
-
-## 设计与技术挑战
-
-- **如何将大模型能力与交易系统解耦**  
-  → 通过 FinancialAgent + Workflow 实现调度与执行分离
-
-- **如何保证 AI 决策可控**  
-  → 引入 Workflow 节点限制执行路径，结合风控规则进行拦截
-
-- **如何扩展 AI 能力**  
-  → 基于 MCP Tool 机制，实现工具注册与动态调用
-
-- **如何提升策略解释性**  
-  → 结合知识库（Milvus）进行 RAG 检索增强
+| 层级 | 技术 |
+|---|---|
+| 后端 | Spring Boot 3.3.5 + Java 17 |
+| 构建 | Maven |
+| 数据库 | PostgreSQL 16 |
+| 缓存 | Redis 7 |
+| 向量库 | Milvus 2.x（可选） |
+| AI | LangChain4j |
+| 前端 | HTML/CSS/Vanilla JS |
+| 部署 | Docker Compose |
 
 ## License
 
