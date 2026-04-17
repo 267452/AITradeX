@@ -38,7 +38,7 @@ app:
   risk-max-notional: ${RISK_MAX_NOTIONAL:2000000}
   risk-allow-short: ${RISK_ALLOW_SHORT:false}
   flink-compute-enabled: ${FLINK_COMPUTE_ENABLED:true}
-  flink-compute-engine: ${FLINK_COMPUTE_ENGINE:embedded}
+  flink-compute-engine: ${FLINK_COMPUTE_ENGINE:snapshot}
   flink-job-name: ${FLINK_JOB_NAME:aitradex-flink-compute}
   knowledge-milvus-host: ${KNOWLEDGE_MILVUS_HOST:localhost}
   knowledge-milvus-port: ${KNOWLEDGE_MILVUS_PORT:19530}

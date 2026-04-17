@@ -82,119 +82,74 @@ public class MonitorRepository {
     }
 
     public FlinkComputeMetricsResponse getFlinkComputeMetrics(boolean flinkEnabled, String engineMode, String jobName) {
-        Integer sourceEvents1m = safeQueryInt("""
-                SELECT COUNT(*)::int
-                FROM workflow_run_step
-                WHERE created_at >= NOW() - INTERVAL '1 minute'
-                """);
-        Integer sourceEvents5m = safeQueryInt("""
-                SELECT COUNT(*)::int
-                FROM workflow_run_step
-                WHERE created_at >= NOW() - INTERVAL '5 minutes'
-                """);
-        Integer processedEvents1m = safeQueryInt("""
-                SELECT (
-                    (SELECT COUNT(*)::int FROM trade_order WHERE created_at >= NOW() - INTERVAL '1 minute') +
-                    (SELECT COUNT(*)::int FROM risk_check_log WHERE created_at >= NOW() - INTERVAL '1 minute')
-                )::int
-                """);
-        Integer processedEvents5m = safeQueryInt("""
-                SELECT (
-                    (SELECT COUNT(*)::int FROM trade_order WHERE created_at >= NOW() - INTERVAL '5 minutes') +
-                    (SELECT COUNT(*)::int FROM risk_check_log WHERE created_at >= NOW() - INTERVAL '5 minutes')
-                )::int
-                """);
-        BigDecimal orderFillRate5m = safeQueryDecimal("""
-                SELECT CASE
-                    WHEN COUNT(*) = 0 THEN 0::numeric
-                    ELSE ROUND((COUNT(*) FILTER (WHERE status = 'filled')::numeric / COUNT(*)::numeric) * 100, 2)
-                END
-                FROM trade_order
-                WHERE created_at >= NOW() - INTERVAL '5 minutes'
-                """);
-        BigDecimal riskRejectRate5m = safeQueryDecimal("""
-                SELECT CASE
-                    WHEN COUNT(*) = 0 THEN 0::numeric
-                    ELSE ROUND((COUNT(*) FILTER (WHERE passed = false)::numeric / COUNT(*)::numeric) * 100, 2)
-                END
-                FROM risk_check_log
-                WHERE created_at >= NOW() - INTERVAL '5 minutes'
-                """);
-        Long avgWorkflowLatencyMs5m = safeQueryLong("""
-                SELECT COALESCE(
-                    ROUND(AVG(EXTRACT(EPOCH FROM (COALESCE(finished_at, NOW()) - started_at)) * 1000)),
-                    0
-                )::bigint
-                FROM workflow_run
-                WHERE started_at >= NOW() - INTERVAL '5 minutes'
-                """);
-        Long p95WorkflowLatencyMs5m = safeQueryLong("""
-                SELECT COALESCE(
-                    ROUND(PERCENTILE_CONT(0.95) WITHIN GROUP (
-                        ORDER BY EXTRACT(EPOCH FROM (COALESCE(finished_at, NOW()) - started_at)) * 1000
-                    )),
-                    0
-                )::bigint
-                FROM workflow_run
-                WHERE started_at >= NOW() - INTERVAL '5 minutes'
-                """);
-        Long watermarkDelayMs = safeQueryLong("""
-                SELECT COALESCE(
-                    ROUND(EXTRACT(EPOCH FROM (NOW() - MAX(COALESCE(finished_at, created_at)))) * 1000),
-                    0
-                )::bigint
-                FROM workflow_run_step
-                """);
-        Integer queuedOrdersNow = safeQueryInt("""
-                SELECT COUNT(*)::int
-                FROM trade_order
-                WHERE status = 'queued'
-                """);
-        Integer activeRunsNow = safeQueryInt("""
-                SELECT COUNT(*)::int
-                FROM workflow_run
-                WHERE status = 'running'
-                """);
-        Integer completedRuns5m = safeQueryInt("""
-                SELECT COUNT(*)::int
-                FROM workflow_run
-                WHERE status = 'completed'
-                  AND started_at >= NOW() - INTERVAL '5 minutes'
-                """);
-        Integer failedRuns5m = safeQueryInt("""
-                SELECT COUNT(*)::int
-                FROM workflow_run
-                WHERE status = 'failed'
-                  AND started_at >= NOW() - INTERVAL '5 minutes'
-                """);
-        List<FlinkHotSymbolResponse> hotSymbols = safeQueryHotSymbols("""
-                SELECT symbol, COUNT(*)::int AS order_count
-                FROM trade_order
-                WHERE created_at >= NOW() - INTERVAL '15 minutes'
-                GROUP BY symbol
-                ORDER BY order_count DESC, symbol ASC
-                LIMIT 6
-                """);
+        String normalizedEngine = engineMode == null || engineMode.isBlank() ? "snapshot" : engineMode;
+        String normalizedJobName = jobName == null || jobName.isBlank() ? "aitradex-flink-compute" : jobName;
+        if (!flinkEnabled) {
+            return emptyFlinkMetrics(false, normalizedEngine, normalizedJobName, "flink_disabled");
+        }
+        try {
+            List<Map<String, Object>> rows = jdbcTemplate.queryForList("""
+                    SELECT
+                        id,
+                        source_events_1m,
+                        source_events_5m,
+                        processed_events_1m,
+                        processed_events_5m,
+                        order_fill_rate_5m,
+                        risk_reject_rate_5m,
+                        avg_workflow_latency_ms_5m,
+                        p95_workflow_latency_ms_5m,
+                        watermark_delay_ms,
+                        queued_orders_now,
+                        active_runs_now,
+                        completed_runs_5m,
+                        failed_runs_5m,
+                        computed_at
+                    FROM flink_compute_snapshot
+                    ORDER BY computed_at DESC
+                    LIMIT 1
+                    """);
+            if (rows.isEmpty()) {
+                return emptyFlinkMetrics(true, normalizedEngine, normalizedJobName, "flink_snapshot_missing");
+            }
 
-        return new FlinkComputeMetricsResponse(
-                flinkEnabled,
-                engineMode == null || engineMode.isBlank() ? "embedded" : engineMode,
-                jobName == null || jobName.isBlank() ? "aitradex-flink-compute" : jobName,
-                sourceEvents1m,
-                sourceEvents5m,
-                processedEvents1m,
-                processedEvents5m,
-                orderFillRate5m,
-                riskRejectRate5m,
-                avgWorkflowLatencyMs5m,
-                p95WorkflowLatencyMs5m,
-                watermarkDelayMs,
-                queuedOrdersNow,
-                activeRunsNow,
-                completedRuns5m,
-                failedRuns5m,
-                hotSymbols,
-                OffsetDateTime.now(ZoneOffset.UTC));
+            Map<String, Object> snapshot = rows.get(0);
+            Long snapshotId = toLong(snapshot.get("id"));
+            List<FlinkHotSymbolResponse> hotSymbols = snapshotId == null
+                    ? List.of()
+                    : jdbcTemplate.query("""
+                            SELECT symbol, order_count
+                            FROM flink_hot_symbol_snapshot
+                            WHERE snapshot_id = ?
+                            ORDER BY rank_no ASC, order_count DESC, symbol ASC
+                            LIMIT 6
+                            """, (rs, rowNum) -> new FlinkHotSymbolResponse(
+                            rs.getString("symbol"),
+                            rs.getInt("order_count")), snapshotId);
+
+            return new FlinkComputeMetricsResponse(
+                    true,
+                    normalizedEngine,
+                    normalizedJobName,
+                    "flink_snapshot",
+                    toInt(snapshot.get("source_events_1m")),
+                    toInt(snapshot.get("source_events_5m")),
+                    toInt(snapshot.get("processed_events_1m")),
+                    toInt(snapshot.get("processed_events_5m")),
+                    toDecimal(snapshot.get("order_fill_rate_5m")),
+                    toDecimal(snapshot.get("risk_reject_rate_5m")),
+                    toLong(snapshot.get("avg_workflow_latency_ms_5m")),
+                    toLong(snapshot.get("p95_workflow_latency_ms_5m")),
+                    toLong(snapshot.get("watermark_delay_ms")),
+                    toInt(snapshot.get("queued_orders_now")),
+                    toInt(snapshot.get("active_runs_now")),
+                    toInt(snapshot.get("completed_runs_5m")),
+                    toInt(snapshot.get("failed_runs_5m")),
+                    hotSymbols,
+                    toOffsetDateTime(snapshot.get("computed_at")));
+        } catch (Exception e) {
+            return emptyFlinkMetrics(true, normalizedEngine, normalizedJobName, "flink_snapshot_unavailable");
+        }
     }
 
     private OrderSummaryResponse toOrderSummary(Map<String, Object> row) {
@@ -207,40 +162,89 @@ public class MonitorRepository {
                 (java.time.OffsetDateTime) row.get("created_at"));
     }
 
-    private Integer safeQueryInt(String sql) {
+    private FlinkComputeMetricsResponse emptyFlinkMetrics(boolean flinkEnabled, String engineMode, String jobName,
+                                                          String dataSource) {
+        return new FlinkComputeMetricsResponse(
+                flinkEnabled,
+                engineMode,
+                jobName,
+                dataSource,
+                0,
+                0,
+                0,
+                0,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                0L,
+                0L,
+                0L,
+                0,
+                0,
+                0,
+                0,
+                List.of(),
+                null);
+    }
+
+    private Integer toInt(Object value) {
+        if (value instanceof Number number) {
+            return number.intValue();
+        }
+        if (value == null) {
+            return 0;
+        }
         try {
-            Number value = jdbcTemplate.queryForObject(sql, Number.class);
-            return value == null ? 0 : value.intValue();
-        } catch (Exception e) {
+            return Integer.parseInt(String.valueOf(value));
+        } catch (NumberFormatException e) {
             return 0;
         }
     }
 
-    private Long safeQueryLong(String sql) {
+    private Long toLong(Object value) {
+        if (value instanceof Number number) {
+            return number.longValue();
+        }
+        if (value == null) {
+            return 0L;
+        }
         try {
-            Number value = jdbcTemplate.queryForObject(sql, Number.class);
-            return value == null ? 0L : value.longValue();
-        } catch (Exception e) {
+            return Long.parseLong(String.valueOf(value));
+        } catch (NumberFormatException e) {
             return 0L;
         }
     }
 
-    private BigDecimal safeQueryDecimal(String sql) {
+    private BigDecimal toDecimal(Object value) {
+        if (value instanceof BigDecimal decimal) {
+            return decimal;
+        }
+        if (value instanceof Number number) {
+            return BigDecimal.valueOf(number.doubleValue());
+        }
+        if (value == null) {
+            return BigDecimal.ZERO;
+        }
         try {
-            BigDecimal value = jdbcTemplate.queryForObject(sql, BigDecimal.class);
-            return value == null ? BigDecimal.ZERO : value;
-        } catch (Exception e) {
+            return new BigDecimal(String.valueOf(value));
+        } catch (NumberFormatException e) {
             return BigDecimal.ZERO;
         }
     }
 
-    private List<FlinkHotSymbolResponse> safeQueryHotSymbols(String sql) {
+    private OffsetDateTime toOffsetDateTime(Object value) {
+        if (value instanceof OffsetDateTime dateTime) {
+            return dateTime;
+        }
+        if (value instanceof java.sql.Timestamp timestamp) {
+            return timestamp.toInstant().atOffset(ZoneOffset.UTC);
+        }
+        if (value == null) {
+            return null;
+        }
         try {
-            return jdbcTemplate.query(sql, (rs, rowNum) -> new FlinkHotSymbolResponse(
-                    rs.getString("symbol"),
-                    rs.getInt("order_count")));
+            return OffsetDateTime.parse(String.valueOf(value));
         } catch (Exception e) {
-            return List.of();
+            return null;
         }
     }
 }

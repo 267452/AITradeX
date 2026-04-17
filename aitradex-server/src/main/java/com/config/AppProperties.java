@@ -23,7 +23,7 @@ public class AppProperties {
     private int riskMaxPositionPerSymbol = 50000;
     private BigDecimal riskMaxStrategyNotional = new BigDecimal("10000000");
     private boolean flinkComputeEnabled = true;
-    private String flinkComputeEngine = "embedded";
+    private String flinkComputeEngine = "snapshot";
     private String flinkJobName = "aitradex-flink-compute";
     private String knowledgeMilvusHost = "localhost";
     private int knowledgeMilvusPort = 19530;

@@ -9,6 +9,7 @@ public record FlinkComputeMetricsResponse(
         @JsonProperty("flink_enabled") Boolean flinkEnabled,
         @JsonProperty("engine_mode") String engineMode,
         @JsonProperty("job_name") String jobName,
+        @JsonProperty("data_source") String dataSource,
         @JsonProperty("source_events_1m") Integer sourceEvents1m,
         @JsonProperty("source_events_5m") Integer sourceEvents5m,
         @JsonProperty("processed_events_1m") Integer processedEvents1m,

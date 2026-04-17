@@ -1146,6 +1146,10 @@
       flex-wrap: wrap;
     }
 
+    .page-toolbar.deduped {
+      justify-content: flex-end;
+    }
+
     .toolbar-title {
       color: #143452;
       font-size: 18px;
@@ -3065,6 +3069,32 @@
       }, state.bigscreen.refreshIntervalMs);
     }
 
+    function syncPageToolbarDedup(page) {
+      const pageView = document.getElementById(`page-${page}`);
+      if (!pageView) {
+        return;
+      }
+      const toolbar = pageView.querySelector(".page-toolbar");
+      if (!toolbar) {
+        return;
+      }
+      const titleNode = toolbar.querySelector(".toolbar-title");
+      const descNode = toolbar.querySelector(".toolbar-desc");
+      const introBlock = titleNode ? titleNode.parentElement : null;
+      if (!titleNode || !descNode || !introBlock) {
+        toolbar.classList.remove("deduped");
+        return;
+      }
+      const meta = PAGE_META[page] || {};
+      const titleText = String(titleNode.textContent || "").trim();
+      const descText = String(descNode.textContent || "").trim();
+      const metaTitle = String(meta.title || "").trim();
+      const metaDesc = String(meta.desc || "").trim();
+      const duplicated = titleText === metaTitle && descText === metaDesc;
+      introBlock.hidden = duplicated;
+      toolbar.classList.toggle("deduped", duplicated);
+    }
+
     function switchPage(page) {
       if (!PAGE_META[page]) {
         return;
@@ -3077,6 +3107,7 @@
         view.classList.toggle("active", view.id === `page-${page}`);
       });
       UiComponents.Header(PAGE_META[page]);
+      syncPageToolbarDedup(page);
       loadPageData(page, true);
       syncBigscreenAutoRefresh();
     }
@@ -3545,8 +3576,9 @@
 
       const flinkMetrics = state.flinkMetrics || {};
       const flinkEnabled = Boolean(pick(flinkMetrics, "flink_enabled", "flinkEnabled"));
-      const flinkEngine = String(pick(flinkMetrics, "engine_mode", "engineMode") || "embedded");
+      const flinkEngine = String(pick(flinkMetrics, "engine_mode", "engineMode") || "snapshot");
       const flinkJobName = String(pick(flinkMetrics, "job_name", "jobName") || "--");
+      const flinkDataSource = String(pick(flinkMetrics, "data_source", "dataSource") || "unknown");
       const sourceEvents1m = Number(pick(flinkMetrics, "source_events_1m", "sourceEvents1m") || 0);
       const sourceEvents5m = Number(pick(flinkMetrics, "source_events_5m", "sourceEvents5m") || 0);
       const processedEvents1m = Number(pick(flinkMetrics, "processed_events_1m", "processedEvents1m") || 0);
@@ -3572,18 +3604,23 @@
         ? 42
         : Math.max(30, Math.min(100, Math.round(100 - (riskSessionCount / conversationCount) * 100)));
       const computeBacklog1m = Math.max(0, sourceEvents1m - processedEvents1m);
-      const flinkHealthy = flinkEnabled && failedRuns5m === 0 && watermarkDelayMs <= 30000;
+      const fromFlinkSnapshot = flinkDataSource === "flink_snapshot";
+      const flinkHealthy = flinkEnabled && fromFlinkSnapshot && failedRuns5m === 0 && watermarkDelayMs <= 30000;
+      const snapshotHint = fromFlinkSnapshot
+        ? `快照时间 ${formatDateTime(lastComputeAt)}`
+        : "未读取到 Flink 快照数据";
 
       const flinkModeTag = $("bigscreenFlinkModeTag");
       if (flinkModeTag) {
-        flinkModeTag.className = `badge ${flinkHealthy ? "success" : flinkEnabled ? "warning" : "info"}`;
+        const badgeTone = !flinkEnabled ? "info" : fromFlinkSnapshot ? (flinkHealthy ? "success" : "warning") : "danger";
+        flinkModeTag.className = `badge ${badgeTone}`;
         flinkModeTag.textContent = flinkEnabled
-          ? `FLINK · ${flinkEngine.toUpperCase()}`
+          ? `FLINK · ${flinkEngine.toUpperCase()} · ${fromFlinkSnapshot ? "SNAPSHOT" : "NO SNAPSHOT"}`
           : "FLINK OFF";
       }
 
       $("bigscreenSummaryText").textContent =
-        `订单总量 ${formatNumber(ordersTotal)}，成交率 ${fillRate}% ，当前排队 ${formatNumber(ordersQueued)} 单，Flink 1 分钟处理 ${formatNumber(processedEvents1m)} 条事件，水位延迟 ${formatNumber(watermarkDelayMs)} ms。`;
+        `订单总量 ${formatNumber(ordersTotal)}，成交率 ${fillRate}% ，当前排队 ${formatNumber(ordersQueued)} 单，Flink 1 分钟处理 ${formatNumber(processedEvents1m)} 条事件，水位延迟 ${formatNumber(watermarkDelayMs)} ms，${snapshotHint}。`;
 
       const refreshedText = state.bigscreen.lastRefreshedAt
         ? formatDateTime(state.bigscreen.lastRefreshedAt)
@@ -3632,6 +3669,7 @@
       $("bigscreenFlinkStats").innerHTML = [
         `<div class="meta-card"><div class="meta-label">计算作业</div><div class="meta-value" style="font-size: 14px;">${escapeHtml(flinkJobName)}</div></div>`,
         `<div class="meta-card"><div class="meta-label">引擎模式</div><div class="meta-value">${escapeHtml(flinkEngine.toUpperCase())}</div></div>`,
+        `<div class="meta-card"><div class="meta-label">数据来源</div><div class="meta-value" style="font-size: 14px;">${escapeHtml(flinkDataSource.toUpperCase())}</div></div>`,
         `<div class="meta-card"><div class="meta-label">5 分钟吞吐</div><div class="meta-value">${formatNumber(processedEvents5m)}</div><div class="item-meta">源事件 ${formatNumber(sourceEvents5m)}</div></div>`,
         `<div class="meta-card"><div class="meta-label">成交率 (5m)</div><div class="meta-value">${formatPercent(orderFillRate5m, 2)}</div><div class="item-meta">订单成交表现</div></div>`,
         `<div class="meta-card"><div class="meta-label">拒绝率 (5m)</div><div class="meta-value">${formatPercent(riskRejectRate5m, 2)}</div><div class="item-meta">风控拦截强度</div></div>`,
@@ -3687,10 +3725,12 @@
         UiComponents.StatusItem({
           title: "Flink 计算",
           desc: flinkEnabled
-            ? `P95 ${formatNumber(p95WorkflowLatencyMs5m)} ms · 水位延迟 ${formatNumber(watermarkDelayMs)} ms · 失败 ${formatNumber(failedRuns5m)}`
+            ? fromFlinkSnapshot
+              ? `P95 ${formatNumber(p95WorkflowLatencyMs5m)} ms · 水位延迟 ${formatNumber(watermarkDelayMs)} ms · 失败 ${formatNumber(failedRuns5m)}`
+              : "Flink 已启用，但尚未收到快照表数据。"
             : "Flink 计算未启用，当前仅展示基础统计。",
-          tone: flinkHealthy ? "success" : flinkEnabled ? "warning" : "info",
-          tag: flinkHealthy ? "ONLINE" : flinkEnabled ? "ALERT" : "OFF"
+          tone: flinkHealthy ? "success" : flinkEnabled ? (fromFlinkSnapshot ? "warning" : "danger") : "info",
+          tag: flinkHealthy ? "ONLINE" : flinkEnabled ? (fromFlinkSnapshot ? "ALERT" : "WAITING") : "OFF"
         })
       ].join("");
 
@@ -3758,6 +3798,8 @@
       }
       if (!flinkEnabled) {
         events.push("Flink 计算暂未开启，建议开启后再观察实时吞吐和延迟指标。");
+      } else if (!fromFlinkSnapshot) {
+        events.push("Flink 快照未就绪：请确认 Flink 作业已将结果写入 flink_compute_snapshot 表。");
       } else {
         if (failedRuns5m > 0) {
           events.push(`近 5 分钟 Flink 运行失败 ${failedRuns5m} 次，请检查执行链节点日志。`);
