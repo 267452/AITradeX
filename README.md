@@ -156,6 +156,30 @@ java -jar target/aitradex-java-1.0.0.jar
 curl http://localhost:8000/api/system/health
 ```
 
+### 执行链路校验脚本
+
+新增脚本：`scripts/verify_execution_chain.sh`
+
+用途：
+- 自动登录（默认 `admin/admin123`，也可传 `JWT_TOKEN`）
+- 调用 `/api/ai/chat-and-execute`
+- 按 `run_id` 校验 `workflow_run`、`workflow_run_step`、`strategy_signal`、`trade_order`、`risk_check_log`
+
+示例：
+
+```bash
+# 基础校验（run/step 必须存在）
+scripts/verify_execution_chain.sh
+
+# 严格校验（要求 risk/signal/order 都有落库）
+STRICT_TRADE=1 scripts/verify_execution_chain.sh
+
+# 指定消息与环境
+CHAT_MESSAGE="请执行交易命令：买入 000001 100" \
+API_BASE_URL="http://localhost:8000" \
+scripts/verify_execution_chain.sh
+```
+
 ## 配置说明
 
 主要环境变量（见 `.env.example` 与 `application.yml`）：

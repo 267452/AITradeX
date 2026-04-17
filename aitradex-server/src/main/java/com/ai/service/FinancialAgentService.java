@@ -1,6 +1,7 @@
 package com.ai.service;
 
 import com.config.AppProperties;
+import com.domain.request.ExecutionContext;
 import com.domain.request.SignalRequest;
 import com.domain.request.StrategyRunRequest;
 import com.domain.request.TradeCommandRequest;
@@ -13,6 +14,7 @@ import com.service.BrokerService;
 import com.service.OkxService;
 import com.service.QuoteService;
 import com.service.TradeService;
+import com.service.WorkflowRuntimeService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
@@ -83,6 +85,7 @@ public class FinancialAgentService {
     private final BrokerAccountService brokerAccountService;
     private final QuoteService quoteService;
     private final TradeService tradeService;
+    private final WorkflowRuntimeService workflowRuntimeService;
     private final OkxService okxService;
     private final MonitorRepository monitorRepository;
     private final AppProperties properties;
@@ -90,92 +93,131 @@ public class FinancialAgentService {
     
     public FinancialAgentService(AiChatService aiChatService, BrokerService brokerService, 
                                  BrokerAccountService brokerAccountService, QuoteService quoteService, 
-                                 TradeService tradeService, OkxService okxService,
+                                 TradeService tradeService, WorkflowRuntimeService workflowRuntimeService,
+                                 OkxService okxService,
                                  MonitorRepository monitorRepository, AppProperties properties, ObjectMapper objectMapper) {
         this.aiChatService = aiChatService;
         this.brokerService = brokerService;
         this.brokerAccountService = brokerAccountService;
         this.quoteService = quoteService;
         this.tradeService = tradeService;
+        this.workflowRuntimeService = workflowRuntimeService;
         this.okxService = okxService;
         this.monitorRepository = monitorRepository;
         this.properties = properties;
         this.objectMapper = objectMapper;
     }
     
-    public Map<String, Object> handle(String message, String provider, String model, boolean autoExecute) {
-        Map<String, Object> context = buildAgentContext();
-        List<Map<String, Object>> traces = new ArrayList<>();
-        List<String> observations = new ArrayList<>();
-        PlannerDecision latestDecision = null;
-        String taskState = "created";
-        boolean executed = false;
-        Map<String, Object> latestTerminalResult = null;
-        
-        for (int round = 0; round < 4; round++) {
-            String promptInput = buildPromptInput(message, context, observations, autoExecute, taskState, round + 1);
-            String raw = aiChatService.generateText(promptInput, provider, model, AGENT_SYSTEM_PROMPT);
-            if (raw == null || raw.isBlank()) {
-                return Map.of("success", false, "message", "当前没有可用的AI模型，请先配置服务商、模型和 API Key");
-            }
-            
-            latestDecision = parseDecision(raw);
-            taskState = latestDecision.taskState();
-            traces.add(Map.of(
-                    "type", "plan",
-                    "round", round + 1,
-                    "raw", raw,
-                    "intent", latestDecision.intent(),
-                    "task_state", latestDecision.taskState(),
-                    "risk_level", latestDecision.riskLevel(),
-                    "done", latestDecision.done(),
-                    "next_step", latestDecision.nextStep(),
-                    "observation_summary", latestDecision.observationSummary(),
-                    "tool_calls", latestDecision.toolCalls()
-            ));
-            
-            if (latestDecision.done() || latestDecision.toolCalls().isEmpty()) {
-                return buildAgentResult(latestDecision, traces, context, executed, latestTerminalResult);
-            }
-            
-            for (ToolCall toolCall : latestDecision.toolCalls()) {
-                Map<String, Object> toolResult = executeTool(toolCall, autoExecute);
-                traces.add(Map.of(
-                        "type", "tool",
-                        "round", round + 1,
-                        "tool", toolCall.name(),
-                        "arguments", toolCall.arguments(),
-                        "result", toolResult
-                ));
-                observations.add("工具 " + toolCall.name() + " 返回: " + safeJson(toolResult));
-                
-                if (Boolean.TRUE.equals(toolResult.get("executed"))) {
-                    executed = true;
+    public Map<String, Object> handle(String message, String provider, String model,
+                                      Long conversationId, Long workflowId, boolean autoExecute) {
+        WorkflowRuntimeService.WorkflowRunContext workflowRunContext = null;
+        ExecutionContext executionContext = null;
+        try {
+            workflowRunContext = workflowRuntimeService.startRun(
+                    workflowId, conversationId, message, provider, model, autoExecute);
+            executionContext = new ExecutionContext(
+                    workflowRunContext.runId(),
+                    conversationId,
+                    workflowId,
+                    workflowRunContext.workflowRunId());
+
+            Map<String, Object> context = buildAgentContext();
+            context.put("execution_context", buildExecutionContextMap(executionContext));
+
+            List<Map<String, Object>> traces = new ArrayList<>();
+            List<String> observations = new ArrayList<>();
+            PlannerDecision latestDecision = null;
+            String taskState = "created";
+            boolean executed = false;
+            Map<String, Object> latestTerminalResult = null;
+
+            for (int round = 0; round < 4; round++) {
+                String promptInput = buildPromptInput(message, context, observations, autoExecute, taskState, round + 1);
+                String raw = aiChatService.generateText(promptInput, provider, model, AGENT_SYSTEM_PROMPT);
+                if (raw == null || raw.isBlank()) {
+                    return failRunAndAttachContext(
+                            workflowRunContext,
+                            executionContext,
+                            "当前没有可用的AI模型，请先配置服务商、模型和 API Key");
                 }
-                if (Boolean.TRUE.equals(toolResult.get("terminal"))) {
-                    latestTerminalResult = toolResult;
-                    String terminalMessage = String.valueOf(toolResult.getOrDefault("message", latestDecision.response()));
-                    PlannerDecision terminalDecision = new PlannerDecision(
-                            latestDecision.intent(),
-                            latestDecision.taskState(),
-                            terminalMessage,
-                            latestDecision.riskLevel(),
-                            true,
-                            latestDecision.nextStep(),
-                            latestDecision.observationSummary(),
-                            latestDecision.requiresConfirmation(),
-                            String.valueOf(toolResult.getOrDefault("command_suggestion", latestDecision.commandSuggestion())),
-                            List.of()
-                    );
-                    return buildAgentResult(terminalDecision, traces, context, executed, toolResult);
+
+                latestDecision = parseDecision(raw);
+                taskState = latestDecision.taskState();
+
+                Map<String, Object> plannerTrace = new LinkedHashMap<>();
+                plannerTrace.put("type", "plan");
+                plannerTrace.put("round", round + 1);
+                plannerTrace.put("raw", raw);
+                plannerTrace.put("intent", latestDecision.intent());
+                plannerTrace.put("task_state", latestDecision.taskState());
+                plannerTrace.put("risk_level", latestDecision.riskLevel());
+                plannerTrace.put("done", latestDecision.done());
+                plannerTrace.put("next_step", latestDecision.nextStep());
+                plannerTrace.put("observation_summary", latestDecision.observationSummary());
+                plannerTrace.put("tool_calls", latestDecision.toolCalls());
+                traces.add(plannerTrace);
+                workflowRuntimeService.recordPlannerRound(workflowRunContext, round + 1, plannerTrace);
+
+                if (latestDecision.done() || latestDecision.toolCalls().isEmpty()) {
+                    Map<String, Object> result = buildAgentResult(
+                            latestDecision, traces, context, executed, latestTerminalResult, executionContext);
+                    return completeRunAndAttachContext(workflowRunContext, executionContext, result);
+                }
+
+                for (ToolCall toolCall : latestDecision.toolCalls()) {
+                    Map<String, Object> toolResult = executeTool(toolCall, autoExecute, executionContext);
+                    Map<String, Object> toolTrace = new LinkedHashMap<>();
+                    toolTrace.put("type", "tool");
+                    toolTrace.put("round", round + 1);
+                    toolTrace.put("tool", toolCall.name());
+                    toolTrace.put("arguments", toolCall.arguments());
+                    toolTrace.put("result", toolResult);
+                    traces.add(toolTrace);
+
+                    workflowRuntimeService.recordToolCall(
+                            workflowRunContext,
+                            round + 1,
+                            toolCall.name(),
+                            toolCall.arguments(),
+                            toolResult);
+
+                    observations.add("工具 " + toolCall.name() + " 返回: " + safeJson(toolResult));
+
+                    if (Boolean.TRUE.equals(toolResult.get("executed"))) {
+                        executed = true;
+                    }
+                    if (Boolean.TRUE.equals(toolResult.get("terminal"))) {
+                        latestTerminalResult = toolResult;
+                        String terminalMessage = String.valueOf(toolResult.getOrDefault("message", latestDecision.response()));
+                        PlannerDecision terminalDecision = new PlannerDecision(
+                                latestDecision.intent(),
+                                latestDecision.taskState(),
+                                terminalMessage,
+                                latestDecision.riskLevel(),
+                                true,
+                                latestDecision.nextStep(),
+                                latestDecision.observationSummary(),
+                                latestDecision.requiresConfirmation(),
+                                String.valueOf(toolResult.getOrDefault("command_suggestion", latestDecision.commandSuggestion())),
+                                List.of()
+                        );
+                        Map<String, Object> result = buildAgentResult(
+                                terminalDecision, traces, context, executed, toolResult, executionContext);
+                        return completeRunAndAttachContext(workflowRunContext, executionContext, result);
+                    }
                 }
             }
+
+            if (latestDecision == null) {
+                return failRunAndAttachContext(workflowRunContext, executionContext, "智能体未能生成有效响应");
+            }
+            Map<String, Object> result = buildAgentResult(
+                    latestDecision, traces, context, executed, latestTerminalResult, executionContext);
+            return completeRunAndAttachContext(workflowRunContext, executionContext, result);
+        } catch (Exception e) {
+            String errorMessage = e.getMessage() == null ? "智能体执行失败" : e.getMessage();
+            return failRunAndAttachContext(workflowRunContext, executionContext, errorMessage);
         }
-        
-        if (latestDecision == null) {
-            return Map.of("success", false, "message", "智能体未能生成有效响应");
-        }
-        return buildAgentResult(latestDecision, traces, context, executed, latestTerminalResult);
     }
     
     private Map<String, Object> buildAgentContext() {
@@ -273,7 +315,7 @@ public class FinancialAgentService {
         }
     }
     
-    private Map<String, Object> executeTool(ToolCall toolCall, boolean autoExecute) {
+    private Map<String, Object> executeTool(ToolCall toolCall, boolean autoExecute, ExecutionContext executionContext) {
         String tool = toolCall.name().toLowerCase(Locale.ROOT);
         Map<String, Object> args = toolCall.arguments();
         
@@ -298,13 +340,14 @@ public class FinancialAgentService {
                     intArg(args, "limit", 120)
             ));
             case "get_okx_portfolio" -> Map.of("ok", true, "data", okxService.getPortfolioSnapshot(intArg(args, "limit", 20)));
-            case "run_trade_command" -> runTradeCommandTool(args, autoExecute);
-            case "run_strategy" -> runStrategyTool(args, autoExecute);
+            case "run_trade_command" -> runTradeCommandTool(args, autoExecute, executionContext);
+            case "run_strategy" -> runStrategyTool(args, autoExecute, executionContext);
             default -> Map.of("ok", false, "message", "unknown_tool:" + toolCall.name());
         };
     }
     
-    private Map<String, Object> runTradeCommandTool(Map<String, Object> args, boolean autoExecute) {
+    private Map<String, Object> runTradeCommandTool(Map<String, Object> args, boolean autoExecute,
+                                                    ExecutionContext executionContext) {
         String command = asString(args.get("command"));
         if (command == null || command.isBlank()) {
             return Map.of("ok", false, "terminal", true, "message", "交易工具缺少 command 参数");
@@ -334,7 +377,7 @@ public class FinancialAgentService {
                     tradeResult.quantity(),
                     tradeResult.strategyName()
             );
-            SignalProcessResponse out = tradeService.processSignal(signal);
+            SignalProcessResponse out = tradeService.processSignal(signal, executionContext);
             return Map.of(
                     "ok", true,
                     "terminal", true,
@@ -350,13 +393,14 @@ public class FinancialAgentService {
                     "symbol", tradeResult.symbol(),
                     "quantity", tradeResult.quantity(),
                     "strategy_name", tradeResult.strategyName()
-            ), true);
+            ), true, executionContext);
         }
         
         return Map.of("ok", false, "terminal", true, "message", "不支持的交易动作");
     }
     
-    private Map<String, Object> runStrategyTool(Map<String, Object> args, boolean autoExecute) {
+    private Map<String, Object> runStrategyTool(Map<String, Object> args, boolean autoExecute,
+                                                ExecutionContext executionContext) {
         String symbol = asString(args.get("symbol"));
         if (symbol == null || symbol.isBlank()) {
             return Map.of("ok", false, "terminal", true, "message", "策略工具缺少 symbol 参数");
@@ -392,7 +436,7 @@ public class FinancialAgentService {
                     "data", generated
             );
         }
-        SignalProcessResponse out = tradeService.processSignal(generated.signal());
+        SignalProcessResponse out = tradeService.processSignal(generated.signal(), executionContext);
         return Map.of(
                 "ok", true,
                 "terminal", true,
@@ -405,12 +449,14 @@ public class FinancialAgentService {
     
     private Map<String, Object> buildAgentResult(PlannerDecision decision, List<Map<String, Object>> traces,
                                                  Map<String, Object> context, boolean executed,
-                                                 Map<String, Object> terminalResult) {
+                                                 Map<String, Object> terminalResult,
+                                                 ExecutionContext executionContext) {
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("success", true);
         result.put("message", decision.response());
         result.put("command", decision.commandSuggestion().isBlank() ? null : decision.commandSuggestion());
         result.put("executed", executed);
+        result.put("execution_context", buildExecutionContextMap(executionContext));
         result.put("agent", Map.of(
                 "intent", decision.intent(),
                 "task_state", decision.taskState(),
@@ -426,6 +472,57 @@ public class FinancialAgentService {
             result.put("data", terminalResult.get("data"));
         }
         return result;
+    }
+
+    private Map<String, Object> completeRunAndAttachContext(
+            WorkflowRuntimeService.WorkflowRunContext workflowRunContext,
+            ExecutionContext executionContext,
+            Map<String, Object> result) {
+        Map<String, Object> output = attachExecutionContext(result, executionContext);
+        workflowRuntimeService.completeRun(workflowRunContext, output);
+        return output;
+    }
+
+    private Map<String, Object> failRunAndAttachContext(
+            WorkflowRuntimeService.WorkflowRunContext workflowRunContext,
+            ExecutionContext executionContext,
+            String errorMessage) {
+        if (workflowRunContext != null) {
+            workflowRuntimeService.failRun(workflowRunContext, errorMessage);
+        }
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("success", false);
+        result.put("message", errorMessage);
+        return attachExecutionContext(result, executionContext);
+    }
+
+    private Map<String, Object> attachExecutionContext(Map<String, Object> payload, ExecutionContext executionContext) {
+        if (executionContext == null) {
+            return payload;
+        }
+        Map<String, Object> output = new LinkedHashMap<>(payload);
+        output.put("run_id", executionContext.runId());
+        output.put("workflow_run_id", executionContext.workflowRunId());
+        output.put("conversation_id", executionContext.conversationId());
+        output.put("workflow_id", executionContext.workflowId());
+        output.put("execution_context", buildExecutionContextMap(executionContext));
+        return output;
+    }
+
+    private Map<String, Object> buildExecutionContextMap(ExecutionContext executionContext) {
+        Map<String, Object> context = new LinkedHashMap<>();
+        if (executionContext == null) {
+            context.put("run_id", null);
+            context.put("workflow_run_id", null);
+            context.put("conversation_id", null);
+            context.put("workflow_id", null);
+            return context;
+        }
+        context.put("run_id", executionContext.runId());
+        context.put("workflow_run_id", executionContext.workflowRunId());
+        context.put("conversation_id", executionContext.conversationId());
+        context.put("workflow_id", executionContext.workflowId());
+        return context;
     }
     
     private String resolveQuoteChannel() {

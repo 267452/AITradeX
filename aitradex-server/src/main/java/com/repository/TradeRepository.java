@@ -1,6 +1,7 @@
 package com.repository;
 
 import com.domain.entity.OrderEntity;
+import com.domain.request.ExecutionContext;
 import com.domain.response.OrderExecutionResult;
 import com.domain.response.SignalOrderIds;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -48,42 +49,93 @@ public class TradeRepository {
 
     @Transactional
     public SignalOrderIds createSignalAndOrder(String strategyName, String symbol, String side, BigDecimal signalStrength,
-                                               OffsetDateTime signalTime, BigDecimal price, int quantity) {
+                                               OffsetDateTime signalTime, BigDecimal price, int quantity,
+                                               ExecutionContext executionContext) {
         KeyHolder signalKey = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
-                    INSERT INTO strategy_signal (strategy_name, symbol, side, signal_strength, signal_time)
-                    VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO strategy_signal (
+                        strategy_name, symbol, side, signal_strength, signal_time,
+                        run_id, conversation_id, workflow_id, workflow_run_id
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, new String[]{"id"});
             ps.setString(1, strategyName);
             ps.setString(2, symbol);
             ps.setString(3, side);
             ps.setBigDecimal(4, signalStrength);
             ps.setObject(5, signalTime);
+            ps.setString(6, executionContext != null ? executionContext.runId() : null);
+            ps.setObject(7, executionContext != null ? executionContext.conversationId() : null);
+            ps.setObject(8, executionContext != null ? executionContext.workflowId() : null);
+            ps.setObject(9, executionContext != null ? executionContext.workflowRunId() : null);
             return ps;
         }, signalKey);
         KeyHolder orderKey = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
-                    INSERT INTO trade_order (symbol, side, order_type, price, quantity, status, strategy_name)
-                    VALUES (?, ?, 'market', ?, ?, 'queued', ?)
+                    INSERT INTO trade_order (
+                        symbol, side, order_type, price, quantity, status, strategy_name,
+                        run_id, conversation_id, workflow_id, workflow_run_id
+                    )
+                    VALUES (?, ?, 'market', ?, ?, 'queued', ?, ?, ?, ?, ?)
                     """, new String[]{"id"});
             ps.setString(1, symbol);
             ps.setString(2, side);
             ps.setBigDecimal(3, price);
             ps.setInt(4, quantity);
             ps.setString(5, strategyName);
+            ps.setString(6, executionContext != null ? executionContext.runId() : null);
+            ps.setObject(7, executionContext != null ? executionContext.conversationId() : null);
+            ps.setObject(8, executionContext != null ? executionContext.workflowId() : null);
+            ps.setObject(9, executionContext != null ? executionContext.workflowRunId() : null);
             return ps;
         }, orderKey);
         return new SignalOrderIds(signalKey.getKey().longValue(), orderKey.getKey().longValue());
     }
 
-    public void insertRiskLog(String checkName, boolean passed, String reason, Map<String, Object> context) {
+    public int getLatestPositionQuantity(String symbol) {
+        List<Integer> rows = jdbcTemplate.query("""
+                SELECT quantity
+                FROM position_snapshot
+                WHERE symbol = ?
+                ORDER BY snapshot_time DESC, id DESC
+                LIMIT 1
+                """, (rs, rowNum) -> rs.getInt(1), symbol);
+        return rows.isEmpty() ? 0 : rows.get(0);
+    }
+
+    public BigDecimal getTodayStrategyNotional(String strategyName) {
+        if (strategyName == null || strategyName.isBlank()) {
+            return BigDecimal.ZERO;
+        }
+        List<BigDecimal> rows = jdbcTemplate.query("""
+                SELECT COALESCE(SUM(ABS(COALESCE(price, 0) * quantity)), 0)
+                FROM trade_order
+                WHERE strategy_name = ?
+                  AND created_at >= date_trunc('day', NOW())
+                """, (rs, rowNum) -> rs.getBigDecimal(1), strategyName);
+        if (rows.isEmpty() || rows.get(0) == null) {
+            return BigDecimal.ZERO;
+        }
+        return rows.get(0);
+    }
+
+    public void insertRiskLog(String checkName, boolean passed, String reason,
+                              Map<String, Object> context, ExecutionContext executionContext) {
         try {
             jdbcTemplate.update("""
-                    INSERT INTO risk_check_log (check_name, passed, reason, context)
-                    VALUES (?, ?, ?, ?::jsonb)
-                    """, checkName, passed, reason, objectMapper.writeValueAsString(context));
+                    INSERT INTO risk_check_log (
+                        check_name, passed, reason, context,
+                        run_id, conversation_id, workflow_id, workflow_run_id
+                    )
+                    VALUES (?, ?, ?, ?::jsonb, ?, ?, ?, ?)
+                    """,
+                    checkName, passed, reason, objectMapper.writeValueAsString(context),
+                    executionContext != null ? executionContext.runId() : null,
+                    executionContext != null ? executionContext.conversationId() : null,
+                    executionContext != null ? executionContext.workflowId() : null,
+                    executionContext != null ? executionContext.workflowRunId() : null);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("json_encode_failed", e);
         }

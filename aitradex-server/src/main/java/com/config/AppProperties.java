@@ -22,6 +22,9 @@ public class AppProperties {
     private BigDecimal riskPriceVolatilityThreshold = new BigDecimal("0.1");
     private int riskMaxPositionPerSymbol = 50000;
     private BigDecimal riskMaxStrategyNotional = new BigDecimal("10000000");
+    private boolean flinkComputeEnabled = true;
+    private String flinkComputeEngine = "embedded";
+    private String flinkJobName = "aitradex-flink-compute";
     private String knowledgeMilvusHost = "localhost";
     private int knowledgeMilvusPort = 19530;
     private String knowledgeMilvusCollection = "knowledge_document_chunks";
@@ -163,6 +166,30 @@ public class AppProperties {
 
     public void setRiskMaxStrategyNotional(BigDecimal riskMaxStrategyNotional) {
         this.riskMaxStrategyNotional = riskMaxStrategyNotional;
+    }
+
+    public boolean isFlinkComputeEnabled() {
+        return flinkComputeEnabled;
+    }
+
+    public void setFlinkComputeEnabled(boolean flinkComputeEnabled) {
+        this.flinkComputeEnabled = flinkComputeEnabled;
+    }
+
+    public String getFlinkComputeEngine() {
+        return flinkComputeEngine;
+    }
+
+    public void setFlinkComputeEngine(String flinkComputeEngine) {
+        this.flinkComputeEngine = flinkComputeEngine;
+    }
+
+    public String getFlinkJobName() {
+        return flinkJobName;
+    }
+
+    public void setFlinkJobName(String flinkJobName) {
+        this.flinkJobName = flinkJobName;
     }
 
     public String getKnowledgeMilvusHost() {

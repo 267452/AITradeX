@@ -1,6 +1,7 @@
 package com.service;
 
 import com.config.AppProperties;
+import com.domain.request.ExecutionContext;
 import com.domain.request.SignalRequest;
 import com.domain.request.StrategyRunRequest;
 import com.domain.request.TradeCommandRequest;
@@ -16,7 +17,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -30,35 +33,51 @@ public class TradeService {
     private final AppProperties properties;
     private final BrokerService brokerService;
     private final RiskService riskService;
+    private final NotificationService notificationService;
 
     public TradeService(TradeRepository tradeRepository, MarketDataRepository marketDataRepository,
-                        AppProperties properties, BrokerService brokerService, RiskService riskService) {
+                        AppProperties properties, BrokerService brokerService, RiskService riskService,
+                        NotificationService notificationService) {
         this.tradeRepository = tradeRepository;
         this.marketDataRepository = marketDataRepository;
         this.properties = properties;
         this.brokerService = brokerService;
         this.riskService = riskService;
+        this.notificationService = notificationService;
     }
 
     public SignalProcessResponse processSignal(SignalRequest signal) {
+        return processSignal(signal, null);
+    }
+
+    public SignalProcessResponse processSignal(SignalRequest signal, ExecutionContext executionContext) {
         logger.info("Processing signal: strategy={}, symbol={}, side={}, qty={}, price={}", 
                     signal.strategyName(), signal.symbol(), signal.side(), signal.quantity(), signal.price());
         
-        RiskCheckResult risk = riskService.checkRisk(signal);
+        RiskCheckResult risk = riskService.checkRisk(signal, executionContext);
         logger.info("Risk check result: passed={}, reason={}", risk.passed(), risk.reason());
-        
-        riskService.logRiskCheck("comprehensive_risk_check", risk.passed(), risk.reason(), java.util.Map.of(
-                "strategy_name", signal.strategyName(),
-                "symbol", signal.symbol(),
-                "side", signal.side(),
-                "quantity", signal.quantity(),
-                "price", signal.price()));
-        
+
+        Map<String, Object> riskLogContext = new LinkedHashMap<>();
+        riskLogContext.put("strategy_name", signal.strategyName());
+        riskLogContext.put("symbol", signal.symbol());
+        riskLogContext.put("side", signal.side());
+        riskLogContext.put("quantity", signal.quantity());
+        riskLogContext.put("price", signal.price());
+        if (executionContext != null) {
+            riskLogContext.put("run_id", executionContext.runId());
+            riskLogContext.put("conversation_id", executionContext.conversationId());
+            riskLogContext.put("workflow_id", executionContext.workflowId());
+            riskLogContext.put("workflow_run_id", executionContext.workflowRunId());
+        }
+
+        riskService.logRiskCheck("comprehensive_risk_check", risk.passed(), risk.reason(), riskLogContext, executionContext);
+
         if (!risk.passed()) {
             logger.warn("Signal rejected by risk check: symbol={}, reason={}", signal.symbol(), risk.reason());
+            notifyTradeResult(signal, executionContext, null, false, risk.reason());
             return new SignalProcessResponse(0L, 0L, false, "risk_rejected: " + risk.reason());
         }
-        
+
         SignalOrderIds ids = tradeRepository.createSignalAndOrder(
                 signal.strategyName(),
                 signal.symbol(),
@@ -66,7 +85,8 @@ public class TradeService {
                 signal.signalStrength(),
                 signal.signalTime() == null ? OffsetDateTime.now(ZoneOffset.UTC) : signal.signalTime(),
                 signal.price(),
-                signal.quantity());
+                signal.quantity(),
+                executionContext);
         
         long orderId = ids.orderId();
         logger.info("Signal created successfully: signalId={}, orderId={}, symbol={}", 
@@ -74,8 +94,33 @@ public class TradeService {
         
         brokerService.executeOrderViaBroker(orderId);
         logger.info("Order queued for execution: orderId={}", orderId);
-        
+
+        notifyTradeResult(signal, executionContext, orderId, true, "signal accepted and order queued");
+
         return new SignalProcessResponse(ids.signalId(), orderId, true, "signal accepted and order queued");
+    }
+
+    private void notifyTradeResult(SignalRequest signal, ExecutionContext executionContext,
+                                   Long orderId, boolean passed, String reason) {
+        String title = passed ? "交易信号已通过风控并进入执行队列" : "交易信号被风控拒绝";
+        String content = String.format(
+                "strategy=%s, symbol=%s, side=%s, qty=%d, price=%s, order_id=%s, run_id=%s, conversation_id=%s, workflow_id=%s, workflow_run_id=%s, reason=%s",
+                signal.strategyName(),
+                signal.symbol(),
+                signal.side(),
+                signal.quantity(),
+                signal.price(),
+                orderId == null ? "-" : orderId,
+                executionContext == null ? "-" : executionContext.runId(),
+                executionContext == null ? "-" : executionContext.conversationId(),
+                executionContext == null ? "-" : executionContext.workflowId(),
+                executionContext == null ? "-" : executionContext.workflowRunId(),
+                reason);
+        try {
+            notificationService.sendNotification(title, content);
+        } catch (Exception e) {
+            logger.warn("Failed to send trade notification: {}", e.getMessage());
+        }
     }
 
 

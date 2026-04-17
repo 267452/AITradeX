@@ -619,6 +619,202 @@
       gap: 14px;
     }
 
+    .bigscreen-hero .panel-body {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      background:
+        linear-gradient(135deg, rgba(29, 151, 173, 0.14), rgba(18, 88, 138, 0.14)),
+        linear-gradient(180deg, #fbfeff, #f3f9ff);
+    }
+
+    .bigscreen-live-tag {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      border-radius: 999px;
+      padding: 0 10px;
+      font-size: 11px;
+      letter-spacing: 0.6px;
+      font-weight: 700;
+      color: #11506f;
+      border: 1px solid #b7d9ee;
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .bigscreen-title {
+      margin: 10px 0 0;
+      color: #11324e;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: 0.2px;
+    }
+
+    .bigscreen-subtitle {
+      margin: 8px 0 0;
+      color: #4d6984;
+      font-size: 13px;
+      line-height: 1.6;
+      max-width: 700px;
+    }
+
+    .bigscreen-last-wrap {
+      min-width: 216px;
+      border: 1px solid #c5dced;
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #ffffff;
+      box-shadow: 0 8px 20px rgba(23, 67, 96, 0.08);
+    }
+
+    .bigscreen-last-label {
+      color: #67839d;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .bigscreen-last-time {
+      margin-top: 5px;
+      color: #173d5b;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .bigscreen-kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .bigscreen-kpi {
+      border: 1px solid #d8e7f3;
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 11px 12px;
+      box-shadow: 0 10px 22px rgba(20, 49, 73, 0.06);
+    }
+
+    .bigscreen-kpi-label {
+      color: #67829d;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .bigscreen-kpi-value {
+      margin-top: 4px;
+      color: #12324f;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.3px;
+    }
+
+    .bigscreen-kpi-meta {
+      margin-top: 5px;
+      color: #6f889f;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .bigscreen-kpi.success {
+      border-color: #bee7d1;
+      background: linear-gradient(180deg, #ffffff, #f3fcf7);
+    }
+
+    .bigscreen-kpi.warning {
+      border-color: #f2d6ad;
+      background: linear-gradient(180deg, #ffffff, #fffaf1);
+    }
+
+    .bigscreen-kpi.danger {
+      border-color: #efc4cd;
+      background: linear-gradient(180deg, #ffffff, #fff6f8);
+    }
+
+    .bigscreen-kpi.info {
+      border-color: #c7d8eb;
+      background: linear-gradient(180deg, #ffffff, #f3f8fe);
+    }
+
+    .bigscreen-layout {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 14px;
+    }
+
+    .bigscreen-flow-list .list-item,
+    .bigscreen-event-list .list-item {
+      align-items: flex-start;
+    }
+
+    .bigscreen-item-right {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .bigscreen-capacity {
+      display: grid;
+      gap: 10px;
+    }
+
+    .capacity-item {
+      border: 1px solid #d7e6f1;
+      border-radius: 11px;
+      background: #fbfdff;
+      padding: 10px 12px;
+    }
+
+    .capacity-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .capacity-label {
+      color: #1c4664;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .capacity-value {
+      color: #204d6f;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .capacity-track {
+      margin-top: 8px;
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #e4eef6;
+      overflow: hidden;
+    }
+
+    .capacity-bar {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #1db6a4, #2282b6);
+      transition: width 0.35s ease;
+    }
+
+    .capacity-meta {
+      margin-top: 6px;
+      color: #6b869f;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
     .span-2 {
       grid-column: span 2;
     }
@@ -1672,6 +1868,14 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .bigscreen-kpi-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .bigscreen-layout {
+        grid-template-columns: 1fr;
+      }
+
       .meta-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -1734,6 +1938,10 @@
         flex-direction: column;
       }
 
+      .bigscreen-hero .panel-body {
+        flex-direction: column;
+      }
+
       .workflow-composer {
         grid-template-columns: 1fr;
       }
@@ -1762,6 +1970,10 @@
       }
 
       .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .bigscreen-kpi-strip {
         grid-template-columns: 1fr;
       }
 
@@ -1800,6 +2012,10 @@
           <div class="nav-item active" data-page="overview">
             <div class="nav-icon">总</div>
             <div class="nav-text">总览中心</div>
+          </div>
+          <div class="nav-item" data-page="bigscreen">
+            <div class="nav-icon">屏</div>
+            <div class="nav-text">数据大屏</div>
           </div>
         </div>
 
@@ -2011,6 +2227,101 @@
               </div>
               <div class="panel-body">
                 <div class="quick-grid" id="quickActionList"></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="page-view" id="page-bigscreen">
+          <div class="page-toolbar">
+            <div>
+              <h2 class="toolbar-title">数据大屏</h2>
+              <p class="toolbar-desc">聚合交易、风控、AI 与工作流核心运行数据的实时总览。</p>
+            </div>
+            <div class="action-row">
+              <button class="btn btn-secondary small" id="bigscreenAutoBtn" data-action="toggle-bigscreen-auto">自动刷新: 开</button>
+              <button class="btn btn-secondary small" data-action="reload-bigscreen">刷新大屏</button>
+            </div>
+          </div>
+
+          <article class="panel bigscreen-hero">
+            <div class="panel-body">
+              <div>
+                <span class="bigscreen-live-tag">LIVE DATA</span>
+                <h2 class="bigscreen-title">执行链路运行态势</h2>
+                <p class="bigscreen-subtitle" id="bigscreenSummaryText">正在汇聚交易、风控、会话与编排数据...</p>
+              </div>
+              <div class="bigscreen-last-wrap">
+                <div class="bigscreen-last-label">最后更新</div>
+                <div class="bigscreen-last-time" id="bigscreenLastUpdated">--</div>
+              </div>
+            </div>
+          </article>
+
+          <div class="bigscreen-kpi-strip" id="bigscreenKpiStrip"></div>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Flink 计算监控</h3>
+                <p>实时观察事件吞吐、延迟、拒绝率与热点交易标的。</p>
+              </div>
+              <span class="badge info" id="bigscreenFlinkModeTag">--</span>
+            </div>
+            <div class="panel-body">
+              <div class="meta-grid" id="bigscreenFlinkStats"></div>
+              <div class="list-box bigscreen-event-list" id="bigscreenFlinkHotSymbols"></div>
+            </div>
+          </article>
+
+          <div class="bigscreen-layout">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <h3>系统健康矩阵</h3>
+                  <p>关键模块可用性与就绪状态</p>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="status-list" id="bigscreenHealthList"></div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <h3>执行流水</h3>
+                  <p>最近订单状态变更流</p>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="list-box bigscreen-flow-list" id="bigscreenFlowList"></div>
+              </div>
+            </article>
+          </div>
+
+          <div class="overview-grid">
+            <article class="panel span-2">
+              <div class="panel-head">
+                <div>
+                  <h3>运行容量</h3>
+                  <p>连接能力、执行节奏与风险覆盖度</p>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="bigscreen-capacity" id="bigscreenCapacity"></div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <h3>关键事件</h3>
+                  <p>运行告警与链路提示</p>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="list-box bigscreen-event-list" id="bigscreenEventList"></div>
               </div>
             </article>
           </div>
@@ -2373,6 +2684,10 @@
         title: "总览中心",
         desc: "统一查看核心运行指标、接入状态和高频操作入口。"
       },
+      bigscreen: {
+        title: "数据大屏",
+        desc: "聚合交易、风控、AI 与工作流核心运行数据的实时总览。"
+      },
       broker: {
         title: "接入管理",
         desc: "券商与交易所接入配置、激活状态与模式切换。"
@@ -2424,6 +2739,7 @@
       knowledgeDocuments: [],
       conversations: [],
       conversationInsights: null,
+      flinkMetrics: null,
       mcpTools: [],
       mcpMarkets: [],
       skills: [],
@@ -2431,6 +2747,12 @@
       workflows: [],
       workflowNodes: [],
       riskRules: [],
+      bigscreen: {
+        autoRefresh: true,
+        refreshIntervalMs: 15000,
+        refreshTimer: null,
+        lastRefreshedAt: null
+      },
       workflowGraphLoadedFor: null,
       workflowGraphLoading: false,
       workflowEditor: {
@@ -2606,6 +2928,17 @@
       return new Intl.NumberFormat("zh-CN").format(number);
     }
 
+    function formatPercent(value, digits = 1) {
+      if (value === null || value === undefined || value === "") {
+        return "--";
+      }
+      const number = Number(value);
+      if (Number.isNaN(number)) {
+        return String(value);
+      }
+      return `${number.toFixed(digits)}%`;
+    }
+
     function formatDateTime(value) {
       if (!value) {
         return "--";
@@ -2700,6 +3033,38 @@
       setInterval(renderClock, 1000);
     }
 
+    function clearBigscreenRefreshTimer() {
+      if (state.bigscreen.refreshTimer) {
+        clearInterval(state.bigscreen.refreshTimer);
+        state.bigscreen.refreshTimer = null;
+      }
+    }
+
+    function updateBigscreenAutoButton() {
+      const button = $("bigscreenAutoBtn");
+      if (!button) {
+        return;
+      }
+      button.textContent = `自动刷新: ${state.bigscreen.autoRefresh ? "开" : "关"}`;
+    }
+
+    function syncBigscreenAutoRefresh() {
+      updateBigscreenAutoButton();
+      if (state.activePage !== "bigscreen" || !state.bigscreen.autoRefresh) {
+        clearBigscreenRefreshTimer();
+        return;
+      }
+      if (state.bigscreen.refreshTimer) {
+        return;
+      }
+      state.bigscreen.refreshTimer = setInterval(() => {
+        if (state.activePage !== "bigscreen") {
+          return;
+        }
+        loadBigscreenData(true).catch(() => {});
+      }, state.bigscreen.refreshIntervalMs);
+    }
+
     function switchPage(page) {
       if (!PAGE_META[page]) {
         return;
@@ -2713,11 +3078,16 @@
       });
       UiComponents.Header(PAGE_META[page]);
       loadPageData(page, true);
+      syncBigscreenAutoRefresh();
     }
 
     async function loadPageData(page, silent = false) {
       if (page === "overview") {
         await loadOverviewData(silent);
+        return;
+      }
+      if (page === "bigscreen") {
+        await loadBigscreenData(silent);
         return;
       }
       if (page === "broker") {
@@ -2794,6 +3164,47 @@
       }
 
       renderOverview();
+    }
+
+    async function loadBigscreenData(silent = false) {
+      const requests = await Promise.allSettled([
+        apiRequest("/monitor/summary"),
+        apiRequest("/broker/mode"),
+        apiRequest("/broker/accounts?limit=100"),
+        apiRequest("/ai/config"),
+        apiRequest("/admin/workflows"),
+        apiRequest("/admin/mcp/tools"),
+        apiRequest("/admin/notification-channels"),
+        apiRequest("/admin/risk/rules"),
+        apiRequest("/admin/conversations"),
+        apiRequest("/admin/conversations/insights"),
+        apiRequest("/monitor/flink/metrics")
+      ]);
+
+      if (requests[0].status === "fulfilled") state.monitorSummary = requests[0].value;
+      if (requests[1].status === "fulfilled") state.brokerMode = requests[1].value;
+      if (requests[2].status === "fulfilled") state.brokerAccounts = requests[2].value || [];
+      if (requests[3].status === "fulfilled") state.aiConfig = requests[3].value;
+      if (requests[4].status === "fulfilled") state.workflows = requests[4].value || [];
+      if (requests[5].status === "fulfilled") state.mcpTools = requests[5].value || [];
+      if (requests[6].status === "fulfilled") state.notificationChannels = requests[6].value || [];
+      if (requests[7].status === "fulfilled") state.riskRules = requests[7].value || [];
+      if (requests[8].status === "fulfilled") state.conversations = requests[8].value || [];
+      if (requests[9].status === "fulfilled") state.conversationInsights = requests[9].value;
+      if (requests[10].status === "fulfilled") state.flinkMetrics = requests[10].value;
+
+      state.bigscreen.lastRefreshedAt = new Date().toISOString();
+
+      if (!silent) {
+        requests.forEach((result) => {
+          if (result.status === "rejected") {
+            showToast(result.reason?.message || "部分大屏数据加载失败", "warning");
+          }
+        });
+      }
+
+      renderBigscreen();
+      syncBigscreenAutoRefresh();
     }
 
     async function loadBrokerData(silent = false) {
@@ -3079,6 +3490,305 @@
       if (!pick(summary, "orders_total", "ordersTotal") && !state.monitorSummary) {
         $("recentOrdersList").innerHTML = "<div class=\"empty\">暂无订单数据</div>";
       }
+    }
+
+    function renderBigscreenKpi({ label, value, meta, tone }) {
+      return `
+        <article class="bigscreen-kpi ${toneClass(tone)}">
+          <div class="bigscreen-kpi-label">${escapeHtml(label)}</div>
+          <div class="bigscreen-kpi-value">${escapeHtml(value)}</div>
+          <div class="bigscreen-kpi-meta">${escapeHtml(meta)}</div>
+        </article>
+      `;
+    }
+
+    function renderCapacityItem({ label, value, meta }) {
+      const safeValue = Math.max(0, Math.min(100, Number(value) || 0));
+      return `
+        <article class="capacity-item">
+          <div class="capacity-head">
+            <div class="capacity-label">${escapeHtml(label)}</div>
+            <div class="capacity-value">${safeValue}%</div>
+          </div>
+          <div class="capacity-track">
+            <div class="capacity-bar" style="width:${safeValue}%;"></div>
+          </div>
+          <div class="capacity-meta">${escapeHtml(meta)}</div>
+        </article>
+      `;
+    }
+
+    function renderBigscreen() {
+      const summary = state.monitorSummary || {};
+      const ordersTotal = Number(pick(summary, "orders_total", "ordersTotal") || 0);
+      const ordersQueued = Number(pick(summary, "orders_queued", "ordersQueued") || 0);
+      const ordersFilled = Number(pick(summary, "orders_filled", "ordersFilled") || 0);
+      const positionsTotal = Number(pick(summary, "positions_total", "positionsTotal") || 0);
+      const latestEquity = pick(summary, "latest_equity", "latestEquity");
+      const latestCash = pick(summary, "latest_cash", "latestCash");
+
+      const workflows = Array.isArray(state.workflows) ? state.workflows : [];
+      const mcpTools = Array.isArray(state.mcpTools) ? state.mcpTools : [];
+      const brokerAccounts = Array.isArray(state.brokerAccounts) ? state.brokerAccounts : [];
+      const riskRules = Array.isArray(state.riskRules) ? state.riskRules : [];
+      const notificationChannels = Array.isArray(state.notificationChannels) ? state.notificationChannels : [];
+      const conversations = Array.isArray(state.conversations) ? state.conversations : [];
+
+      const activeAccounts = brokerAccounts.filter((item) => Boolean(pick(item, "is_active", "active"))).length;
+      const hasAi = Boolean(pick(state.aiConfig, "provider")) && Boolean(pick(state.aiConfig, "hasApiKey", "has_api_key"));
+      const workflowCount = workflows.length;
+      const mcpCount = mcpTools.length;
+      const riskEnabledCount = riskRules.filter((rule) => Boolean(pick(rule, "enabled"))).length;
+      const channelEnabledCount = notificationChannels.filter((item) => Boolean(pick(item, "enabled"))).length;
+      const conversationCount = conversations.length;
+      const riskSessionCount = Number(pick(state.conversationInsights, "risk_sessions", "riskSessions") || 0);
+
+      const flinkMetrics = state.flinkMetrics || {};
+      const flinkEnabled = Boolean(pick(flinkMetrics, "flink_enabled", "flinkEnabled"));
+      const flinkEngine = String(pick(flinkMetrics, "engine_mode", "engineMode") || "embedded");
+      const flinkJobName = String(pick(flinkMetrics, "job_name", "jobName") || "--");
+      const sourceEvents1m = Number(pick(flinkMetrics, "source_events_1m", "sourceEvents1m") || 0);
+      const sourceEvents5m = Number(pick(flinkMetrics, "source_events_5m", "sourceEvents5m") || 0);
+      const processedEvents1m = Number(pick(flinkMetrics, "processed_events_1m", "processedEvents1m") || 0);
+      const processedEvents5m = Number(pick(flinkMetrics, "processed_events_5m", "processedEvents5m") || 0);
+      const orderFillRate5m = Number(pick(flinkMetrics, "order_fill_rate_5m", "orderFillRate5m") || 0);
+      const riskRejectRate5m = Number(pick(flinkMetrics, "risk_reject_rate_5m", "riskRejectRate5m") || 0);
+      const avgWorkflowLatencyMs5m = Number(pick(flinkMetrics, "avg_workflow_latency_ms_5m", "avgWorkflowLatencyMs5m") || 0);
+      const p95WorkflowLatencyMs5m = Number(pick(flinkMetrics, "p95_workflow_latency_ms_5m", "p95WorkflowLatencyMs5m") || 0);
+      const watermarkDelayMs = Number(pick(flinkMetrics, "watermark_delay_ms", "watermarkDelayMs") || 0);
+      const queuedOrdersNow = Number(pick(flinkMetrics, "queued_orders_now", "queuedOrdersNow") || ordersQueued || 0);
+      const activeRunsNow = Number(pick(flinkMetrics, "active_runs_now", "activeRunsNow") || 0);
+      const completedRuns5m = Number(pick(flinkMetrics, "completed_runs_5m", "completedRuns5m") || 0);
+      const failedRuns5m = Number(pick(flinkMetrics, "failed_runs_5m", "failedRuns5m") || 0);
+      const hotSymbols = Array.isArray(pick(flinkMetrics, "hot_symbols", "hotSymbols")) ? pick(flinkMetrics, "hot_symbols", "hotSymbols") : [];
+      const lastComputeAt = pick(flinkMetrics, "last_compute_at", "lastComputeAt");
+
+      const fillRate = ordersTotal > 0 ? ((ordersFilled / ordersTotal) * 100).toFixed(1) : "0.0";
+      const queuePressure = Math.min(100, Math.round((queuedOrdersNow / Math.max(1, ordersTotal)) * 100));
+      const runtimeCoverage = Math.min(100, Math.round(((workflowCount + mcpCount + activeAccounts) / 15) * 100));
+      const securityCoverage = Math.min(100, Math.round(((riskEnabledCount + channelEnabledCount) / 12) * 100));
+      const aiReadiness = hasAi ? 100 : 38;
+      const conversationStability = conversationCount === 0
+        ? 42
+        : Math.max(30, Math.min(100, Math.round(100 - (riskSessionCount / conversationCount) * 100)));
+      const computeBacklog1m = Math.max(0, sourceEvents1m - processedEvents1m);
+      const flinkHealthy = flinkEnabled && failedRuns5m === 0 && watermarkDelayMs <= 30000;
+
+      const flinkModeTag = $("bigscreenFlinkModeTag");
+      if (flinkModeTag) {
+        flinkModeTag.className = `badge ${flinkHealthy ? "success" : flinkEnabled ? "warning" : "info"}`;
+        flinkModeTag.textContent = flinkEnabled
+          ? `FLINK · ${flinkEngine.toUpperCase()}`
+          : "FLINK OFF";
+      }
+
+      $("bigscreenSummaryText").textContent =
+        `订单总量 ${formatNumber(ordersTotal)}，成交率 ${fillRate}% ，当前排队 ${formatNumber(ordersQueued)} 单，Flink 1 分钟处理 ${formatNumber(processedEvents1m)} 条事件，水位延迟 ${formatNumber(watermarkDelayMs)} ms。`;
+
+      const refreshedText = state.bigscreen.lastRefreshedAt
+        ? formatDateTime(state.bigscreen.lastRefreshedAt)
+        : "--";
+      $("bigscreenLastUpdated").textContent = refreshedText;
+
+      $("bigscreenKpiStrip").innerHTML = [
+        renderBigscreenKpi({
+          label: "最新权益",
+          value: formatCurrency(latestEquity),
+          meta: `可用现金 ${formatCurrency(latestCash)}`,
+          tone: "success"
+        }),
+        renderBigscreenKpi({
+          label: "订单成交率",
+          value: `${fillRate}%`,
+          meta: `已成交 ${formatNumber(ordersFilled)} / 总量 ${formatNumber(ordersTotal)}`,
+          tone: ordersTotal > 0 && Number(fillRate) >= 60 ? "success" : "warning"
+        }),
+        renderBigscreenKpi({
+          label: "Flink 1m 吞吐",
+          value: formatNumber(processedEvents1m),
+          meta: `输入 ${formatNumber(sourceEvents1m)} · 堆积 ${formatNumber(computeBacklog1m)}`,
+          tone: computeBacklog1m > 200 ? "danger" : computeBacklog1m > 50 ? "warning" : "info"
+        }),
+        renderBigscreenKpi({
+          label: "Flink P95 延迟",
+          value: `${formatNumber(p95WorkflowLatencyMs5m)} ms`,
+          meta: `均值 ${formatNumber(avgWorkflowLatencyMs5m)} ms · 活跃运行 ${formatNumber(activeRunsNow)}`,
+          tone: p95WorkflowLatencyMs5m > 20000 ? "danger" : p95WorkflowLatencyMs5m > 8000 ? "warning" : "success"
+        }),
+        renderBigscreenKpi({
+          label: "执行排队",
+          value: formatNumber(queuedOrdersNow),
+          meta: queuePressure >= 45 ? "当前排队压力较高" : "执行队列平稳",
+          tone: queuePressure >= 65 ? "danger" : queuePressure >= 35 ? "warning" : "info"
+        }),
+        renderBigscreenKpi({
+          label: "在管会话",
+          value: formatNumber(conversationCount),
+          meta: `风险会话 ${formatNumber(riskSessionCount)} · 工作流 ${formatNumber(workflowCount)}`,
+          tone: riskSessionCount > 0 ? "warning" : "info"
+        })
+      ].join("");
+
+      $("bigscreenFlinkStats").innerHTML = [
+        `<div class="meta-card"><div class="meta-label">计算作业</div><div class="meta-value" style="font-size: 14px;">${escapeHtml(flinkJobName)}</div></div>`,
+        `<div class="meta-card"><div class="meta-label">引擎模式</div><div class="meta-value">${escapeHtml(flinkEngine.toUpperCase())}</div></div>`,
+        `<div class="meta-card"><div class="meta-label">5 分钟吞吐</div><div class="meta-value">${formatNumber(processedEvents5m)}</div><div class="item-meta">源事件 ${formatNumber(sourceEvents5m)}</div></div>`,
+        `<div class="meta-card"><div class="meta-label">成交率 (5m)</div><div class="meta-value">${formatPercent(orderFillRate5m, 2)}</div><div class="item-meta">订单成交表现</div></div>`,
+        `<div class="meta-card"><div class="meta-label">拒绝率 (5m)</div><div class="meta-value">${formatPercent(riskRejectRate5m, 2)}</div><div class="item-meta">风控拦截强度</div></div>`,
+        `<div class="meta-card"><div class="meta-label">Watermark 延迟</div><div class="meta-value">${formatNumber(watermarkDelayMs)} ms</div><div class="item-meta">超过 60,000 ms 需关注</div></div>`,
+        `<div class="meta-card"><div class="meta-label">运行态 (5m)</div><div class="meta-value">${formatNumber(completedRuns5m)} / ${formatNumber(failedRuns5m)}</div><div class="item-meta">完成 / 失败</div></div>`,
+        `<div class="meta-card"><div class="meta-label">最近计算时间</div><div class="meta-value" style="font-size: 14px;">${escapeHtml(formatDateTime(lastComputeAt))}</div></div>`
+      ].join("");
+
+      if (!hotSymbols.length) {
+        $("bigscreenFlinkHotSymbols").innerHTML = "<div class=\"empty\">近 15 分钟暂无热点标的数据。</div>";
+      } else {
+        $("bigscreenFlinkHotSymbols").innerHTML = hotSymbols.map((row, index) => `
+          <div class="list-item">
+            <div>
+              <div class="item-title">热点 #${index + 1} · ${escapeHtml(pick(row, "symbol") || "--")}</div>
+              <div class="item-meta">近 15 分钟触发 ${formatNumber(pick(row, "order_count", "orderCount") || 0)} 笔订单</div>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      $("bigscreenHealthList").innerHTML = [
+        UiComponents.StatusItem({
+          title: "交易通道",
+          desc: activeAccounts > 0 ? `${activeAccounts} 个激活账户在线` : "暂无激活账户，执行链将阻塞",
+          tone: activeAccounts > 0 ? "success" : "danger",
+          tag: activeAccounts > 0 ? "READY" : "BLOCKED"
+        }),
+        UiComponents.StatusItem({
+          title: "AI 引擎",
+          desc: hasAi ? `${pick(state.aiConfig, "provider")} · ${pick(state.aiConfig, "model")}` : "模型 API Key 未完整配置",
+          tone: hasAi ? "success" : "warning",
+          tag: hasAi ? "READY" : "BETA"
+        }),
+        UiComponents.StatusItem({
+          title: "工作流执行",
+          desc: workflowCount > 0 ? `已发布 ${workflowCount} 条流程定义` : "暂无可用工作流定义",
+          tone: workflowCount > 0 ? "success" : "warning",
+          tag: workflowCount > 0 ? "ONLINE" : "DRAFT"
+        }),
+        UiComponents.StatusItem({
+          title: "风险与通知",
+          desc: `启用风控 ${riskEnabledCount} 条 · 启用通知 ${channelEnabledCount} 条`,
+          tone: riskEnabledCount > 0 && channelEnabledCount > 0 ? "success" : "warning",
+          tag: riskEnabledCount > 0 && channelEnabledCount > 0 ? "COVERED" : "PARTIAL"
+        }),
+        UiComponents.StatusItem({
+          title: "MCP 工具",
+          desc: mcpCount > 0 ? `${mcpCount} 个工具可调用` : "尚未接入 MCP 工具",
+          tone: mcpCount > 0 ? "success" : "info",
+          tag: mcpCount > 0 ? "READY" : "INIT"
+        }),
+        UiComponents.StatusItem({
+          title: "Flink 计算",
+          desc: flinkEnabled
+            ? `P95 ${formatNumber(p95WorkflowLatencyMs5m)} ms · 水位延迟 ${formatNumber(watermarkDelayMs)} ms · 失败 ${formatNumber(failedRuns5m)}`
+            : "Flink 计算未启用，当前仅展示基础统计。",
+          tone: flinkHealthy ? "success" : flinkEnabled ? "warning" : "info",
+          tag: flinkHealthy ? "ONLINE" : flinkEnabled ? "ALERT" : "OFF"
+        })
+      ].join("");
+
+      const recentOrders = pick(summary, "recent_orders", "recentOrders") || [];
+      if (!recentOrders.length) {
+        $("bigscreenFlowList").innerHTML = "<div class=\"empty\">暂无执行流水，请先发起交易或策略执行。</div>";
+      } else {
+        $("bigscreenFlowList").innerHTML = recentOrders.slice(0, 10).map((order) => {
+          const symbol = pick(order, "symbol") || "--";
+          const side = String(pick(order, "side") || "--").toUpperCase();
+          const quantity = pick(order, "quantity") ?? "--";
+          const status = String(pick(order, "status") || "--");
+          const statusTone = toneClass(normalizeToneFromStatus(status));
+          return `
+            <div class="list-item">
+              <div>
+                <div class="item-title">${escapeHtml(symbol)} · ${escapeHtml(side)} · ${escapeHtml(quantity)}</div>
+                <div class="item-meta">订单 #${escapeHtml(pick(order, "id") || "--")} · ${escapeHtml(formatDateTime(pick(order, "created_at", "createdAt")))}</div>
+              </div>
+              <div class="bigscreen-item-right">
+                <span class="badge ${statusTone}">${escapeHtml(status.toUpperCase())}</span>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      $("bigscreenCapacity").innerHTML = [
+        renderCapacityItem({
+          label: "AI 决策可用度",
+          value: aiReadiness,
+          meta: hasAi ? "模型配置完整，可直接进入执行链路。" : "请在模型管理补齐 API Key 与模型参数。"
+        }),
+        renderCapacityItem({
+          label: "执行通道覆盖度",
+          value: runtimeCoverage,
+          meta: `账户 ${activeAccounts} · 工作流 ${workflowCount} · MCP ${mcpCount}`
+        }),
+        renderCapacityItem({
+          label: "风控与通知覆盖度",
+          value: securityCoverage,
+          meta: `风控规则 ${riskEnabledCount} · 通知渠道 ${channelEnabledCount}`
+        }),
+        renderCapacityItem({
+          label: "会话稳定度",
+          value: conversationStability,
+          meta: `风险会话 ${riskSessionCount} / 在管会话 ${conversationCount}`
+        })
+      ].join("");
+
+      const events = [];
+      if (queuedOrdersNow > 0) {
+        events.push(`执行队列中有 ${formatNumber(queuedOrdersNow)} 笔订单等待成交。`);
+      } else {
+        events.push("当前无排队订单，执行链路处于空闲态。");
+      }
+      if (!hasAi) {
+        events.push("AI 引擎未完全就绪，建议优先完成模型密钥配置。");
+      }
+      if (riskEnabledCount === 0) {
+        events.push("暂无启用风控规则，建议立即补充风险约束。");
+      }
+      if (channelEnabledCount === 0) {
+        events.push("通知渠道未启用，告警和成交回执可能丢失。");
+      }
+      if (!flinkEnabled) {
+        events.push("Flink 计算暂未开启，建议开启后再观察实时吞吐和延迟指标。");
+      } else {
+        if (failedRuns5m > 0) {
+          events.push(`近 5 分钟 Flink 运行失败 ${failedRuns5m} 次，请检查执行链节点日志。`);
+        }
+        if (watermarkDelayMs > 60000) {
+          events.push(`Flink 水位延迟 ${formatNumber(watermarkDelayMs)} ms，存在明显事件积压风险。`);
+        }
+        if (riskRejectRate5m > 25) {
+          events.push(`近 5 分钟风控拒绝率 ${formatPercent(riskRejectRate5m, 1)}，建议排查规则阈值是否过严。`);
+        }
+        if (hotSymbols.length > 0) {
+          events.push(`热点标的 ${pick(hotSymbols[0], "symbol") || "--"} 触发最频繁，可优先关注该链路。`);
+        }
+      }
+      if (workflowCount > 0) {
+        const topWorkflow = [...workflows]
+          .sort((a, b) => Number(pick(b, "run_count", "runCount") || 0) - Number(pick(a, "run_count", "runCount") || 0))[0];
+        if (topWorkflow) {
+          events.push(`高频流程：${pick(topWorkflow, "name") || "--"}（运行 ${formatNumber(pick(topWorkflow, "run_count", "runCount") || 0)} 次）。`);
+        }
+      }
+
+      $("bigscreenEventList").innerHTML = events.map((text) => `
+        <div class="list-item">
+          <div>
+            <div class="item-title">${escapeHtml(text)}</div>
+          </div>
+        </div>
+      `).join("");
+
+      updateBigscreenAutoButton();
     }
 
     function renderRecentOrders(orders) {
@@ -5075,6 +5785,14 @@
         if (action === "reload-broker") return loadBrokerData(false);
         if (action === "activate-account") return activateAccount(id).catch((error) => showToast(error.message, "danger"));
 
+        if (action === "reload-bigscreen") return loadBigscreenData(false);
+        if (action === "toggle-bigscreen-auto") {
+          state.bigscreen.autoRefresh = !state.bigscreen.autoRefresh;
+          syncBigscreenAutoRefresh();
+          showToast(`大屏自动刷新已${state.bigscreen.autoRefresh ? "开启" : "关闭"}`, "success");
+          return;
+        }
+
         if (action === "open-ai-config") return openAiConfigModal("save");
         if (action === "switch-ai-model") return openSwitchModelModal();
         if (action === "switch-to-config") return switchToConfig(provider).catch((error) => showToast(error.message, "danger"));
@@ -5172,6 +5890,7 @@
     }
 
     function logout() {
+      clearBigscreenRefreshTimer();
       localStorage.removeItem("access_token");
       localStorage.removeItem("user_info");
       window.location.href = "/login";
@@ -5193,6 +5912,7 @@
 
       await Promise.allSettled([
         loadOverviewData(true),
+        loadBigscreenData(true),
         loadBrokerData(true),
         loadModelData(true),
         loadKnowledgeData(true),
@@ -5204,6 +5924,7 @@
         loadRiskRuleData(true)
       ]);
       renderOverview();
+      syncBigscreenAutoRefresh();
       showToast("控制台已就绪", "success");
     }
 

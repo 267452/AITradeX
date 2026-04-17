@@ -2,6 +2,7 @@ package com.controller.monitor;
 
 import com.common.api.ApiResponse;
 import com.config.AppProperties;
+import com.domain.response.FlinkComputeMetricsResponse;
 import com.domain.response.MonitorSummaryResponse;
 import com.domain.response.OrderPageResponse;
 import com.repository.MonitorRepository;
@@ -31,6 +32,14 @@ public class MonitorController {
     public ApiResponse<OrderPageResponse> monitorOrders(@RequestParam(defaultValue = "1") int page,
                                                         @RequestParam(defaultValue = "10") int pageSize) {
         return ApiResponse.success(monitorRepository.listOrdersPaginated(page, pageSize));
+    }
+
+    @GetMapping("/flink/metrics")
+    public ApiResponse<FlinkComputeMetricsResponse> flinkMetrics() {
+        return ApiResponse.success(monitorRepository.getFlinkComputeMetrics(
+                properties.isFlinkComputeEnabled(),
+                properties.getFlinkComputeEngine(),
+                properties.getFlinkJobName()));
     }
 
     @GetMapping("/risk/rules")
