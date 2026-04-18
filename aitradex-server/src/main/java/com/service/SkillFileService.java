@@ -14,16 +14,22 @@ import java.util.Map;
 public class SkillFileService {
     private final Path skillsBasePath;
     private final ObjectMapper objectMapper;
+    private final boolean localMirrorEnabled;
 
     public SkillFileService(
             @Value("${app.skills.path:data/skills}") String skillsPath,
+            @Value("${app.skills.local-mirror-enabled:false}") boolean localMirrorEnabled,
             ObjectMapper objectMapper) {
         this.skillsBasePath = Paths.get(skillsPath).toAbsolutePath();
+        this.localMirrorEnabled = localMirrorEnabled;
         this.objectMapper = objectMapper;
         initDirectory();
     }
 
     private void initDirectory() {
+        if (!localMirrorEnabled) {
+            return;
+        }
         try {
             Files.createDirectories(skillsBasePath);
         } catch (IOException e) {
@@ -38,6 +44,9 @@ public class SkillFileService {
     public void createSkillFiles(long skillId, String name, String description, String icon,
                                   String category, String status, String promptTemplate,
                                   Object variables, Object tools, String enabledTools) {
+        if (!localMirrorEnabled) {
+            return;
+        }
         try {
             Path skillPath = getSkillPath(skillId);
             Files.createDirectories(skillPath);
@@ -69,6 +78,9 @@ public class SkillFileService {
     public void updateSkillFiles(long skillId, String name, String description, String icon,
                                   String category, String status, String promptTemplate,
                                   Object variables, Object tools, String enabledTools) {
+        if (!localMirrorEnabled) {
+            return;
+        }
         try {
             Path skillPath = getSkillPath(skillId);
             if (!Files.exists(skillPath)) {
@@ -99,6 +111,9 @@ public class SkillFileService {
     }
 
     public void deleteSkillFiles(long skillId) {
+        if (!localMirrorEnabled) {
+            return;
+        }
         try {
             Path skillPath = getSkillPath(skillId);
             if (Files.exists(skillPath)) {
@@ -117,6 +132,9 @@ public class SkillFileService {
     }
 
     public String readPrompt(long skillId) {
+        if (!localMirrorEnabled) {
+            return "";
+        }
         try {
             Path promptPath = getSkillPath(skillId).resolve("prompt.md");
             if (Files.exists(promptPath)) {
@@ -129,6 +147,9 @@ public class SkillFileService {
     }
 
     public void writePrompt(long skillId, String content) {
+        if (!localMirrorEnabled) {
+            return;
+        }
         try {
             Path skillPath = getSkillPath(skillId);
             Files.createDirectories(skillPath);
@@ -139,6 +160,9 @@ public class SkillFileService {
     }
 
     public String readScript(long skillId) {
+        if (!localMirrorEnabled) {
+            return "";
+        }
         try {
             Path scriptPath = getSkillPath(skillId).resolve("script.py");
             if (Files.exists(scriptPath)) {
@@ -151,6 +175,9 @@ public class SkillFileService {
     }
 
     public void writeScript(long skillId, String content) {
+        if (!localMirrorEnabled) {
+            return;
+        }
         try {
             Path skillPath = getSkillPath(skillId);
             Files.createDirectories(skillPath);
@@ -161,6 +188,9 @@ public class SkillFileService {
     }
 
     public Map<String, Object> readConfig(long skillId) {
+        if (!localMirrorEnabled) {
+            return Map.of();
+        }
         try {
             Path configPath = getSkillPath(skillId).resolve("config.json");
             if (Files.exists(configPath)) {

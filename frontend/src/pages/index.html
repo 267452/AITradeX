@@ -1141,25 +1141,63 @@
     .page-toolbar {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      gap: 12px;
+      align-items: flex-start;
+      gap: 14px;
       flex-wrap: wrap;
+      border: 1px solid #d9e5f1;
+      border-radius: 12px;
+      padding: 12px 14px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(246, 251, 255, 0.94)),
+        radial-gradient(circle at right top, rgba(53, 151, 203, 0.12), transparent 48%);
+      box-shadow: 0 10px 26px rgba(27, 63, 92, 0.05);
     }
 
-    .page-toolbar.deduped {
-      justify-content: flex-end;
+    .toolbar-intro {
+      min-width: 280px;
+      max-width: 760px;
     }
 
     .toolbar-title {
       color: #143452;
-      font-size: 18px;
+      font-size: 16px;
+      font-weight: 700;
       margin: 0;
+      line-height: 1.25;
     }
 
     .toolbar-desc {
-      margin: 4px 0 0;
+      margin: 6px 0 0;
       color: #5e7893;
       font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .toolbar-tags {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .toolbar-tag {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #c8d9e8;
+      background: #ffffff;
+      color: #355774;
+      border-radius: 999px;
+      padding: 2px 9px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1px;
+      line-height: 1.45;
+    }
+
+    .page-toolbar .action-row {
+      margin-left: auto;
+      align-self: center;
+      justify-content: flex-end;
     }
 
     .action-row {
@@ -1957,6 +1995,11 @@
       .workflow-select-wrap select {
         min-width: 130px;
       }
+
+      .page-toolbar .action-row {
+        width: 100%;
+        justify-content: flex-start;
+      }
     }
 
     @media (max-width: 760px) {
@@ -2730,6 +2773,59 @@
       }
     };
 
+    const PAGE_TOOLBAR_BRIEF = {
+      bigscreen: {
+        title: "运行焦点",
+        desc: "优先关注实时吞吐、延迟告警和热点标的，确认执行链路是否稳定。",
+        tags: ["实时链路", "Flink 快照", "自动刷新"]
+      },
+      broker: {
+        title: "接入焦点",
+        desc: "确保账户激活和通道可用，交易模式切换前先核对连接状态。",
+        tags: ["账户状态", "交易通道", "模式切换"]
+      },
+      models: {
+        title: "模型焦点",
+        desc: "围绕供应商、模型和密钥做可用性管理，先测通再进入执行链。",
+        tags: ["供应商配置", "连接测试", "模型切换"]
+      },
+      knowledge: {
+        title: "知识焦点",
+        desc: "追踪知识库规模与文档同步状态，保证检索链路命中率稳定。",
+        tags: ["知识库", "文档同步", "向量索引"]
+      },
+      conversation: {
+        title: "会话焦点",
+        desc: "关注会话质量、工具调用和风险交接，及时发现异常会话。",
+        tags: ["会话质量", "工具调用", "风险交接"]
+      },
+      mcp: {
+        title: "MCP 焦点",
+        desc: "优先检查工具端点和市场可见性，避免调用链路缺失。",
+        tags: ["工具接入", "市场分发", "端点健康"]
+      },
+      risk: {
+        title: "风控焦点",
+        desc: "围绕规则覆盖率和拦截强度进行调整，防止执行链裸奔。",
+        tags: ["规则覆盖", "阈值调优", "拦截日志"]
+      },
+      notification: {
+        title: "通知焦点",
+        desc: "确认渠道可用与告警送达，成交回执和异常告警要可追踪。",
+        tags: ["渠道启用", "告警送达", "回执可追踪"]
+      },
+      skill: {
+        title: "技能焦点",
+        desc: "维护技能模板和工具绑定关系，确保助手能力按预期生效。",
+        tags: ["技能模板", "工具绑定", "能力覆盖"]
+      },
+      workflow: {
+        title: "编排焦点",
+        desc: "用可视化编排器维护节点关系与版本状态，发布前先校验拓扑。",
+        tags: ["节点拓扑", "版本状态", "发布前校验"]
+      }
+    };
+
     const state = {
       activePage: "overview",
       modalConfig: null,
@@ -3069,7 +3165,7 @@
       }, state.bigscreen.refreshIntervalMs);
     }
 
-    function syncPageToolbarDedup(page) {
+    function syncPageToolbarLayout(page) {
       const pageView = document.getElementById(`page-${page}`);
       if (!pageView) {
         return;
@@ -3082,17 +3178,26 @@
       const descNode = toolbar.querySelector(".toolbar-desc");
       const introBlock = titleNode ? titleNode.parentElement : null;
       if (!titleNode || !descNode || !introBlock) {
-        toolbar.classList.remove("deduped");
         return;
       }
-      const meta = PAGE_META[page] || {};
-      const titleText = String(titleNode.textContent || "").trim();
-      const descText = String(descNode.textContent || "").trim();
-      const metaTitle = String(meta.title || "").trim();
-      const metaDesc = String(meta.desc || "").trim();
-      const duplicated = titleText === metaTitle && descText === metaDesc;
-      introBlock.hidden = duplicated;
-      toolbar.classList.toggle("deduped", duplicated);
+      introBlock.hidden = false;
+      introBlock.classList.add("toolbar-intro");
+
+      const brief = PAGE_TOOLBAR_BRIEF[page];
+      if (!brief) {
+        return;
+      }
+
+      titleNode.textContent = brief.title;
+      descNode.textContent = brief.desc;
+
+      let tagsWrap = introBlock.querySelector(".toolbar-tags");
+      if (!tagsWrap) {
+        tagsWrap = document.createElement("div");
+        tagsWrap.className = "toolbar-tags";
+        introBlock.appendChild(tagsWrap);
+      }
+      tagsWrap.innerHTML = (brief.tags || []).map((tag) => `<span class="toolbar-tag">${escapeHtml(tag)}</span>`).join("");
     }
 
     function switchPage(page) {
@@ -3107,7 +3212,7 @@
         view.classList.toggle("active", view.id === `page-${page}`);
       });
       UiComponents.Header(PAGE_META[page]);
-      syncPageToolbarDedup(page);
+      syncPageToolbarLayout(page);
       loadPageData(page, true);
       syncBigscreenAutoRefresh();
     }
@@ -5496,17 +5601,19 @@
           { name: "enabledTools", label: "可用工具 (逗号分隔)", type: "text", optional: true, value: record?.enabled_tools || record?.enabledTools || "" }
         ],
         onSubmit: async (payload) => {
-          if (payload.promptContent !== undefined) {
-            await apiRequest(`/admin/skills/${record.id}/prompt`, { method: "PUT", body: payload.promptContent });
-          }
-          if (payload.scriptContent !== undefined) {
-            await apiRequest(`/admin/skills/${record.id}/script`, { method: "PUT", body: payload.scriptContent });
-          }
           const { promptContent, scriptContent, ...skillPayload } = payload;
+          let targetId = isEdit ? Number(record.id) : null;
           if (isEdit) {
             await apiRequest(`/admin/skills/${record.id}`, { method: "PUT", body: skillPayload });
           } else {
-            await apiRequest("/admin/skills", { method: "POST", body: skillPayload });
+            const created = await apiRequest("/admin/skills", { method: "POST", body: skillPayload });
+            targetId = Number(pick(created, "id"));
+          }
+          if (targetId && promptContent !== undefined) {
+            await apiRequest(`/admin/skills/${targetId}/prompt`, { method: "PUT", body: promptContent });
+          }
+          if (targetId && scriptContent !== undefined) {
+            await apiRequest(`/admin/skills/${targetId}/script`, { method: "PUT", body: scriptContent });
           }
           await loadSkillData(true);
         }
@@ -5947,6 +6054,7 @@
       bindEvents();
       startClock();
       UiComponents.Header(PAGE_META.overview);
+      Object.keys(PAGE_TOOLBAR_BRIEF).forEach((page) => syncPageToolbarLayout(page));
       updateHealthChip("info", "数据加载中");
       $("searchResults").innerHTML = "<div class=\"empty\">先选择市场，再输入代码检索行情。</div>";
       $("recentOrdersList").innerHTML = "<div class=\"empty\">订单数据加载中...</div>";

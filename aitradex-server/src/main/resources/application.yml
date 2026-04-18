@@ -40,6 +40,9 @@ app:
   flink-compute-enabled: ${FLINK_COMPUTE_ENABLED:true}
   flink-compute-engine: ${FLINK_COMPUTE_ENGINE:snapshot}
   flink-job-name: ${FLINK_JOB_NAME:aitradex-flink-compute}
+  skills:
+    path: ${SKILLS_PATH:data/skills}
+    local-mirror-enabled: ${SKILLS_LOCAL_MIRROR_ENABLED:false}
   knowledge-milvus-host: ${KNOWLEDGE_MILVUS_HOST:localhost}
   knowledge-milvus-port: ${KNOWLEDGE_MILVUS_PORT:19530}
   knowledge-milvus-collection: ${KNOWLEDGE_MILVUS_COLLECTION:knowledge_document_chunks}

@@ -59,7 +59,7 @@ public class MonitorRepository {
                 eq == null ? BigDecimal.ZERO : (BigDecimal) eq.get("total_equity"),
                 eq == null ? BigDecimal.ZERO : (BigDecimal) eq.get("cash_balance"),
                 eq == null ? BigDecimal.ZERO : (BigDecimal) eq.get("market_value"),
-                (java.time.OffsetDateTime) totals.get("latest_order_time"),
+                toOffsetDateTime(totals.get("latest_order_time")),
                 recentOrders.stream().map(this::toOrderSummary).toList());
     }
 
@@ -159,7 +159,7 @@ public class MonitorRepository {
                 String.valueOf(row.get("side")),
                 ((Number) row.get("quantity")).intValue(),
                 String.valueOf(row.get("status")),
-                (java.time.OffsetDateTime) row.get("created_at"));
+                toOffsetDateTime(row.get("created_at")));
     }
 
     private FlinkComputeMetricsResponse emptyFlinkMetrics(boolean flinkEnabled, String engineMode, String jobName,

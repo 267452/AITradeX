@@ -542,44 +542,86 @@ public class AdminModuleRepository {
 
     public List<Map<String, Object>> listSkills() {
         return jdbcTemplate.queryForList("""
-                SELECT id, name, description, icon, category, status, prompt_template,
-                       variables, tools, enabled_tools, run_count, last_run_at
-                FROM skill
-                ORDER BY last_run_at DESC NULLS LAST, id DESC
+                SELECT
+                    sd.id,
+                    sd.name,
+                    sd.description,
+                    sd.icon,
+                    sd.category,
+                    sd.status,
+                    sd.source_type,
+                    sd.current_version_id,
+                    COALESCE(sv.version_no, 0) AS current_version_no,
+                    COALESCE(sv.prompt_template, '') AS prompt_template,
+                    COALESCE(sv.prompt_content, sv.prompt_template, '') AS prompt_content,
+                    COALESCE(sv.script_content, '') AS script_content,
+                    COALESCE(sv.variables, '[]'::jsonb) AS variables,
+                    COALESCE(sv.tools, '[]'::jsonb) AS tools,
+                    COALESCE(sv.enabled_tools, '') AS enabled_tools,
+                    COALESCE(srm.run_count, sd.run_count, 0)::int AS run_count,
+                    COALESCE(srm.last_run_at, sd.last_run_at) AS last_run_at
+                FROM skill_definition sd
+                LEFT JOIN skill_version sv ON sv.id = sd.current_version_id
+                LEFT JOIN skill_runtime_metrics srm ON srm.skill_id = sd.id
+                ORDER BY COALESCE(srm.last_run_at, sd.last_run_at) DESC NULLS LAST, sd.id DESC
                 """);
     }
 
     public Map<String, Object> getSkill(long id) {
-        return jdbcTemplate.queryForMap("""
-                SELECT id, name, description, icon, category, status, prompt_template,
-                       variables, tools, enabled_tools, run_count, last_run_at
-                FROM skill WHERE id = ?
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList("""
+                SELECT
+                    sd.id,
+                    sd.name,
+                    sd.description,
+                    sd.icon,
+                    sd.category,
+                    sd.status,
+                    sd.source_type,
+                    sd.current_version_id,
+                    COALESCE(sv.version_no, 0) AS current_version_no,
+                    COALESCE(sv.prompt_template, '') AS prompt_template,
+                    COALESCE(sv.prompt_content, sv.prompt_template, '') AS prompt_content,
+                    COALESCE(sv.script_content, '') AS script_content,
+                    COALESCE(sv.variables, '[]'::jsonb) AS variables,
+                    COALESCE(sv.tools, '[]'::jsonb) AS tools,
+                    COALESCE(sv.enabled_tools, '') AS enabled_tools,
+                    COALESCE(srm.run_count, sd.run_count, 0)::int AS run_count,
+                    COALESCE(srm.last_run_at, sd.last_run_at) AS last_run_at
+                FROM skill_definition sd
+                LEFT JOIN skill_version sv ON sv.id = sd.current_version_id
+                LEFT JOIN skill_runtime_metrics srm ON srm.skill_id = sd.id
+                WHERE sd.id = ?
+                LIMIT 1
                 """, id);
+        return rows.isEmpty() ? null : rows.get(0);
     }
 
-    public void createSkill(SkillUpsertRequest request) {
-        jdbcTemplate.update("""
-                INSERT INTO skill (name, description, icon, category, status, prompt_template,
-                                   variables, tools, enabled_tools, last_run_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?::jsonb, ?::jsonb, ?, NOW())
-                """,
-                request.name(),
-                defaultString(request.description()),
-                defaultString(request.icon(), "⚡"),
-                defaultString(request.category(), "general"),
-                defaultString(request.status(), "enabled"),
-                defaultString(request.promptTemplate()),
-                toJsonString(request.variables()),
-                toJsonString(request.tools()),
-                defaultString(request.enabledTools()));
+    public long createSkill(SkillUpsertRequest request) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement("""
+                    INSERT INTO skill_definition (name, description, icon, category, status, source_type)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, request.name());
+            ps.setString(2, defaultString(request.description()));
+            ps.setString(3, defaultString(request.icon(), "⚡"));
+            ps.setString(4, defaultString(request.category(), "general"));
+            ps.setString(5, defaultString(request.status(), "enabled"));
+            ps.setString(6, "db");
+            return ps;
+        }, keyHolder);
+        long id = extractGeneratedId(keyHolder);
+        if (id <= 0) {
+            throw new BusinessException(500, "skill_create_failed_no_id");
+        }
+        return id;
     }
 
     public void updateSkill(long id, SkillUpsertRequest request) {
-        jdbcTemplate.update("""
-                UPDATE skill
-                SET name = ?, description = ?, icon = ?, category = ?, status = ?,
-                    prompt_template = ?, variables = ?::jsonb, tools = ?::jsonb,
-                    enabled_tools = ?, last_run_at = NOW()
+        int updated = jdbcTemplate.update("""
+                UPDATE skill_definition
+                SET name = ?, description = ?, icon = ?, category = ?, status = ?, updated_at = NOW()
                 WHERE id = ?
                 """,
                 request.name(),
@@ -587,15 +629,111 @@ public class AdminModuleRepository {
                 defaultString(request.icon(), "⚡"),
                 defaultString(request.category(), "general"),
                 defaultString(request.status(), "enabled"),
-                defaultString(request.promptTemplate()),
-                toJsonString(request.variables()),
-                toJsonString(request.tools()),
-                defaultString(request.enabledTools()),
                 id);
+        if (updated == 0) {
+            throw new BusinessException(404, "skill_not_found");
+        }
     }
 
     public void deleteSkill(long id) {
-        jdbcTemplate.update("DELETE FROM skill WHERE id = ?", id);
+        jdbcTemplate.update("DELETE FROM skill_definition WHERE id = ?", id);
+    }
+
+    public Map<String, Object> getCurrentSkillVersion(long skillId) {
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList("""
+                SELECT
+                    sv.id,
+                    sv.skill_id,
+                    sv.version_no,
+                    sv.is_published,
+                    sv.prompt_template,
+                    sv.prompt_content,
+                    sv.script_content,
+                    sv.variables::text AS variables_json,
+                    sv.tools::text AS tools_json,
+                    sv.enabled_tools,
+                    sv.checksum,
+                    sv.published_at,
+                    sv.created_at,
+                    sv.updated_at
+                FROM skill_definition sd
+                LEFT JOIN skill_version sv ON sv.id = sd.current_version_id
+                WHERE sd.id = ?
+                LIMIT 1
+                """, skillId);
+        if (rows.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> row = rows.get(0);
+        if (row.get("id") == null) {
+            return Map.of();
+        }
+        return row;
+    }
+
+    public long createSkillVersion(long skillId,
+                                   String promptTemplate,
+                                   String promptContent,
+                                   String scriptContent,
+                                   String[] variables,
+                                   String[] tools,
+                                   String enabledTools,
+                                   boolean publish,
+                                   String checksum) {
+        Integer nextVersionNo = jdbcTemplate.queryForObject("""
+                SELECT COALESCE(MAX(version_no), 0) + 1
+                FROM skill_version
+                WHERE skill_id = ?
+                """, Integer.class, skillId);
+        int versionNo = nextVersionNo == null ? 1 : nextVersionNo;
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement("""
+                    INSERT INTO skill_version (
+                        skill_id, version_no, is_published, prompt_template, prompt_content, script_content,
+                        variables, tools, enabled_tools, checksum, published_at, created_at, updated_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?::jsonb, ?::jsonb, ?, ?, ?, NOW(), NOW())
+                    """, Statement.RETURN_GENERATED_KEYS);
+            ps.setLong(1, skillId);
+            ps.setInt(2, versionNo);
+            ps.setBoolean(3, publish);
+            ps.setString(4, defaultString(promptTemplate));
+            ps.setString(5, defaultString(promptContent));
+            ps.setString(6, defaultString(scriptContent));
+            ps.setString(7, toJsonString(variables));
+            ps.setString(8, toJsonString(tools));
+            ps.setString(9, defaultString(enabledTools));
+            ps.setString(10, defaultString(checksum));
+            if (publish) {
+                ps.setObject(11, java.time.OffsetDateTime.now(java.time.ZoneOffset.UTC));
+            } else {
+                ps.setObject(11, null);
+            }
+            return ps;
+        }, keyHolder);
+
+        long versionId = extractGeneratedId(keyHolder);
+        if (versionId <= 0) {
+            throw new BusinessException(500, "skill_version_create_failed_no_id");
+        }
+
+        if (publish) {
+            jdbcTemplate.update("""
+                    UPDATE skill_definition
+                    SET current_version_id = ?, updated_at = NOW()
+                    WHERE id = ?
+                    """, versionId, skillId);
+        }
+        return versionId;
+    }
+
+    public void ensureSkillRuntimeMetrics(long skillId) {
+        jdbcTemplate.update("""
+                INSERT INTO skill_runtime_metrics (skill_id, run_count, success_count, failure_count, last_run_at, updated_at)
+                VALUES (?, 0, 0, 0, NULL, NOW())
+                ON CONFLICT (skill_id) DO NOTHING
+                """, skillId);
     }
 
     public List<Map<String, Object>> listNotificationChannels() {

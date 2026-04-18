@@ -208,9 +208,9 @@ public class AdminModuleController {
     }
 
     @PostMapping("/skills")
-    public ApiResponse<Void> createSkill(@RequestBody SkillUpsertRequest request) {
-        skillService.createSkill(request);
-        return ApiResponse.success();
+    public ApiResponse<Map<String, Object>> createSkill(@RequestBody SkillUpsertRequest request) {
+        long id = skillService.createSkill(request);
+        return ApiResponse.success(Map.of("id", id));
     }
 
     @PutMapping("/skills/{id}")
