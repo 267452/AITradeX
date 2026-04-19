@@ -135,15 +135,16 @@ public class SkillService {
             throw new BusinessException(404, "skill_not_found");
         }
         Map<String, Object> currentVersion = repository.getCurrentSkillVersion(skillId);
+        String normalizedContent = normalizeEditorContent(content);
         String promptTemplate = asString(currentVersion.get("prompt_template"));
         if (promptTemplate.isBlank()) {
-            promptTemplate = defaultString(content);
+            promptTemplate = normalizedContent;
         }
         String scriptContent = asString(currentVersion.get("script_content"));
         String[] variables = parseJsonStringArray(currentVersion.get("variables_json"));
         String[] tools = parseJsonStringArray(currentVersion.get("tools_json"));
         String enabledTools = asString(currentVersion.get("enabled_tools"));
-        String promptContent = defaultString(content);
+        String promptContent = normalizedContent;
 
         repository.createSkillVersion(
                 skillId,
@@ -180,6 +181,7 @@ public class SkillService {
             throw new BusinessException(404, "skill_not_found");
         }
         Map<String, Object> currentVersion = repository.getCurrentSkillVersion(skillId);
+        String normalizedContent = normalizeEditorContent(content);
         String promptTemplate = asString(currentVersion.get("prompt_template"));
         String promptContent = asString(currentVersion.get("prompt_content"));
         if (promptContent.isBlank()) {
@@ -188,7 +190,7 @@ public class SkillService {
         String[] variables = parseJsonStringArray(currentVersion.get("variables_json"));
         String[] tools = parseJsonStringArray(currentVersion.get("tools_json"));
         String enabledTools = asString(currentVersion.get("enabled_tools"));
-        String scriptContent = defaultString(content);
+        String scriptContent = normalizedContent;
 
         repository.createSkillVersion(
                 skillId,
@@ -308,5 +310,18 @@ public class SkillService {
 
     private String asString(Object value) {
         return value == null ? "" : String.valueOf(value);
+    }
+
+    private String normalizeEditorContent(String content) {
+        String raw = defaultString(content);
+        String trimmed = raw.trim();
+        if (trimmed.length() >= 2 && trimmed.startsWith("\"") && trimmed.endsWith("\"")) {
+            try {
+                return objectMapper.readValue(trimmed, String.class);
+            } catch (Exception ignored) {
+                // keep raw payload when it is plain text with surrounding quotes
+            }
+        }
+        return raw;
     }
 }

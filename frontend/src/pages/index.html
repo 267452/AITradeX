@@ -3081,8 +3081,16 @@
         }
       };
       if (options.body !== undefined) {
-        init.headers["Content-Type"] = "application/json";
-        init.body = JSON.stringify(options.body);
+        const contentTypeKey = Object.keys(init.headers).find((key) => key.toLowerCase() === "content-type");
+        const contentType = contentTypeKey ? String(init.headers[contentTypeKey]).toLowerCase() : "";
+        if (!contentType) {
+          init.headers["Content-Type"] = "application/json";
+          init.body = JSON.stringify(options.body);
+        } else if (contentType.includes("application/json")) {
+          init.body = JSON.stringify(options.body);
+        } else {
+          init.body = typeof options.body === "string" ? options.body : JSON.stringify(options.body);
+        }
       }
       const response = await fetch(`${API_BASE}${path}`, init);
       if (response.status === 401) {
@@ -5610,10 +5618,18 @@
             targetId = Number(pick(created, "id"));
           }
           if (targetId && promptContent !== undefined) {
-            await apiRequest(`/admin/skills/${targetId}/prompt`, { method: "PUT", body: promptContent });
+            await apiRequest(`/admin/skills/${targetId}/prompt`, {
+              method: "PUT",
+              headers: { "Content-Type": "text/plain; charset=utf-8" },
+              body: promptContent
+            });
           }
           if (targetId && scriptContent !== undefined) {
-            await apiRequest(`/admin/skills/${targetId}/script`, { method: "PUT", body: scriptContent });
+            await apiRequest(`/admin/skills/${targetId}/script`, {
+              method: "PUT",
+              headers: { "Content-Type": "text/plain; charset=utf-8" },
+              body: scriptContent
+            });
           }
           await loadSkillData(true);
         }
