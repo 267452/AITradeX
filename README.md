@@ -1,51 +1,112 @@
-# AITradeX Java Edition
+# AITradeX
 
-AITradeX 是一个基于 `Multi-Agent + Workflow + RAG` 的 AI 量化交易决策系统，提供从自然语言请求到风控校验、下单执行、通知回传、监控总览的闭环能力。
+> 一个面向交易场景的 AI 决策与执行中台。  
+> 它把自然语言指令、Agent 协作、工作流编排、风控校验、下单执行和通知回传，串成一条可追踪、可治理、可回放的完整链路。
 
 ![AITradeX Dashboard](img.png)
 
-## 项目定位
+## 项目简介
 
-- 面向交易场景的 AI 助手与执行中台
-- 支持模型管理、知识库、MCP 工具、Skill、工作流可视化编排
-- 支持纸面交易与多券商模式统一接入
-- 支持风控规则管理与执行前拦截
+AITradeX 不是一个“只会聊天”的交易助手，而是一套完整的交易控制台。
 
-## 核心特性
+你可以把它理解成三层能力：
 
-- Agent-first 决策链：Intent Router / Market Analyst / Risk Guardian / Execution Agent / Summary Agent
-- 对常见交易指令、账户查询、风控查询支持规则直达，AI 不可用时仍可走确定性链路
-- 风控支持“预检不落状态”，分析模式不会污染真实频次和执行上下文
-- 实盘审批闸门：实盘模式下禁止 `/api/ai/chat-and-execute` 直达执行，必须走 `/api/ai/confirm-execute`（复核人 + 审批口令）
-- 工作流图可视化编排与拓扑持久化
-- Agent 质量评分：内置成功率、风控拒绝率、平均/P95 延迟聚合与趋势序列接口
-- 行情检索支持 A 股、可转债、港股、美股、期货、区块链
-- 交易链路完整：信号 -> 风控 -> 订单 -> 成交 -> 持仓/账户快照
-- 知识文档解析 + 向量化写入（Milvus）
-- 通知渠道（飞书/企业微信 Webhook）
+- 上层是交互层：用户通过自然语言发起分析、查询或交易请求。
+- 中层是决策层：系统用多 Agent、工作流、知识库和工具能力生成结构化决策。
+- 下层是执行层：风控校验通过后，系统进入下单、通知、监控和回放闭环。
 
-## 系统架构
+这意味着它既能“看懂你要做什么”，也能“按规则把事情做完”，同时还能把整个过程记录清楚，方便复盘和审计。
 
-### 技术架构图
+## 适合什么场景
 
-```mermaid
-flowchart TB
-  UI["前端 Dashboard\nfrontend/src/pages"] --> API["Spring Boot API\naitradex-server"]
-  API --> PG[(PostgreSQL)]
-  API --> Redis[(Redis)]
-  API --> Milvus[(Milvus 可选)]
+- 想把自然语言交易指令接入真实执行链路
+- 想把 AI 分析、风控、下单和通知做成统一闭环
+- 想用可视化工作流管理复杂交易流程
+- 想把知识库、MCP 工具、Skill 和模型配置统一纳入后台管理
+- 想让每次交易决策都有 trace、run_id、步骤记录和回放能力
 
-  subgraph API["Spring Boot API"]
-    C[Controller]
-    S[Service]
-    R[Repository JDBC]
-    AI[AI Module\nProvider/Factory/Agent]
-    C --> S --> R
-    S --> AI
-  end
-```
+## 核心能力
 
-### 模块总图
+### 1. Agent-first 决策链
+
+系统当前采用多 Agent 协作模式，而不是单一大 Prompt。
+
+内置角色包括：
+
+- `intent_router`：识别用户意图，决定本次任务该走哪条链路
+- `market_analyst`：补齐行情、账户、上下文等事实信息
+- `risk_guardian`：生成候选信号，并做无副作用风控预检
+- `execution_agent`：在分析模式下输出建议，在执行模式下接入真实交易链
+- `summary_agent`：把结构化结果整理成最终用户可读回复
+
+每个阶段都会落库到 `workflow_run_step`，所以整条决策过程是可回放、可评估、可复盘的。
+
+### 2. 工作流驱动执行
+
+AITradeX 把“对话请求”和“工作流执行”打通：
+
+- 请求进入系统后，会生成 `run_id`
+- 工作流执行过程会写入 `workflow_run`
+- 每一步 Agent 输出、工具调用和中间结果都会记录下来
+- 最终结果可以回传到前端，也可以进入监控视图查看
+
+这让系统从“AI 聊天结果”升级成“可管理的执行过程”。
+
+### 3. 风控先行，不让 AI 直接裸奔下单
+
+系统内置风控规则管理，并且把风控校验放在执行前。
+
+当前已经支持：
+
+- 数量限制
+- 金额限制
+- 做空限制
+- 执行前拦截
+- 分析模式无副作用预检
+
+特别说明：
+
+- `/api/admin/risk/*` 面向后台规则配置
+- `/api/monitor/risk/rules` 面向运行时阈值快照
+
+### 4. 实盘审批闸门
+
+在实盘模式下，系统不会允许 `/api/ai/chat-and-execute` 直接下单。
+
+必须走两段式流程：
+
+1. 先用 `/api/ai/chat` 生成建议指令和决策卡片
+2. 再用 `/api/ai/confirm-execute` 进行确认执行
+
+确认执行时支持：
+
+- `co_approver`
+- `approval_passphrase`
+- `approval_note`
+
+这让实盘场景具备基本的人审闸门和审计上下文。
+
+### 5. 可视化运营后台
+
+前端后台已经覆盖以下核心模块：
+
+- 总览中心
+- 运行观察台
+- 编排设计台
+- 接入管理
+- 模型管理
+- 知识管理
+- 对话管理
+- MCP 管理
+- Skill 管理
+- 通知渠道
+- 治理控制台
+
+它不是一个只展示指标的 Dashboard，而是一个可直接操作、可配置、可治理的控制台。
+
+## 一条主链路怎么跑
+
+下面这张图可以帮助快速理解系统：
 
 ```mermaid
 flowchart LR
@@ -75,7 +136,7 @@ N --> O
 C --> O
 ```
 
-### 一次执行时序
+如果你想看一次执行从前端到下单再到通知的完整时序，可以看下面这张图：
 
 ```mermaid
 sequenceDiagram
@@ -107,66 +168,55 @@ AI-->>UI: 可追踪响应
 UI->>MON: 按 run_id/order_id 拉总览
 ```
 
-## 当前实现说明
+## 技术架构
 
-- 工作流模块当前已实现定义管理、节点拓扑编辑与存储。
-- AI 执行入口已改造为多 Agent 编排主链，`FinancialAgentService` 作为薄入口转发给 `TradingDecisionOrchestrator`。
-- 当前 agent 角色为：
-  - `intent_router`：意图识别与任务路由
-  - `market_analyst`：行情、账户、上下文事实收集
-  - `risk_guardian`：生成候选信号并做无副作用风控预检
-  - `execution_agent`：分析模式输出建议，执行模式接入真实交易链
-  - `summary_agent`：把结构化结果汇总成用户可读回复
-- 每个 agent 阶段都会落到 `workflow_run_step`，可用于回放、评估和后续 A/B。
-- 知识文档 `trigger_parse=true` 时会尝试写入 Milvus；未启用解析时不依赖 Milvus。
-- 风控存在两套视角：
-  - `/api/admin/risk/*`：规则配置管理（`risk_rule` 表）
-  - `/api/monitor/risk/rules`：运行时阈值快照（来自 `app.*` 配置）
+```mermaid
+flowchart TB
+  UI["前端 Dashboard\nfrontend/src/pages"] --> API["Spring Boot API\naitradex-server"]
+  API --> PG[(PostgreSQL)]
+  API --> Redis[(Redis)]
+  API --> Milvus[(Milvus 可选)]
 
-## Agent-First 改造方向
-
-当前版本已经把系统主链从“单一大 prompt”切到了“多角色协作 + 结构化决策卡片”。如果继续往真正的 agent 决策交易系统演进，最值得优先补的点是：
-
-- 组合级 agent memory：把账户持仓、近 N 次决策、失败原因、滑点表现沉淀成长期记忆，而不是只看单次请求。
-- Human approval gate：已落地基础审批闸门（复核人 + 审批口令）；下一步可升级为“审批人权限分级 + 超时/撤销 + 双签审计”。
-- Research agent 扩展：把新闻、公告、财报、宏观事件接入统一 research agent，而不只依赖价格和 K 线。
-- Portfolio construction agent：从“单笔信号是否可下”升级为“当前组合下最合适的仓位与调仓路径”。
-- Post-trade review agent：对每次执行做复盘，评估触发理由、风控质量、成交偏差、PnL 归因。
-- Model routing / ensemble：不同 agent 使用不同模型与温度，例如路由 agent 偏确定性，summary agent 偏表达，review agent 偏严格约束。
-
-## 功能模块（与前端侧边栏对应）
-
-- 总览中心：系统状态、订单与资产摘要
-- 业务流程：工作流、交易管理
-- AI 核心：模型管理、对话管理
-- 知识与工具：知识库、MCP、Skill
-- 系统管理：通知渠道、风控规则
+  subgraph API["Spring Boot API"]
+    C[Controller]
+    S[Service]
+    R[Repository JDBC]
+    AI[AI Module\nProvider/Factory/Agent]
+    C --> S --> R
+    S --> AI
+  end
+```
 
 ## 快速开始
 
-### 前置要求
+### 环境要求
 
 - JDK 17+
 - Maven 3.8+
 - Docker + Docker Compose
-- 可选：Milvus（仅在文档解析入库时需要）
+- 可选：Milvus（只有在文档解析并向量化入库时才需要）
 
-### 方式一：Docker Compose 一键启动
+### 方案一：Docker Compose 一键启动
+
+这是最省心的启动方式。
 
 ```bash
 cp .env.example .env
 docker compose up --build -d
 ```
 
-访问地址：`http://localhost:8000/`
+启动后访问：
 
-若构建时遇到 Docker Hub 拉取超时（`failed to fetch anonymous token`），可先使用“方式二”本地运行 API，再重试 Compose。
+```text
+http://localhost:8000/
+```
 
-### 方式二：本地运行 API（依赖 Docker 数据库）
+如果你在构建时遇到 Docker Hub 拉取超时，例如 `failed to fetch anonymous token`，建议先改用“方案二”本地运行 API。
+
+### 方案二：本地运行 API，数据库走 Docker
 
 ```bash
 cp .env.example .env
-
 docker compose up -d postgres redis
 
 cd aitradex-server
@@ -180,76 +230,145 @@ java -jar target/aitradex-java-1.0.0.jar
 curl http://localhost:8000/api/system/health
 ```
 
-### 执行链路校验脚本
+## 推荐使用顺序
 
-新增脚本：`scripts/verify_execution_chain.sh`
+第一次接触项目时，建议按下面顺序体验：
 
-用途：
-- 自动登录（默认 `admin/admin123`，也可传 `JWT_TOKEN`）
+1. 先启动系统，打开控制台确认页面能正常加载
+2. 在“模型管理”里配置模型供应商和 API Key
+3. 在“接入管理”里确认当前交易模式和可用账户
+4. 在“治理控制台”里检查风控规则是否启用
+5. 在“编排设计台”里确认已有工作流或新建一个主路径流程
+6. 最后在首页交易指挥台发起 AI 分析或执行
+
+这样更容易把系统理解成一条链，而不是一堆功能菜单。
+
+## 执行链路校验
+
+项目自带一份校验脚本：
+
+```text
+scripts/verify_execution_chain.sh
+```
+
+它会做这些事：
+
+- 自动登录（默认 `admin/admin123`，也可以传 `JWT_TOKEN`）
 - 调用 `/api/ai/chat-and-execute`
-- 按 `run_id` 校验 `workflow_run`、`workflow_run_step`、`strategy_signal`、`trade_order`、`risk_check_log`
+- 根据 `run_id` 检查 `workflow_run`
+- 检查 `workflow_run_step`
+- 检查 `strategy_signal`
+- 检查 `trade_order`
+- 检查 `risk_check_log`
 
-注意：
-- 当前版本在实盘模式下会拦截 `/api/ai/chat-and-execute`，返回 `approval_required=true`（预期行为）。
-- 若要继续使用脚本做“自动执行链路校验”，请先切到 `paper` 模式；或改用 `/api/ai/chat` + `/api/ai/confirm-execute` 两阶段校验。
-
-示例：
+基础用法：
 
 ```bash
-# 基础校验（run/step 必须存在）
 scripts/verify_execution_chain.sh
+```
 
-# 严格校验（要求 risk/signal/order 都有落库）
+严格校验：
+
+```bash
 STRICT_TRADE=1 scripts/verify_execution_chain.sh
+```
 
-# 指定消息与环境
+指定消息和环境：
+
+```bash
 CHAT_MESSAGE="请执行交易命令：买入 000001 100" \
 API_BASE_URL="http://localhost:8000" \
 scripts/verify_execution_chain.sh
 ```
 
-### 实盘审批链路快速验证
+注意：
+
+- 当前版本在实盘模式下，会拦截 `/api/ai/chat-and-execute`
+- 如果你要验证“自动执行链路”，请先切到 `paper` 模式
+- 如果你要验证实盘链路，请使用 `/api/ai/chat` + `/api/ai/confirm-execute`
+
+## 实盘审批链路验证
+
+下面是一套最直接的验证方式。
+
+### 第一步：登录拿 token
 
 ```bash
-# 1) 登录拿 token
 TOKEN=$(curl -sS -X POST "http://localhost:8000/api/auth/login" \
   -H "Content-Type: application/json" \
   -d '{"username":"admin","password":"admin123"}' | jq -r '.data.access_token')
+```
 
-# 2) 直接执行会被拦截（预期：approval_required=true）
+### 第二步：直接执行会被拦截
+
+预期结果是返回 `approval_required=true`。
+
+```bash
 curl -sS -X POST "http://localhost:8000/api/ai/chat-and-execute" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"message":"买入 600519 100 股","conversation_id":1,"workflow_id":1}'
+```
 
-# 3) 走确认执行接口（注意字段是 command，不是 message）
+### 第三步：通过确认执行接口放行
+
+注意这里传的是 `command`，不是 `message`。
+
+```bash
 curl -sS -X POST "http://localhost:8000/api/ai/confirm-execute" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"command":"买入 600519 100 股","conversation_id":1,"workflow_id":1,"co_approver":"ops-user","approval_passphrase":"your-passphrase","approval_note":"manual approval"}'
 ```
 
-说明：
-- 若未配置 `APP_EXECUTION_APPROVAL_PASSPHRASE`，第 3 步会返回“审批口令未配置”（预期行为）。
-- 在生产环境建议强制配置审批口令，并结合审计日志保留复核轨迹。
+补充说明：
 
-## 配置说明
+- 如果没有配置 `APP_EXECUTION_APPROVAL_PASSPHRASE`，第三步返回“审批口令未配置”是正常行为
+- 生产环境建议强制配置审批口令，并保留完整审计记录
 
-主要环境变量（见 `.env.example` 与 `application.yml`）：
+## 当前实现状态
+
+当前版本已经具备一条完整的交易主链，重点包括：
+
+- 多 Agent 决策编排已经接入真实执行入口
+- `FinancialAgentService` 已作为薄入口转发到 `TradingDecisionOrchestrator`
+- 工作流定义、节点编辑和拓扑存储已经落地
+- Agent 质量评分接口已提供成功率、风控拒绝率、平均延迟和 P95 延迟
+- 知识文档在 `trigger_parse=true` 时可以写入 Milvus
+- 通知渠道已支持飞书、企业微信 Webhook
+
+换句话说，现在的项目已经不是 Demo，而是一套可运行、可管理、可持续扩展的基础平台。
+
+## 下一阶段最值得做的事
+
+如果继续往“真正的 Agent 化交易系统”演进，优先级最高的方向建议是：
+
+- 组合级记忆：不仅看本次请求，也看当前持仓、近几次决策、失败原因和滑点表现
+- 更完整的人审链路：支持权限分级、超时、撤销和双签审计
+- Research Agent：接入新闻、公告、财报和宏观事件
+- Portfolio Agent：从单笔交易判断升级为组合级仓位管理
+- Post-trade Review Agent：对每次执行做复盘和归因
+- Model Routing：不同 Agent 使用不同模型和参数
+
+## 关键配置
+
+主要环境变量见 `.env.example` 和 `aitradex-server/src/main/resources/application.yml`。
+
+下面是最常用的一组：
 
 | 变量 | 默认值 | 说明 |
 |---|---|---|
 | `APP_HOST` | `0.0.0.0` | 服务监听地址 |
 | `APP_PORT` | `8000` | 服务端口 |
-| `JDBC_DATABASE_URL` | `jdbc:postgresql://localhost:5432/aibuy` | PostgreSQL JDBC 地址 |
-| `POSTGRES_USER` | `aibuy` | 数据库用户 |
+| `JDBC_DATABASE_URL` | `jdbc:postgresql://localhost:5432/aibuy` | PostgreSQL 地址 |
+| `POSTGRES_USER` | `aibuy` | 数据库用户名 |
 | `POSTGRES_PASSWORD` | `aibuy` | 数据库密码 |
-| `REDIS_URL` | `redis://localhost:6379/0` | Redis 连接地址 |
-| `BROKER_MODE` | `paper` | 默认券商模式 |
-| `RISK_MAX_QTY` | `100000` | 风控：最大数量 |
-| `RISK_MAX_NOTIONAL` | `2000000` | 风控：最大金额 |
-| `RISK_ALLOW_SHORT` | `false` | 风控：是否允许做空 |
-| `APP_EXECUTION_APPROVAL_PASSPHRASE` | 空 | 实盘确认执行审批口令（建议在生产环境强制配置） |
+| `REDIS_URL` | `redis://localhost:6379/0` | Redis 地址 |
+| `BROKER_MODE` | `paper` | 默认交易模式 |
+| `RISK_MAX_QTY` | `100000` | 风控最大数量 |
+| `RISK_MAX_NOTIONAL` | `2000000` | 风控最大金额 |
+| `RISK_ALLOW_SHORT` | `false` | 是否允许做空 |
+| `APP_EXECUTION_APPROVAL_PASSPHRASE` | 空 | 实盘审批口令 |
 | `OPENAI_API_KEY` | 空 | OpenAI API Key |
 | `OPENAI_BASE_URL` | 空 | OpenAI Base URL |
 | `MINIMAX_API_KEY` | 空 | MiniMax API Key |
@@ -263,23 +382,26 @@ curl -sS -X POST "http://localhost:8000/api/ai/confirm-execute" \
 AITradeX/
 ├── aitradex-server/                # Spring Boot 后端
 │   ├── src/main/java/com/
-│   │   ├── controller/             # API 路由层
-│   │   ├── service/                # 业务逻辑层
-│   │   ├── repository/             # JDBC 数据访问层
-│   │   ├── ai/                     # AI Provider/Factory/Agent
-│   │   ├── domain/                 # DTO / Entity
+│   │   ├── controller/             # API 入口
+│   │   ├── service/                # 核心业务逻辑
+│   │   ├── repository/             # JDBC 数据访问
+│   │   ├── ai/                     # Provider / Factory / Agent / AI Service
+│   │   ├── domain/                 # 请求、响应、实体模型
 │   │   ├── config/                 # 配置与拦截器
-│   │   └── common/                 # 统一响应、异常处理
+│   │   ├── common/                 # 通用响应与异常
+│   │   └── system/                 # 系统管理相关服务
 │   └── src/main/resources/
-│       └── application.yml
-├── frontend/src/pages/             # login/register/dashboard 页面
+│       ├── application.yml
+│       └── logback-spring.xml
+├── frontend/src/pages/             # login / register / dashboard 页面
 ├── infra/postgres/init/            # PostgreSQL 初始化脚本
+├── scripts/                        # 辅助校验脚本
 ├── docker-compose.yml
 ├── .env.example
 └── README.md
 ```
 
-## API 总览（按模块）
+## API 概览
 
 统一前缀：`/api`
 
@@ -293,7 +415,7 @@ AITradeX/
 | `GET` | `/auth/userinfo` | 当前用户信息 |
 | `GET` | `/system/health` | 系统健康检查 |
 
-### 券商与账户
+### 交易接入
 
 | 方法 | 路径 | 说明 |
 |---|---|---|
@@ -310,13 +432,20 @@ AITradeX/
 
 | 方法 | 路径 | 说明 |
 |---|---|---|
-| `GET` | `/market/quote/search` | 标的检索（需 `q`、`market`） |
+| `GET` | `/market/quote/search` | 标的检索，需要 `q` 和 `market` |
 | `GET` | `/market/quote/{symbol}` | 单标的行情 |
 | `GET` | `/market/kline/{symbol}` | K 线数据 |
 | `POST` | `/market/bars/import-csv` | 导入 CSV 行情 |
 | `POST` | `/market/bars/simulate` | 生成模拟行情 |
 
-`market` 支持值：`cn_stock`、`cn_convertible`、`crypto`、`futures`、`hk_stock`、`us_stock`
+支持的 `market`：
+
+- `cn_stock`
+- `cn_convertible`
+- `crypto`
+- `futures`
+- `hk_stock`
+- `us_stock`
 
 ### 交易与回测
 
@@ -324,83 +453,71 @@ AITradeX/
 |---|---|---|
 | `POST` | `/trade/signals` | 直接提交交易信号 |
 | `GET` | `/trade/orders/{orderId}` | 查询订单详情 |
-| `POST` | `/trade/trade/command` | 自然语言交易指令解析/执行 |
+| `POST` | `/trade/trade/command` | 自然语言交易指令解析或执行 |
 | `POST` | `/trade/strategy/run` | 执行策略并尝试下单 |
 | `POST` | `/trade/backtest/sma` | SMA 回测 |
 | `GET` | `/trade/backtest/reports` | 回测报告列表 |
 
-### 监控
+### AI
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| `GET` | `/ai/models` | 供应商和模型目录 |
+| `GET` | `/ai/config` | 当前模型配置 |
+| `GET` | `/ai/saved-configs` | 已保存配置 |
+| `POST` | `/ai/config` | 保存模型配置 |
+| `DELETE` | `/ai/config` | 清空当前配置 |
+| `POST` | `/ai/test` | 连通性测试 |
+| `POST` | `/ai/switch-model` | 切换模型 |
+| `POST` | `/ai/chat` | AI 分析，不执行 |
+| `POST` | `/ai/simple-chat` | 简单聊天 |
+| `POST` | `/ai/chat-and-execute` | AI 分析并执行 |
+| `POST` | `/ai/confirm-execute` | 审批后确认执行 |
+
+### 监控与回放
 
 | 方法 | 路径 | 说明 |
 |---|---|---|
 | `GET` | `/monitor/summary` | 监控摘要 |
 | `GET` | `/monitor/orders` | 订单分页 |
 | `GET` | `/monitor/risk/rules` | 运行时风控阈值快照 |
-| `GET` | `/monitor/workflow-runs` | 工作流运行记录（支持 runId/workflowRunId/status/startedFrom/startedTo 过滤） |
-| `GET` | `/monitor/workflow-runs/{runId}` | 指定 run_id 的回放详情（含步骤输入输出） |
-| `GET` | `/monitor/workflow-quality` | Agent 质量评分聚合与趋势（成功率/拒绝率/延迟） |
+| `GET` | `/monitor/workflow-runs` | 工作流运行记录 |
+| `GET` | `/monitor/workflow-runs/{runId}` | 指定 `run_id` 的回放详情 |
+| `GET` | `/monitor/workflow-quality` | Agent 质量评分与趋势 |
 
-### AI
-
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| `GET` | `/ai/models` | 供应商/模型目录 |
-| `GET` | `/ai/config` | 当前配置 |
-| `GET` | `/ai/saved-configs` | 已保存配置 |
-| `POST` | `/ai/config` | 保存模型配置 |
-| `DELETE` | `/ai/config` | 清空当前配置 |
-| `POST` | `/ai/test` | 连通性测试 |
-| `POST` | `/ai/switch-model` | 切换模型 |
-| `POST` | `/ai/chat` | AI 分析（不执行） |
-| `POST` | `/ai/simple-chat` | 简单聊天 |
-| `POST` | `/ai/chat-and-execute` | AI 分析并执行（实盘模式下会被审批闸门拦截） |
-| `POST` | `/ai/confirm-execute` | 执行确认（支持 `co_approver`、`approval_passphrase`、`approval_note`） |
-
-### 实盘审批执行流程
-
-1. 调用 `/api/ai/chat` 生成建议指令与决策卡片（不落真实执行）。
-2. 运营/交易员填写复核人和审批口令，调用 `/api/ai/confirm-execute`。
-3. 服务端验证通过后才进入执行链，并把审批上下文（复核人、时间、签名）回写到执行结果与回放记录。
-
-### 管理后台（知识、对话、MCP、工作流、Skill、通知）
+### 管理后台
 
 | 方法 | 路径 | 说明 |
 |---|---|---|
 | `GET` | `/admin/knowledge/stats` | 知识统计 |
-| `GET/POST` | `/admin/knowledge/bases` | 知识库列表/创建 |
-| `PUT/DELETE` | `/admin/knowledge/bases/{id}` | 知识库更新/删除 |
-| `GET/POST` | `/admin/knowledge/documents` | 文档列表/创建 |
-| `GET/POST` | `/admin/conversations` | 对话列表/创建 |
-| `PUT/DELETE` | `/admin/conversations/{id}` | 对话更新/删除 |
+| `GET/POST` | `/admin/knowledge/bases` | 知识库列表与创建 |
+| `PUT/DELETE` | `/admin/knowledge/bases/{id}` | 知识库更新与删除 |
+| `GET/POST` | `/admin/knowledge/documents` | 文档列表与创建 |
+| `GET/POST` | `/admin/conversations` | 对话列表与创建 |
+| `PUT/DELETE` | `/admin/conversations/{id}` | 对话更新与删除 |
 | `GET` | `/admin/conversations/insights` | 对话洞察 |
-| `GET/POST` | `/admin/mcp/tools` | MCP 工具列表/创建 |
-| `PUT/DELETE` | `/admin/mcp/tools/{id}` | MCP 工具更新/删除 |
-| `GET/POST` | `/admin/mcp/markets` | MCP 市场列表/创建 |
-| `PUT/DELETE` | `/admin/mcp/markets/{id}` | MCP 市场更新/删除 |
-| `GET/POST` | `/admin/workflows` | 工作流列表/创建 |
-| `PUT/DELETE` | `/admin/workflows/{id}` | 工作流更新/删除 |
+| `GET/POST` | `/admin/mcp/tools` | MCP 工具列表与创建 |
+| `PUT/DELETE` | `/admin/mcp/tools/{id}` | MCP 工具更新与删除 |
+| `GET/POST` | `/admin/mcp/markets` | MCP 市场列表与创建 |
+| `PUT/DELETE` | `/admin/mcp/markets/{id}` | MCP 市场更新与删除 |
+| `GET/POST` | `/admin/workflows` | 工作流列表与创建 |
+| `PUT/DELETE` | `/admin/workflows/{id}` | 工作流更新与删除 |
 | `GET` | `/admin/workflows/nodes` | 工作流节点列表 |
-| `GET/PUT` | `/admin/workflows/{id}/graph` | 工作流拓扑读取/保存 |
-| `GET/POST` | `/admin/skills` | Skill 列表/创建 |
-| `GET/PUT/DELETE` | `/admin/skills/{id}` | Skill 详情/更新/删除 |
+| `GET/PUT` | `/admin/workflows/{id}/graph` | 工作流拓扑读取与保存 |
+| `GET/POST` | `/admin/skills` | Skill 列表与创建 |
+| `GET/PUT/DELETE` | `/admin/skills/{id}` | Skill 详情、更新、删除 |
 | `GET` | `/admin/skills/{id}/detail` | Skill 聚合详情 |
 | `GET/PUT` | `/admin/skills/{id}/prompt` | Skill Prompt 读写 |
 | `GET/PUT` | `/admin/skills/{id}/script` | Skill Script 读写 |
-| `GET/POST` | `/admin/notification-channels` | 通知渠道列表/创建 |
-| `GET/PUT/DELETE` | `/admin/notification-channels/{id}` | 通知渠道详情/更新/删除 |
+| `GET/POST` | `/admin/notification-channels` | 通知渠道列表与创建 |
+| `GET/PUT/DELETE` | `/admin/notification-channels/{id}` | 通知渠道详情、更新、删除 |
+| `GET/POST` | `/admin/risk/rules` | 风控规则列表与创建 |
+| `GET/PUT/DELETE` | `/admin/risk/rules/{id}` | 风控规则详情、更新、删除 |
+| `PUT` | `/admin/risk/rules/{id}/toggle?enabled=true|false` | 风控规则启停 |
 
-### 风控规则管理
+## 核心数据模型
 
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| `GET` | `/admin/risk/rules` | 风控规则列表 |
-| `GET` | `/admin/risk/rules/{id}` | 风控规则详情 |
-| `POST` | `/admin/risk/rules` | 创建风控规则 |
-| `PUT` | `/admin/risk/rules/{id}` | 更新风控规则 |
-| `PUT` | `/admin/risk/rules/{id}/toggle?enabled=true|false` | 启停规则 |
-| `DELETE` | `/admin/risk/rules/{id}` | 删除规则 |
-
-## 数据模型（核心表）
+按业务域划分，当前最重要的表包括：
 
 - 交易域：`strategy_signal`、`trade_order`、`trade_fill`、`position_snapshot`、`account_snapshot`
 - 风控域：`risk_rule`、`risk_check_log`
@@ -416,25 +533,29 @@ AITradeX/
 ### 常用命令
 
 ```bash
-# 编译
 cd aitradex-server
+
+# 编译
 mvn clean package -DskipTests
 
 # 本地运行
 java -jar target/aitradex-java-1.0.0.jar
 
 # 查看日志
-tail -f aitradex-server/logs/aitradex.log
-tail -f aitradex-server/logs/aitradex-error.log
+tail -f logs/aitradex.log
+tail -f logs/aitradex-error.log
 ```
 
-### 典型检查点
+### 常见问题
 
-- 无法登录：检查 `JWT_SECRET`、数据库用户表初始化与浏览器 token
-- 行情检索失败：确认 `market` 参数与标的代码格式
-- AI 无响应：确认模型配置与 API Key
-- 文档解析失败：`trigger_parse=true` 时确认 Milvus 可用
-- 通知未发送：确认渠道 `enabled=true` 且 webhook 配置有效
+| 问题 | 优先检查 |
+|---|---|
+| 无法登录 | `JWT_SECRET`、用户表初始化、浏览器 token |
+| 行情检索失败 | `market` 参数、标的代码格式 |
+| AI 无响应 | 模型配置、API Key、Base URL |
+| 文档解析失败 | `trigger_parse=true` 时 Milvus 是否可用 |
+| 通知未发送 | 渠道是否 `enabled=true`，Webhook 是否有效 |
+| 执行被拦截 | 当前是否为实盘模式，是否进入审批链路 |
 
 ## 技术栈
 
@@ -446,7 +567,7 @@ tail -f aitradex-server/logs/aitradex-error.log
 | 缓存 | Redis 7 |
 | 向量库 | Milvus 2.x（可选） |
 | AI | LangChain4j |
-| 前端 | HTML/CSS/Vanilla JS |
+| 前端 | HTML / CSS / Vanilla JS |
 | 部署 | Docker Compose |
 
 ## License
