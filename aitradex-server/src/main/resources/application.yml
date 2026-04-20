@@ -49,6 +49,7 @@ app:
   knowledge-embedding-dim: ${KNOWLEDGE_EMBEDDING_DIM:384}
   knowledge-chunk-size: ${KNOWLEDGE_CHUNK_SIZE:500}
   knowledge-chunk-overlap: ${KNOWLEDGE_CHUNK_OVERLAP:80}
+  execution-approval-passphrase: ${APP_EXECUTION_APPROVAL_PASSPHRASE:}
   ai:
     default-provider: ${AI_DEFAULT_PROVIDER:openai}
     default-model: ${AI_DEFAULT_MODEL:gpt-3.5-turbo}

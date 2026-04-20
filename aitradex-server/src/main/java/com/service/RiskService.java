@@ -35,10 +35,22 @@ public class RiskService {
     }
 
     public RiskCheckResult checkRisk(SignalRequest signal) {
-        return checkRisk(signal, null);
+        return checkRisk(signal, null, true);
     }
 
     public RiskCheckResult checkRisk(SignalRequest signal, ExecutionContext executionContext) {
+        return checkRisk(signal, executionContext, true);
+    }
+
+    public RiskCheckResult previewRisk(SignalRequest signal) {
+        return checkRisk(signal, null, false);
+    }
+
+    public RiskCheckResult previewRisk(SignalRequest signal, ExecutionContext executionContext) {
+        return checkRisk(signal, executionContext, false);
+    }
+
+    public RiskCheckResult checkRisk(SignalRequest signal, ExecutionContext executionContext, boolean mutateRuntimeState) {
         EffectiveRiskConfig riskConfig = resolveRiskConfig();
         logger.info("Performing risk check for signal: strategy={}, symbol={}, side={}", 
                     signal.strategyName(), signal.symbol(), signal.side());
@@ -58,7 +70,7 @@ public class RiskService {
             return priceCheck;
         }
 
-        RiskCheckResult frequencyCheck = checkTradeFrequency(signal, riskConfig);
+        RiskCheckResult frequencyCheck = checkTradeFrequency(signal, riskConfig, mutateRuntimeState);
         if (!frequencyCheck.passed()) {
             return frequencyCheck;
         }
@@ -75,6 +87,21 @@ public class RiskService {
 
         logger.info("All risk checks passed for signal: symbol={}", signal.symbol());
         return new RiskCheckResult(true, "all_risk_checks_passed");
+    }
+
+    public Map<String, Object> getEffectiveRiskConfigSnapshot() {
+        EffectiveRiskConfig config = resolveRiskConfig();
+        Map<String, Object> snapshot = new ConcurrentHashMap<>();
+        snapshot.put("enabled", config.enabled());
+        snapshot.put("max_qty", config.maxQty());
+        snapshot.put("max_notional", config.maxNotional());
+        snapshot.put("allow_short", config.allowShort());
+        snapshot.put("trade_frequency_limit_sec", config.tradeFrequencyLimitSec());
+        snapshot.put("daily_trade_limit", config.dailyTradeLimit());
+        snapshot.put("price_volatility_threshold", config.priceVolatilityThreshold());
+        snapshot.put("max_position_per_symbol", config.maxPositionPerSymbol());
+        snapshot.put("max_strategy_notional", config.maxStrategyNotional());
+        return snapshot;
     }
 
     private EffectiveRiskConfig resolveRiskConfig() {
@@ -177,12 +204,14 @@ public class RiskService {
         return new RiskCheckResult(true, "price_check_passed");
     }
 
-    private RiskCheckResult checkTradeFrequency(SignalRequest signal, EffectiveRiskConfig riskConfig) {
+    private RiskCheckResult checkTradeFrequency(SignalRequest signal, EffectiveRiskConfig riskConfig,
+                                                boolean mutateRuntimeState) {
         String key = signal.symbol() + ":" + signal.strategyName();
         OffsetDateTime lastTradeTime = lastTradeTimeMap.get(key);
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
         if (lastTradeTime != null) {
-            Duration duration = Duration.between(lastTradeTime, OffsetDateTime.now(ZoneOffset.UTC));
+            Duration duration = Duration.between(lastTradeTime, now);
             if (riskConfig.tradeFrequencyLimitSec() > 0
                     && duration.toSeconds() < riskConfig.tradeFrequencyLimitSec()) {
                 logger.warn("Risk check failed: trade frequency too high for {}", key);
@@ -190,15 +219,16 @@ public class RiskService {
             }
         }
 
-        lastTradeTimeMap.put(key, OffsetDateTime.now(ZoneOffset.UTC));
-
         Integer count = tradeCountMap.getOrDefault(key, 0);
         if (riskConfig.dailyTradeLimit() > 0 && count >= riskConfig.dailyTradeLimit()) {
             logger.warn("Risk check failed: daily trade limit reached for {}", key);
             return new RiskCheckResult(false, "daily_trade_limit_reached");
         }
 
-        tradeCountMap.put(key, count + 1);
+        if (mutateRuntimeState) {
+            lastTradeTimeMap.put(key, now);
+            tradeCountMap.put(key, count + 1);
+        }
 
         return new RiskCheckResult(true, "frequency_check_passed");
     }

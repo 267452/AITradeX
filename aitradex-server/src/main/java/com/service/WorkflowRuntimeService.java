@@ -27,6 +27,16 @@ public class WorkflowRuntimeService {
                                        String provider,
                                        String model,
                                        boolean autoExecute) {
+        return startRun(workflowId, conversationId, message, provider, model, autoExecute, Map.of());
+    }
+
+    public WorkflowRunContext startRun(Long workflowId,
+                                       Long conversationId,
+                                       String message,
+                                       String provider,
+                                       String model,
+                                       boolean autoExecute,
+                                       Map<String, Object> requestContext) {
         String runId = "run-" + UUID.randomUUID().toString().replace("-", "");
         Map<String, Object> inputPayload = new LinkedHashMap<>();
         inputPayload.put("message", message);
@@ -36,6 +46,9 @@ public class WorkflowRuntimeService {
         inputPayload.put("conversation_id", conversationId);
         inputPayload.put("workflow_id", workflowId);
         inputPayload.put("started_at", OffsetDateTime.now(ZoneOffset.UTC).toString());
+        if (requestContext != null && !requestContext.isEmpty()) {
+            inputPayload.put("request_context", new LinkedHashMap<>(requestContext));
+        }
 
         long workflowRunId = workflowRuntimeRepository.createWorkflowRun(runId, workflowId, conversationId, inputPayload);
         WorkflowRunContext context = new WorkflowRunContext(workflowRunId, runId, workflowId, conversationId);
@@ -125,6 +138,27 @@ public class WorkflowRuntimeService {
                 ok ? "" : String.valueOf(result.getOrDefault("message", "tool_call_failed")));
     }
 
+    public void recordAgentStep(WorkflowRunContext context,
+                                String role,
+                                String status,
+                                Map<String, Object> inputPayload,
+                                Map<String, Object> outputPayload,
+                                String summary) {
+        if (context == null) {
+            return;
+        }
+        workflowRuntimeRepository.appendWorkflowRunStep(
+                context.workflowRunId(),
+                context.nextStepOrder(),
+                "agent-" + sanitizeNodeId(role),
+                "Agent " + role,
+                "agent",
+                status == null || status.isBlank() ? "completed" : status,
+                inputPayload == null ? Map.of() : inputPayload,
+                outputPayload == null ? Map.of() : outputPayload,
+                summary == null ? "" : summary);
+    }
+
     public void completeRun(WorkflowRunContext context, Map<String, Object> outputPayload) {
         if (context == null || !context.markClosed()) {
             return;
@@ -211,5 +245,12 @@ public class WorkflowRuntimeService {
             closed = true;
             return true;
         }
+    }
+
+    private String sanitizeNodeId(String role) {
+        if (role == null || role.isBlank()) {
+            return "unknown";
+        }
+        return role.trim().toLowerCase().replaceAll("[^a-z0-9_-]+", "-");
     }
 }

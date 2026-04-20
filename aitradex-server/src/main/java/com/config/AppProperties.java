@@ -31,6 +31,7 @@ public class AppProperties {
     private int knowledgeEmbeddingDim = 384;
     private int knowledgeChunkSize = 500;
     private int knowledgeChunkOverlap = 80;
+    private String executionApprovalPassphrase = "";
 
     public String getBrokerMode() {
         return brokerMode;
@@ -238,5 +239,13 @@ public class AppProperties {
 
     public void setKnowledgeChunkOverlap(int knowledgeChunkOverlap) {
         this.knowledgeChunkOverlap = knowledgeChunkOverlap;
+    }
+
+    public String getExecutionApprovalPassphrase() {
+        return executionApprovalPassphrase;
+    }
+
+    public void setExecutionApprovalPassphrase(String executionApprovalPassphrase) {
+        this.executionApprovalPassphrase = executionApprovalPassphrase;
     }
 }

@@ -901,6 +901,402 @@
       color: #a04858;
     }
 
+    .command-confirm-row {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .approval-inline {
+      display: none;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .approval-inline.show {
+      display: inline-flex;
+    }
+
+    .approval-input {
+      border: 1px solid #ccdcea;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #214561;
+      height: 34px;
+      min-width: 126px;
+      max-width: 190px;
+      padding: 0 9px;
+      font-size: 12px;
+      outline: none;
+    }
+
+    .decision-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .decision-card {
+      border: 1px solid #d7e6f2;
+      border-radius: 12px;
+      background: #fbfdff;
+      padding: 12px;
+    }
+
+    .decision-title {
+      margin: 0;
+      color: #153a57;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .decision-subtitle {
+      margin: 4px 0 0;
+      color: #68849e;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .decision-kv {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .decision-item {
+      border: 1px solid #e1ebf4;
+      border-radius: 9px;
+      background: #ffffff;
+      padding: 8px 9px;
+      min-height: 56px;
+    }
+
+    .decision-item-label {
+      color: #708aa2;
+      font-size: 11px;
+      line-height: 1.2;
+    }
+
+    .decision-item-value {
+      margin-top: 3px;
+      color: #1e4664;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .decision-placeholder {
+      border: 1px dashed #c9dbe8;
+      border-radius: 10px;
+      background: #f8fcff;
+      color: #6a839d;
+      font-size: 12px;
+      line-height: 1.55;
+      padding: 11px 12px;
+      margin-top: 10px;
+    }
+
+    .trace-panel {
+      margin-top: 12px;
+      border: 1px solid #d8e7f2;
+      border-radius: 12px;
+      background: #fbfdff;
+      padding: 10px;
+    }
+
+    .quality-panel {
+      margin-top: 12px;
+      border: 1px solid #d8e7f2;
+      border-radius: 12px;
+      background: #fbfdff;
+      padding: 10px;
+    }
+
+    .quality-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .quality-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .quality-actions select {
+      border: 1px solid #ccdeeb;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #1c4968;
+      height: 32px;
+      padding: 0 8px;
+      font-size: 12px;
+      outline: none;
+    }
+
+    .quality-kpi-grid {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .quality-kpi-card {
+      border: 1px solid #dce9f3;
+      border-radius: 10px;
+      background: #ffffff;
+      padding: 8px 9px;
+    }
+
+    .quality-kpi-label {
+      color: #6c879f;
+      font-size: 11px;
+      line-height: 1.3;
+    }
+
+    .quality-kpi-value {
+      margin-top: 2px;
+      color: #1f4866;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .quality-kpi-meta {
+      margin-top: 2px;
+      color: #6f88a0;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .quality-trend-grid {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .quality-trend-item {
+      border: 1px solid #dce9f3;
+      border-radius: 10px;
+      background: #ffffff;
+      padding: 8px 9px;
+    }
+
+    .quality-trend-title {
+      color: #2a506e;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .quality-trend-svg {
+      width: 100%;
+      height: 76px;
+      display: block;
+      margin-top: 4px;
+    }
+
+    .quality-trend-meta {
+      color: #6f88a0;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .trace-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .trace-item {
+      border: 1px solid #deebf5;
+      border-radius: 10px;
+      background: #ffffff;
+      padding: 9px 10px;
+    }
+
+    .trace-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .trace-role {
+      color: #204d6d;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .trace-summary {
+      color: #64829c;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .trace-io {
+      margin-top: 6px;
+      border-top: 1px solid #edf3f8;
+      padding-top: 6px;
+      color: #5f7b94;
+      font-size: 11px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .mono {
+      font-family: "SFMono-Regular", "Menlo", "Monaco", "Consolas", monospace;
+      font-size: 11px;
+    }
+
+    .policy-select-wrap {
+      border: 1px solid #ccdeeb;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #2c4f6f;
+      height: 34px;
+      padding: 0 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .policy-select-wrap select {
+      border: none;
+      background: transparent;
+      color: #1c4968;
+      font-size: 12px;
+      font-weight: 600;
+      outline: none;
+    }
+
+    .run-drawer-overlay {
+      justify-content: flex-end;
+      align-items: stretch;
+      padding: 0;
+      background: rgba(8, 18, 31, 0.48);
+    }
+
+    .run-drawer {
+      width: min(720px, 100%);
+      height: 100vh;
+      border-radius: 0;
+      border-left: 1px solid #d6e4ef;
+      box-shadow: -16px 0 38px rgba(10, 24, 39, 0.26);
+    }
+
+    .run-drawer .modal-body {
+      grid-template-columns: 1fr;
+      gap: 10px;
+      padding: 14px 16px;
+    }
+
+    .run-history-filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .run-history-filter-row input,
+    .run-history-filter-row select {
+      flex: 1 1 140px;
+      min-width: 128px;
+      border: 1px solid #ccdcea;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 12px;
+      color: #214561;
+      background: #ffffff;
+      outline: none;
+    }
+
+    .run-history-filter-row .btn {
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
+    .run-filter-summary {
+      margin-bottom: 4px;
+      color: #67839b;
+      font-size: 11px;
+    }
+
+    .run-history-list {
+      display: grid;
+      gap: 8px;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    .run-history-item {
+      border: 1px solid #dbe9f4;
+      border-radius: 10px;
+      background: #ffffff;
+      padding: 9px 10px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      cursor: pointer;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .run-history-item:hover {
+      border-color: #7eb8d2;
+      box-shadow: 0 8px 20px rgba(20, 74, 104, 0.12);
+    }
+
+    .run-history-item.active {
+      border-color: #32a8ac;
+      box-shadow: 0 10px 22px rgba(21, 118, 135, 0.2);
+      background: #f7fffe;
+    }
+
+    .run-history-item-title {
+      color: #173e5c;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .run-history-item-meta {
+      margin-top: 3px;
+      color: #66839d;
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .run-detail-box {
+      border: 1px solid #d9e7f2;
+      border-radius: 12px;
+      background: #fbfdff;
+      padding: 10px;
+    }
+
+    .run-detail-steps {
+      margin-top: 8px;
+      display: grid;
+      gap: 7px;
+      max-height: 330px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
     .status-list {
       display: grid;
       gap: 10px;
@@ -1929,6 +2325,18 @@
       .workflow-inspector {
         grid-column: 1 / -1;
       }
+
+      .decision-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .quality-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .quality-trend-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 1180px) {
@@ -2025,6 +2433,23 @@
       }
 
       .quick-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .decision-kv {
+        grid-template-columns: 1fr;
+      }
+
+      .approval-inline {
+        width: 100%;
+      }
+
+      .approval-input {
+        max-width: none;
+        width: 100%;
+      }
+
+      .quality-kpi-grid {
         grid-template-columns: 1fr;
       }
 
@@ -2207,7 +2632,63 @@
                   <button class="btn btn-secondary" id="dryRunBtn">Dry Run</button>
                 </div>
 
+                <div class="command-confirm-row">
+                  <label class="policy-select-wrap">
+                    <span>执行策略</span>
+                    <select id="executionPolicySelect">
+                      <option value="auto">自动执行</option>
+                      <option value="approval">确认后执行</option>
+                    </select>
+                  </label>
+                  <button class="btn btn-secondary" id="confirmExecuteBtn" disabled>确认执行建议指令</button>
+                  <button class="btn btn-secondary" id="openRunHistoryBtn">运行回放</button>
+                  <div class="approval-inline" id="liveApprovalInline">
+                    <input class="approval-input" id="approvalCoApproverInput" type="text" placeholder="复核人（必填）">
+                    <input class="approval-input" id="approvalPassphraseInput" type="password" placeholder="审批口令（必填）">
+                    <input class="approval-input" id="approvalNoteInput" type="text" placeholder="审批备注（可选）">
+                  </div>
+                  <span class="item-meta" id="pendingCommandHint">暂无待确认指令</span>
+                </div>
+
                 <div class="result-box" id="commandResult">还没有执行交易命令。</div>
+
+                <div class="decision-grid">
+                  <section class="decision-card">
+                    <h4 class="decision-title">Agent 决策卡片</h4>
+                    <p class="decision-subtitle">意图、风险、执行状态与建议指令</p>
+                    <div id="decisionCardPanel" class="decision-placeholder">等待执行 AI 分析后展示。</div>
+                  </section>
+                  <section class="decision-card">
+                    <h4 class="decision-title">执行上下文</h4>
+                    <p class="decision-subtitle">run_id、workflow_run_id 与执行模式</p>
+                    <div id="executionContextPanel" class="decision-placeholder">尚未生成执行上下文。</div>
+                  </section>
+                </div>
+
+                <div class="trace-panel">
+                  <h4 class="decision-title">Agent Trace</h4>
+                  <p class="decision-subtitle">intent_router → market_analyst → risk_guardian → execution_agent → summary_agent</p>
+                  <div id="agentTracePanel" class="decision-placeholder">尚未产生 trace 记录。</div>
+                </div>
+
+                <div class="quality-panel">
+                  <div class="quality-head">
+                    <div>
+                      <h4 class="decision-title">Agent 质量评分</h4>
+                      <p class="decision-subtitle">成功率、风控拒绝率与延迟趋势（按运行回放汇总）</p>
+                    </div>
+                    <div class="quality-actions">
+                      <select id="qualityWindowSelect">
+                        <option value="6">近 6 小时</option>
+                        <option value="24" selected>近 24 小时</option>
+                        <option value="72">近 72 小时</option>
+                      </select>
+                      <button class="btn btn-secondary small" id="qualityRefreshBtn">刷新质量</button>
+                    </div>
+                  </div>
+                  <div class="quality-kpi-grid" id="agentQualityKpiGrid"></div>
+                  <div class="quality-trend-grid" id="agentQualityTrendGrid"></div>
+                </div>
               </div>
             </article>
 
@@ -2723,6 +3204,46 @@
 
   <div class="toast-wrap" id="toastWrap"></div>
 
+  <div class="modal-overlay run-drawer-overlay" id="runHistoryOverlay">
+    <div class="modal-card run-drawer">
+      <div class="modal-head">
+        <div>
+          <h3>运行回放</h3>
+          <p>按 run_id 查看 agent 决策链和每一步输入输出</p>
+        </div>
+        <button class="modal-close" id="runHistoryCloseBtn" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="search-row" style="margin-bottom:0;">
+          <input id="runHistoryInput" type="text" placeholder="输入 run_id，或从下方最近运行中选择">
+          <button class="btn btn-secondary small" id="runHistorySearchBtn">查询</button>
+          <button class="btn btn-secondary small" id="runHistoryReloadBtn">刷新最近</button>
+        </div>
+        <div class="run-history-filter-row">
+          <input id="runHistoryRunIdFilterInput" type="text" placeholder="筛选 run_id（模糊匹配）">
+          <input id="runHistoryWorkflowRunIdInput" type="number" min="1" step="1" placeholder="workflow_run_id">
+          <select id="runHistoryStatusSelect">
+            <option value="">全部状态</option>
+            <option value="running">running</option>
+            <option value="completed">completed</option>
+            <option value="failed">failed</option>
+            <option value="canceled">canceled</option>
+          </select>
+          <input id="runHistoryStartedFromInput" type="datetime-local" step="1" placeholder="开始时间从">
+          <input id="runHistoryStartedToInput" type="datetime-local" step="1" placeholder="开始时间到">
+          <button class="btn btn-secondary small" id="runHistoryFilterBtn">应用筛选</button>
+          <button class="btn btn-secondary small" id="runHistoryClearFilterBtn">清空筛选</button>
+          <button class="btn btn-secondary small" id="runHistoryExportBtn">导出 JSON</button>
+        </div>
+        <div class="run-filter-summary" id="runHistoryFilterSummary">最近 20 条记录</div>
+        <div class="run-history-list" id="runHistoryRecentList"></div>
+        <div class="run-detail-box" id="runHistoryDetailBox">
+          <div class="decision-placeholder">请选择一次运行记录查看详情。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const API_BASE = "/api";
 
@@ -2847,6 +3368,34 @@
       workflows: [],
       workflowNodes: [],
       riskRules: [],
+      latestAgentDecision: null,
+      pendingCommandSuggestion: "",
+      lastExecutionContext: null,
+      executionPolicyMode: "auto",
+      runHistory: {
+        recentRuns: [],
+        selectedRunId: "",
+        selectedRunDetail: null,
+        limit: 20,
+        filters: {
+          runId: "",
+          workflowRunId: "",
+          status: "",
+          startedFrom: "",
+          startedTo: ""
+        }
+      },
+      agentQuality: {
+        windowHours: 24,
+        bucketMinutes: 60,
+        runCount: 0,
+        successRate: 0,
+        riskRejectRate: 0,
+        avgLatencyMs: 0,
+        p95LatencyMs: 0,
+        trend: [],
+        generatedAt: null
+      },
       bigscreen: {
         autoRefresh: true,
         refreshIntervalMs: 15000,
@@ -3287,7 +3836,8 @@
         apiRequest("/admin/knowledge/bases"),
         apiRequest("/admin/conversations"),
         apiRequest("/admin/mcp/tools"),
-        apiRequest("/admin/workflows")
+        apiRequest("/admin/workflows"),
+        apiRequest(buildWorkflowQualityQuery())
       ]);
 
       if (requests[0].status === "fulfilled") state.monitorSummary = requests[0].value;
@@ -3298,6 +3848,7 @@
       if (requests[5].status === "fulfilled") state.conversations = requests[5].value || [];
       if (requests[6].status === "fulfilled") state.mcpTools = requests[6].value || [];
       if (requests[7].status === "fulfilled") state.workflows = requests[7].value || [];
+      if (requests[8].status === "fulfilled") applyAgentQualityData(requests[8].value || {});
 
       if (!silent) {
         requests.forEach((result) => {
@@ -3307,6 +3858,7 @@
         });
       }
 
+      enforceLiveApprovalPolicy(true);
       renderOverview();
     }
 
@@ -3366,6 +3918,7 @@
           }
         });
       }
+      enforceLiveApprovalPolicy(true);
       renderBrokerPage();
     }
 
@@ -3634,6 +4187,7 @@
       if (!pick(summary, "orders_total", "ordersTotal") && !state.monitorSummary) {
         $("recentOrdersList").innerHTML = "<div class=\"empty\">暂无订单数据</div>";
       }
+      renderAgentQualityPanel();
     }
 
     function renderBigscreenKpi({ label, value, meta, tone }) {
@@ -5010,6 +5564,790 @@
       box.textContent = text;
     }
 
+    function compactJson(value, maxLength = 260) {
+      if (value === null || value === undefined || value === "") {
+        return "--";
+      }
+      const text = typeof value === "string" ? value : JSON.stringify(value);
+      if (text.length <= maxLength) {
+        return text;
+      }
+      return `${text.slice(0, maxLength)}...`;
+    }
+
+    function normalizeDecisionTone(value) {
+      const lowered = String(value || "").toLowerCase();
+      if (["executed", "completed", "passed", "ready", "ready_to_execute", "true"].includes(lowered)) {
+        return "success";
+      }
+      if (["blocked", "failed", "reject", "rejected", "false", "error"].includes(lowered)) {
+        return "danger";
+      }
+      if (["analysis_only", "observe", "pending", "warning"].includes(lowered)) {
+        return "warning";
+      }
+      return "info";
+    }
+
+    function updatePendingCommand(command, executed = false) {
+      const suggestion = String(command || "").trim();
+      const hint = $("pendingCommandHint");
+      const confirmBtn = $("confirmExecuteBtn");
+      if (!hint || !confirmBtn) {
+        return;
+      }
+
+      if (executed) {
+        state.pendingCommandSuggestion = "";
+        confirmBtn.disabled = true;
+        hint.textContent = "当前结果已执行完成，无需确认。";
+        return;
+      }
+
+      if (suggestion) {
+        state.pendingCommandSuggestion = suggestion;
+        confirmBtn.disabled = false;
+        hint.textContent = `待确认指令：${suggestion}`;
+      } else {
+        state.pendingCommandSuggestion = "";
+        confirmBtn.disabled = true;
+        hint.textContent = "暂无待确认指令";
+      }
+    }
+
+    function isLiveBrokerMode() {
+      const broker = String(pick(state.brokerMode, "broker") || "").toLowerCase();
+      if (!broker) {
+        return false;
+      }
+      return !["paper", "sim", "mock"].includes(broker);
+    }
+
+    function loadExecutionPolicyMode() {
+      const saved = String(localStorage.getItem("execution_policy_mode") || "").toLowerCase();
+      if (saved === "approval" || saved === "auto") {
+        state.executionPolicyMode = saved;
+        return;
+      }
+      state.executionPolicyMode = isLiveBrokerMode() ? "approval" : "auto";
+    }
+
+    function syncExecutionPolicyUI() {
+      const select = $("executionPolicySelect");
+      const hint = $("pendingCommandHint");
+      if (!select) {
+        return;
+      }
+      const autoOption = select.querySelector("option[value=\"auto\"]");
+      if (autoOption) {
+        autoOption.disabled = isLiveBrokerMode();
+      }
+      select.value = state.executionPolicyMode;
+      if (hint && !state.pendingCommandSuggestion) {
+        if (state.executionPolicyMode === "approval" && isLiveBrokerMode()) {
+          hint.textContent = "实盘审批模式：会先分析，需二次确认后执行";
+        } else {
+          hint.textContent = "暂无待确认指令";
+        }
+      }
+      syncLiveApprovalInputs();
+    }
+
+    function setExecutionPolicyMode(mode) {
+      if (mode !== "approval" && isLiveBrokerMode()) {
+        state.executionPolicyMode = "approval";
+        localStorage.setItem("execution_policy_mode", state.executionPolicyMode);
+        syncExecutionPolicyUI();
+        showToast("实盘模式下必须先确认后执行，已保持审批模式。", "warning");
+        return;
+      }
+      state.executionPolicyMode = mode === "approval" ? "approval" : "auto";
+      localStorage.setItem("execution_policy_mode", state.executionPolicyMode);
+      syncExecutionPolicyUI();
+      showToast(
+        state.executionPolicyMode === "approval"
+          ? "已启用确认后执行模式"
+          : "已切换为自动执行模式",
+        "success");
+    }
+
+    function enforceLiveApprovalPolicy(silent = false) {
+      if (isLiveBrokerMode() && state.executionPolicyMode !== "approval") {
+        state.executionPolicyMode = "approval";
+        localStorage.setItem("execution_policy_mode", "approval");
+        syncExecutionPolicyUI();
+        if (!silent) {
+          showToast("检测到实盘模式，已自动启用确认后执行。", "warning");
+        }
+        return;
+      }
+      syncExecutionPolicyUI();
+    }
+
+    function shouldRequireApproval(execute) {
+      return Boolean(execute) && state.executionPolicyMode === "approval" && isLiveBrokerMode();
+    }
+
+    function getCurrentOperatorName() {
+      const user = getUserInfo() || {};
+      return String(user.username || user.nickName || "").trim();
+    }
+
+    function syncLiveApprovalInputs() {
+      const inline = $("liveApprovalInline");
+      if (!inline) {
+        return;
+      }
+      const liveMode = isLiveBrokerMode();
+      inline.classList.toggle("show", liveMode);
+      if (!liveMode) {
+        if ($("approvalPassphraseInput")) $("approvalPassphraseInput").value = "";
+        if ($("approvalNoteInput")) $("approvalNoteInput").value = "";
+      }
+    }
+
+    function collectApprovalPayload() {
+      const payload = {
+        coApprover: String($("approvalCoApproverInput")?.value || "").trim(),
+        approvalPassphrase: String($("approvalPassphraseInput")?.value || "").trim(),
+        approvalNote: String($("approvalNoteInput")?.value || "").trim()
+      };
+      if (!isLiveBrokerMode()) {
+        return payload;
+      }
+      const operator = getCurrentOperatorName().toLowerCase();
+      if (!payload.coApprover) {
+        showToast("实盘执行需填写复核人", "warning");
+        return null;
+      }
+      if (!payload.approvalPassphrase) {
+        showToast("实盘执行需输入审批口令", "warning");
+        return null;
+      }
+      if (operator && payload.coApprover.toLowerCase() === operator) {
+        showToast("复核人不能与当前登录用户相同", "warning");
+        return null;
+      }
+      return payload;
+    }
+
+    function selectQualityBucketMinutes(windowHours) {
+      if (windowHours <= 6) return 15;
+      if (windowHours <= 24) return 60;
+      return 180;
+    }
+
+    function buildWorkflowQualityQuery() {
+      const hours = Math.max(1, Math.min(24 * 30, Number(state.agentQuality.windowHours) || 24));
+      const bucketMinutes = selectQualityBucketMinutes(hours);
+      state.agentQuality.windowHours = hours;
+      state.agentQuality.bucketMinutes = bucketMinutes;
+      const params = new URLSearchParams();
+      params.set("windowHours", String(hours));
+      params.set("bucketMinutes", String(bucketMinutes));
+      params.set("limit", "120");
+      return `/monitor/workflow-quality?${params.toString()}`;
+    }
+
+    function applyAgentQualityData(data) {
+      const trend = Array.isArray(pick(data, "trend")) ? pick(data, "trend") : [];
+      state.agentQuality.runCount = Number(pick(data, "run_count", "runCount") || 0);
+      state.agentQuality.successRate = Number(pick(data, "success_rate", "successRate") || 0);
+      state.agentQuality.riskRejectRate = Number(pick(data, "risk_reject_rate", "riskRejectRate") || 0);
+      state.agentQuality.avgLatencyMs = Number(pick(data, "avg_latency_ms", "avgLatencyMs") || 0);
+      state.agentQuality.p95LatencyMs = Number(pick(data, "p95_latency_ms", "p95LatencyMs") || 0);
+      state.agentQuality.generatedAt = pick(data, "generated_at", "generatedAt") || null;
+      state.agentQuality.trend = trend;
+    }
+
+    async function loadAgentQualityMetrics(silent = true) {
+      try {
+        const data = await apiRequest(buildWorkflowQualityQuery());
+        applyAgentQualityData(data || {});
+        renderAgentQualityPanel();
+      } catch (error) {
+        if (!silent) {
+          showToast(error.message || "加载 Agent 质量指标失败", "warning");
+        }
+      }
+    }
+
+    function formatMs(value) {
+      const number = Number(value);
+      if (!Number.isFinite(number)) {
+        return "--";
+      }
+      return `${new Intl.NumberFormat("zh-CN", { maximumFractionDigits: 0 }).format(number)} ms`;
+    }
+
+    function buildSparklineSvg(values, color) {
+      const width = 300;
+      const height = 76;
+      const pad = 8;
+      const points = (Array.isArray(values) ? values : [])
+        .map((value) => Number(value))
+        .filter((value) => Number.isFinite(value));
+      if (!points.length) {
+        return `
+          <svg class="quality-trend-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+            <rect x="0" y="0" width="${width}" height="${height}" fill="#f7fbff"></rect>
+            <text x="${width / 2}" y="${height / 2 + 4}" text-anchor="middle" fill="#8da3b7" font-size="11">暂无数据</text>
+          </svg>
+        `;
+      }
+      const min = Math.min(...points);
+      const max = Math.max(...points);
+      const span = Math.max(1, max - min);
+      const usableWidth = width - pad * 2;
+      const usableHeight = height - pad * 2;
+      const polyline = points.map((value, index) => {
+        const ratioX = points.length <= 1 ? 1 : index / (points.length - 1);
+        const ratioY = (value - min) / span;
+        const x = pad + usableWidth * ratioX;
+        const y = height - pad - usableHeight * ratioY;
+        return `${x.toFixed(2)},${y.toFixed(2)}`;
+      }).join(" ");
+      return `
+        <svg class="quality-trend-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+          <rect x="0" y="0" width="${width}" height="${height}" fill="#f7fbff"></rect>
+          <line x1="${pad}" y1="${height - pad}" x2="${width - pad}" y2="${height - pad}" stroke="#dbe7f2" stroke-width="1"></line>
+          <line x1="${pad}" y1="${height / 2}" x2="${width - pad}" y2="${height / 2}" stroke="#e6eff7" stroke-width="1"></line>
+          <polyline points="${polyline}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+        </svg>
+      `;
+    }
+
+    function renderQualityTrendItem(title, values, color, formatter) {
+      const list = (Array.isArray(values) ? values : []).map((value) => Number(value)).filter((value) => Number.isFinite(value));
+      const latest = list.length ? list[list.length - 1] : null;
+      const min = list.length ? Math.min(...list) : null;
+      const max = list.length ? Math.max(...list) : null;
+      const meta = latest === null
+        ? "暂无趋势数据"
+        : `最新 ${formatter(latest)} · 低 ${formatter(min)} · 高 ${formatter(max)}`;
+      return `
+        <article class="quality-trend-item">
+          <div class="quality-trend-title">${escapeHtml(title)}</div>
+          ${buildSparklineSvg(list, color)}
+          <div class="quality-trend-meta">${escapeHtml(meta)}</div>
+        </article>
+      `;
+    }
+
+    function renderAgentQualityPanel() {
+      const kpiGrid = $("agentQualityKpiGrid");
+      const trendGrid = $("agentQualityTrendGrid");
+      const windowSelect = $("qualityWindowSelect");
+      if (!kpiGrid || !trendGrid) {
+        return;
+      }
+      if (windowSelect) {
+        windowSelect.value = String(state.agentQuality.windowHours || 24);
+      }
+
+      const runCount = Number(state.agentQuality.runCount || 0);
+      const successRate = Number(state.agentQuality.successRate || 0);
+      const riskRejectRate = Number(state.agentQuality.riskRejectRate || 0);
+      const avgLatencyMs = Number(state.agentQuality.avgLatencyMs || 0);
+      const p95LatencyMs = Number(state.agentQuality.p95LatencyMs || 0);
+      const generatedAt = state.agentQuality.generatedAt ? formatDateTime(state.agentQuality.generatedAt) : "--";
+
+      kpiGrid.innerHTML = [
+        `
+          <article class="quality-kpi-card">
+            <div class="quality-kpi-label">样本运行数</div>
+            <div class="quality-kpi-value">${escapeHtml(formatNumber(runCount))}</div>
+            <div class="quality-kpi-meta">窗口 ${escapeHtml(String(state.agentQuality.windowHours))} 小时</div>
+          </article>
+        `,
+        `
+          <article class="quality-kpi-card">
+            <div class="quality-kpi-label">成功率</div>
+            <div class="quality-kpi-value">${escapeHtml(formatPercent(successRate, 2))}</div>
+            <div class="quality-kpi-meta">${successRate >= 85 ? "稳定" : successRate >= 65 ? "需关注" : "偏低"}</div>
+          </article>
+        `,
+        `
+          <article class="quality-kpi-card">
+            <div class="quality-kpi-label">风控拒绝率</div>
+            <div class="quality-kpi-value">${escapeHtml(formatPercent(riskRejectRate, 2))}</div>
+            <div class="quality-kpi-meta">${riskRejectRate <= 15 ? "正常" : riskRejectRate <= 30 ? "偏高" : "较高"}</div>
+          </article>
+        `,
+        `
+          <article class="quality-kpi-card">
+            <div class="quality-kpi-label">平均 / P95 延迟</div>
+            <div class="quality-kpi-value">${escapeHtml(formatMs(avgLatencyMs))}</div>
+            <div class="quality-kpi-meta">P95 ${escapeHtml(formatMs(p95LatencyMs))} · ${escapeHtml(generatedAt)}</div>
+          </article>
+        `
+      ].join("");
+
+      const trend = Array.isArray(state.agentQuality.trend) ? state.agentQuality.trend : [];
+      const successSeries = trend.map((item) => Number(pick(item, "success_rate", "successRate") || 0));
+      const rejectSeries = trend.map((item) => Number(pick(item, "risk_reject_rate", "riskRejectRate") || 0));
+      const latencySeries = trend.map((item) => Number(pick(item, "p95_latency_ms", "p95LatencyMs") || 0));
+
+      trendGrid.innerHTML = [
+        renderQualityTrendItem("成功率趋势", successSeries, "#2b9b63", (value) => `${value.toFixed(1)}%`),
+        renderQualityTrendItem("风控拒绝率趋势", rejectSeries, "#d27a2e", (value) => `${value.toFixed(1)}%`),
+        renderQualityTrendItem("P95 延迟趋势", latencySeries, "#2b78c2", (value) => formatMs(value))
+      ].join("");
+    }
+
+    function toIsoFromLocalDateTime(value) {
+      const safeValue = String(value || "").trim();
+      if (!safeValue) {
+        return "";
+      }
+      const date = new Date(safeValue);
+      if (Number.isNaN(date.getTime())) {
+        return "";
+      }
+      return date.toISOString();
+    }
+
+    function readRunHistoryFiltersFromUI() {
+      const nextFilters = {
+        runId: String($("runHistoryRunIdFilterInput")?.value || "").trim(),
+        workflowRunId: String($("runHistoryWorkflowRunIdInput")?.value || "").trim(),
+        status: String($("runHistoryStatusSelect")?.value || "").trim(),
+        startedFrom: String($("runHistoryStartedFromInput")?.value || "").trim(),
+        startedTo: String($("runHistoryStartedToInput")?.value || "").trim()
+      };
+      state.runHistory.filters = nextFilters;
+      return nextFilters;
+    }
+
+    function syncRunHistoryFilterUI() {
+      const filters = state.runHistory.filters || {};
+      const runIdInput = $("runHistoryRunIdFilterInput");
+      const workflowRunIdInput = $("runHistoryWorkflowRunIdInput");
+      const statusSelect = $("runHistoryStatusSelect");
+      const startedFromInput = $("runHistoryStartedFromInput");
+      const startedToInput = $("runHistoryStartedToInput");
+      if (runIdInput) runIdInput.value = String(filters.runId || "");
+      if (workflowRunIdInput) workflowRunIdInput.value = String(filters.workflowRunId || "");
+      if (statusSelect) statusSelect.value = String(filters.status || "");
+      if (startedFromInput) startedFromInput.value = String(filters.startedFrom || "");
+      if (startedToInput) startedToInput.value = String(filters.startedTo || "");
+    }
+
+    function validateRunHistoryFilters(filters, silent = false) {
+      if (!filters || typeof filters !== "object") {
+        return true;
+      }
+      if (filters.workflowRunId) {
+        const workflowRunId = Number.parseInt(filters.workflowRunId, 10);
+        if (!Number.isInteger(workflowRunId) || workflowRunId <= 0) {
+          if (!silent) {
+            showToast("workflow_run_id 需为正整数", "warning");
+          }
+          return false;
+        }
+      }
+      const fromIso = toIsoFromLocalDateTime(filters.startedFrom);
+      const toIso = toIsoFromLocalDateTime(filters.startedTo);
+      if (filters.startedFrom && !fromIso) {
+        if (!silent) {
+          showToast("开始时间（从）格式无效", "warning");
+        }
+        return false;
+      }
+      if (filters.startedTo && !toIso) {
+        if (!silent) {
+          showToast("开始时间（到）格式无效", "warning");
+        }
+        return false;
+      }
+      if (fromIso && toIso && fromIso > toIso) {
+        if (!silent) {
+          showToast("时间区间无效：开始时间不能晚于结束时间", "warning");
+        }
+        return false;
+      }
+      return true;
+    }
+
+    function buildRunHistoryQuery(limit = 20) {
+      const safeLimit = Math.max(1, Math.min(50, limit));
+      const params = new URLSearchParams();
+      params.set("limit", String(safeLimit));
+      const filters = state.runHistory.filters || {};
+      const runId = String(filters.runId || "").trim();
+      const workflowRunId = Number.parseInt(String(filters.workflowRunId || "").trim(), 10);
+      const status = String(filters.status || "").trim();
+      const startedFromIso = toIsoFromLocalDateTime(filters.startedFrom);
+      const startedToIso = toIsoFromLocalDateTime(filters.startedTo);
+      if (runId) params.set("runId", runId);
+      if (Number.isInteger(workflowRunId) && workflowRunId > 0) {
+        params.set("workflowRunId", String(workflowRunId));
+      }
+      if (status) params.set("status", status);
+      if (startedFromIso) params.set("startedFrom", startedFromIso);
+      if (startedToIso) params.set("startedTo", startedToIso);
+      return `/monitor/workflow-runs?${params.toString()}`;
+    }
+
+    function updateRunHistoryFilterSummary() {
+      const summary = $("runHistoryFilterSummary");
+      if (!summary) {
+        return;
+      }
+      const filters = state.runHistory.filters || {};
+      const chips = [];
+      if (filters.runId) chips.push(`run_id~${filters.runId}`);
+      if (filters.workflowRunId) chips.push(`workflow_run_id=${filters.workflowRunId}`);
+      if (filters.status) chips.push(`status=${filters.status}`);
+      if (filters.startedFrom) chips.push(`from=${filters.startedFrom.replace("T", " ")}`);
+      if (filters.startedTo) chips.push(`to=${filters.startedTo.replace("T", " ")}`);
+      const runs = Array.isArray(state.runHistory.recentRuns) ? state.runHistory.recentRuns.length : 0;
+      const prefix = chips.length ? `筛选: ${chips.join(" / ")}` : "无筛选";
+      summary.textContent = `${prefix} · 已加载 ${runs} 条`;
+    }
+
+    async function loadRecentRunHistory(limit = state.runHistory.limit || 20, silent = true) {
+      const safeLimit = Math.max(1, Math.min(50, Number(limit) || 20));
+      state.runHistory.limit = safeLimit;
+      if (!validateRunHistoryFilters(state.runHistory.filters, silent)) {
+        return;
+      }
+      try {
+        const list = await apiRequest(buildRunHistoryQuery(safeLimit));
+        state.runHistory.recentRuns = Array.isArray(list) ? list : [];
+        renderRunHistoryRecentList();
+        updateRunHistoryFilterSummary();
+      } catch (error) {
+        if (!silent) {
+          showToast(error.message || "加载运行历史失败", "danger");
+        }
+      }
+    }
+
+    async function applyRunHistoryFilters() {
+      const filters = readRunHistoryFiltersFromUI();
+      if (!validateRunHistoryFilters(filters, false)) {
+        return;
+      }
+      await loadRecentRunHistory(state.runHistory.limit || 20, false);
+    }
+
+    async function clearRunHistoryFilters() {
+      state.runHistory.filters = {
+        runId: "",
+        workflowRunId: "",
+        status: "",
+        startedFrom: "",
+        startedTo: ""
+      };
+      syncRunHistoryFilterUI();
+      await loadRecentRunHistory(state.runHistory.limit || 20, false);
+    }
+
+    function sanitizeJsonFileName(rawName) {
+      const safe = String(rawName || "")
+        .trim()
+        .replace(/[^a-zA-Z0-9._-]+/g, "_")
+        .replace(/^_+|_+$/g, "");
+      return safe || "workflow_run_replay";
+    }
+
+    function exportRunHistoryDetail() {
+      const detail = state.runHistory.selectedRunDetail;
+      if (!detail || typeof detail !== "object") {
+        showToast("请先选择一条运行记录再导出", "warning");
+        return;
+      }
+      const runId = String(pick(detail, "run_id", "runId") || "workflow_run_replay");
+      const exportPayload = {
+        exported_at: new Date().toISOString(),
+        filters: {
+          ...state.runHistory.filters
+        },
+        detail
+      };
+      const blob = new Blob([JSON.stringify(exportPayload, null, 2)], {
+        type: "application/json;charset=utf-8"
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `${sanitizeJsonFileName(runId)}.json`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+      showToast("回放 JSON 已导出", "success");
+    }
+
+    function renderRunHistoryRecentList() {
+      const container = $("runHistoryRecentList");
+      if (!container) {
+        return;
+      }
+      const runs = Array.isArray(state.runHistory.recentRuns) ? state.runHistory.recentRuns : [];
+      if (!runs.length) {
+        container.innerHTML = "<div class=\"empty\">暂无运行记录。</div>";
+        return;
+      }
+      container.innerHTML = runs.map((run) => {
+        const runId = String(pick(run, "run_id", "runId") || "");
+        const active = state.runHistory.selectedRunId === runId ? "active" : "";
+        const status = String(pick(run, "status") || "--");
+        return `
+          <article class="run-history-item ${active}" data-action="open-run-history-item" data-run-id="${escapeHtml(runId)}">
+            <div>
+              <div class="run-history-item-title mono">${escapeHtml(runId || "--")}</div>
+              <div class="run-history-item-meta">
+                状态 ${escapeHtml(status)} · 开始 ${escapeHtml(formatDateTime(pick(run, "started_at", "startedAt")))}
+              </div>
+              <div class="run-history-item-meta">
+                决策 ${escapeHtml(String(pick(run, "decision") || "--"))} · 执行 ${escapeHtml(String(pick(run, "executed") ?? "--"))}
+              </div>
+            </div>
+            <span class="badge ${toneClass(normalizeDecisionTone(status))}">${escapeHtml(status.toUpperCase())}</span>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderRunHistoryDetail() {
+      const box = $("runHistoryDetailBox");
+      if (!box) {
+        return;
+      }
+      const detail = state.runHistory.selectedRunDetail;
+      if (!detail || typeof detail !== "object") {
+        box.innerHTML = "<div class=\"decision-placeholder\">请选择一次运行记录查看详情。</div>";
+        return;
+      }
+      const steps = Array.isArray(pick(detail, "steps")) ? pick(detail, "steps") : [];
+      box.innerHTML = `
+        <div class="decision-kv">
+          <div class="decision-item">
+            <div class="decision-item-label">run_id</div>
+            <div class="decision-item-value mono">${escapeHtml(String(pick(detail, "run_id", "runId") || "--"))}</div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-item-label">status</div>
+            <div class="decision-item-value"><span class="badge ${toneClass(normalizeDecisionTone(pick(detail, "status")))}">${escapeHtml(String(pick(detail, "status") || "--").toUpperCase())}</span></div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-item-label">workflow_id</div>
+            <div class="decision-item-value mono">${escapeHtml(String(pick(detail, "workflow_id", "workflowId") || "--"))}</div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-item-label">conversation_id</div>
+            <div class="decision-item-value mono">${escapeHtml(String(pick(detail, "conversation_id", "conversationId") || "--"))}</div>
+          </div>
+        </div>
+        <div class="run-detail-steps">
+          ${steps.length
+            ? steps.map((step) => `
+              <article class="trace-item">
+                <div class="trace-head">
+                  <span class="trace-role">${escapeHtml(String(pick(step, "node_name", "nodeName") || pick(step, "node_id", "nodeId") || "step"))}</span>
+                  <span class="badge ${toneClass(normalizeDecisionTone(pick(step, "status")))}">${escapeHtml(String(pick(step, "status") || "--").toUpperCase())}</span>
+                </div>
+                <div class="trace-summary">#${escapeHtml(String(pick(step, "step_order", "stepOrder") || "--"))} · ${escapeHtml(String(pick(step, "node_type", "nodeType") || "--"))}</div>
+                <div class="trace-io mono">IN: ${escapeHtml(compactJson(pick(step, "input_payload", "inputPayload"), 360))}<br>OUT: ${escapeHtml(compactJson(pick(step, "output_payload", "outputPayload"), 360))}</div>
+              </article>
+            `).join("")
+            : "<div class=\"decision-placeholder\">该运行没有步骤明细。</div>"
+          }
+        </div>
+      `;
+    }
+
+    async function loadRunHistoryDetail(runId, silent = false) {
+      const safeRunId = String(runId || "").trim();
+      if (!safeRunId) {
+        return;
+      }
+      try {
+        const detail = await apiRequest(`/monitor/workflow-runs/${encodeURIComponent(safeRunId)}`);
+        state.runHistory.selectedRunId = safeRunId;
+        state.runHistory.selectedRunDetail = detail;
+        if ($("runHistoryInput")) {
+          $("runHistoryInput").value = safeRunId;
+        }
+        renderRunHistoryRecentList();
+        renderRunHistoryDetail();
+      } catch (error) {
+        if (!silent) {
+          showToast(error.message || "加载运行详情失败", "danger");
+        }
+      }
+    }
+
+    async function openRunHistoryDrawer(runId = "") {
+      const overlay = $("runHistoryOverlay");
+      if (!overlay) {
+        return;
+      }
+      overlay.classList.add("show");
+      syncRunHistoryFilterUI();
+      await loadRecentRunHistory(state.runHistory.limit || 20, true);
+      const currentRunId = String(runId || pick(state.lastExecutionContext, "run_id", "runId") || "").trim();
+      if (currentRunId) {
+        $("runHistoryInput").value = currentRunId;
+        await loadRunHistoryDetail(currentRunId, true);
+      } else {
+        renderRunHistoryRecentList();
+        renderRunHistoryDetail();
+      }
+    }
+
+    function closeRunHistoryDrawer() {
+      const overlay = $("runHistoryOverlay");
+      if (overlay) {
+        overlay.classList.remove("show");
+      }
+    }
+
+    function renderDecisionPanels(data) {
+      const decisionPanel = $("decisionCardPanel");
+      const contextPanel = $("executionContextPanel");
+      const tracePanel = $("agentTracePanel");
+      if (!decisionPanel || !contextPanel || !tracePanel) {
+        return;
+      }
+
+      if (!data || typeof data !== "object") {
+        decisionPanel.className = "decision-placeholder";
+        contextPanel.className = "decision-placeholder";
+        tracePanel.className = "decision-placeholder";
+        decisionPanel.textContent = "等待执行 AI 分析后展示。";
+        contextPanel.textContent = "尚未生成执行上下文。";
+        tracePanel.textContent = "尚未产生 trace 记录。";
+        updatePendingCommand("", false);
+        return;
+      }
+
+      state.latestAgentDecision = data;
+      const agent = pick(data, "agent") || {};
+      const decisionCard = pick(agent, "decision_card", "decisionCard") || {};
+      const executionContext = pick(data, "execution_context", "executionContext") || {};
+      const trace = Array.isArray(pick(agent, "trace")) ? pick(agent, "trace") : [];
+      state.lastExecutionContext = executionContext;
+      const runHistoryInput = $("runHistoryInput");
+      if (runHistoryInput) {
+        runHistoryInput.value = String(pick(executionContext, "run_id", "runId") || "");
+      }
+
+      const decision = pick(decisionCard, "decision") || "--";
+      const executionStatus = pick(decisionCard, "execution_status", "executionStatus") || "--";
+      const riskPassed = pick(decisionCard, "risk_passed", "riskPassed");
+      const executionApproval = pick(data, "execution_approval", "executionApproval")
+        || pick(decisionCard, "execution_approval", "executionApproval")
+        || {};
+      const approvalRequired = Boolean(pick(executionApproval, "approval_required", "approvalRequired"));
+      const approvalSignature = String(pick(executionApproval, "approval_signature", "approvalSignature") || "");
+      const coApprover = String(pick(executionApproval, "co_approver", "coApprover") || "");
+      const approvedAt = pick(executionApproval, "approved_at", "approvedAt");
+      const commandSuggestion = pick(data, "command")
+        || pick(decisionCard, "command_suggestion", "commandSuggestion")
+        || "";
+      const executed = Boolean(pick(data, "executed")) || Boolean(pick(decisionCard, "executed"));
+
+      decisionPanel.className = "decision-card";
+      decisionPanel.innerHTML = `
+        <div class="decision-kv">
+          <div class="decision-item">
+            <div class="decision-item-label">决策</div>
+            <div class="decision-item-value"><span class="badge ${toneClass(normalizeDecisionTone(decision))}">${escapeHtml(String(decision).toUpperCase())}</span></div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-item-label">执行状态</div>
+            <div class="decision-item-value"><span class="badge ${toneClass(normalizeDecisionTone(executionStatus))}">${escapeHtml(String(executionStatus).toUpperCase())}</span></div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-item-label">意图类型</div>
+            <div class="decision-item-value">${escapeHtml(pick(decisionCard, "intent_category", "intentCategory") || "--")}</div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-item-label">风险结果</div>
+            <div class="decision-item-value">${riskPassed === undefined || riskPassed === null ? "--" : `<span class="badge ${riskPassed ? "success" : "danger"}">${riskPassed ? "PASSED" : "BLOCKED"}</span>`}</div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-item-label">标的</div>
+            <div class="decision-item-value">${escapeHtml(pick(decisionCard, "symbol") || "--")}</div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-item-label">模式</div>
+            <div class="decision-item-value">${escapeHtml(pick(decisionCard, "mode") || "--")}</div>
+          </div>
+          <div class="decision-item" style="grid-column: 1 / -1;">
+            <div class="decision-item-label">建议指令</div>
+            <div class="decision-item-value mono">${escapeHtml(commandSuggestion || "--")}</div>
+          </div>
+        </div>
+      `;
+
+      contextPanel.className = "decision-card";
+      const approvalContextHtml = approvalRequired ? `
+          <div class="decision-item">
+            <div class="decision-item-label">复核人</div>
+            <div class="decision-item-value">${escapeHtml(coApprover || "--")}</div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-item-label">审批时间</div>
+            <div class="decision-item-value">${escapeHtml(formatDateTime(approvedAt))}</div>
+          </div>
+          <div class="decision-item" style="grid-column: 1 / -1;">
+            <div class="decision-item-label">审批签名</div>
+            <div class="decision-item-value mono">${escapeHtml(approvalSignature || "--")}</div>
+          </div>
+      ` : "";
+      contextPanel.innerHTML = `
+        <div class="decision-kv">
+          <div class="decision-item">
+            <div class="decision-item-label">run_id</div>
+            <div class="decision-item-value mono">${escapeHtml(String(pick(executionContext, "run_id", "runId") || "--"))}</div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-item-label">workflow_run_id</div>
+            <div class="decision-item-value mono">${escapeHtml(String(pick(executionContext, "workflow_run_id", "workflowRunId") || "--"))}</div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-item-label">workflow_id</div>
+            <div class="decision-item-value mono">${escapeHtml(String(pick(executionContext, "workflow_id", "workflowId") || "--"))}</div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-item-label">conversation_id</div>
+            <div class="decision-item-value mono">${escapeHtml(String(pick(executionContext, "conversation_id", "conversationId") || "--"))}</div>
+          </div>
+          ${approvalContextHtml}
+        </div>
+      `;
+
+      if (!trace.length) {
+        tracePanel.className = "decision-placeholder";
+        tracePanel.textContent = "本次没有返回 agent trace。";
+      } else {
+        tracePanel.className = "trace-list";
+        tracePanel.innerHTML = trace.map((step, index) => {
+          const role = pick(step, "role") || `step_${index + 1}`;
+          const status = pick(step, "status") || "completed";
+          const summary = pick(step, "summary") || "--";
+          const input = compactJson(pick(step, "input"));
+          const output = compactJson(pick(step, "output"));
+          return `
+            <article class="trace-item">
+              <div class="trace-head">
+                <span class="trace-role">${escapeHtml(role)}</span>
+                <span class="badge ${toneClass(normalizeDecisionTone(status))}">${escapeHtml(String(status).toUpperCase())}</span>
+              </div>
+              <div class="trace-summary">${escapeHtml(summary)}</div>
+              <div class="trace-io mono">IN: ${escapeHtml(input)}<br>OUT: ${escapeHtml(output)}</div>
+            </article>
+          `;
+        }).join("");
+      }
+
+      updatePendingCommand(commandSuggestion, executed);
+    }
+
     async function handleAnalyze(execute = false) {
       const command = $("commandInput").value.trim();
       if (!command) {
@@ -5021,7 +6359,8 @@
       const loadingText = execute ? "执行中..." : "分析中...";
       setButtonLoading(button, true, loadingText, normalText);
       try {
-        const endpoint = execute ? "/ai/chat-and-execute" : "/ai/chat";
+        const enforceApproval = shouldRequireApproval(execute);
+        const endpoint = execute && !enforceApproval ? "/ai/chat-and-execute" : "/ai/chat";
         const data = await apiRequest(endpoint, {
           method: "POST",
           body: {
@@ -5031,12 +6370,61 @@
           }
         });
         const message = pick(data, "message", "result", "text") || JSON.stringify(data);
-        setCommandResult(typeof message === "string" ? message : JSON.stringify(message), "success");
+        setCommandResult(typeof message === "string" ? message : JSON.stringify(message), execute && !enforceApproval ? "success" : "info");
+        renderDecisionPanels(data);
+        if (enforceApproval) {
+          showToast("当前是实盘审批模式，已先完成分析，请点击“确认执行建议指令”。", "warning");
+        }
         await loadOverviewData(true);
       } catch (error) {
         setCommandResult(error.message || "命令处理失败", "danger");
+        renderDecisionPanels(null);
       } finally {
         setButtonLoading(button, false, loadingText, normalText);
+      }
+    }
+
+    async function handleConfirmExecute() {
+      const command = String(state.pendingCommandSuggestion || "").trim();
+      if (!command) {
+        setCommandResult("当前没有可确认执行的建议指令。", "warning");
+        return;
+      }
+      const approvalPayload = collectApprovalPayload();
+      if (!approvalPayload) {
+        return;
+      }
+      const button = $("confirmExecuteBtn");
+      setButtonLoading(button, true, "确认执行中...", "确认执行建议指令");
+      try {
+        const data = await apiRequest("/ai/confirm-execute", {
+          method: "POST",
+          body: {
+            command,
+            provider: pick(state.aiConfig, "provider") || null,
+            model: pick(state.aiConfig, "model") || null,
+            conversation_id: pick(state.lastExecutionContext, "conversation_id", "conversationId"),
+            workflow_id: pick(state.lastExecutionContext, "workflow_id", "workflowId"),
+            co_approver: approvalPayload.coApprover || null,
+            approval_passphrase: approvalPayload.approvalPassphrase || null,
+            approval_note: approvalPayload.approvalNote || null
+          }
+        });
+        const message = pick(data, "message", "result", "text") || JSON.stringify(data);
+        const ok = Boolean(pick(data, "success", "executed")) || Boolean(pick(data, "agent"));
+        setCommandResult(typeof message === "string" ? message : JSON.stringify(message), ok ? "success" : "warning");
+        renderDecisionPanels(data);
+        if (ok) {
+          if ($("approvalPassphraseInput")) $("approvalPassphraseInput").value = "";
+          if ($("approvalNoteInput")) $("approvalNoteInput").value = "";
+        } else if (pick(data, "approval_required", "approvalRequired")) {
+          showToast("审批未通过，未执行交易。", "warning");
+        }
+        await loadOverviewData(true);
+      } catch (error) {
+        setCommandResult(error.message || "确认执行失败", "danger");
+      } finally {
+        setButtonLoading(button, false, "确认执行中...", "确认执行建议指令");
       }
     }
 
@@ -5058,6 +6446,7 @@
         });
         const message = pick(data, "message") || JSON.stringify(data);
         setCommandResult(String(message), "info");
+        updatePendingCommand("", false);
       } catch (error) {
         setCommandResult(error.message || "Dry run 失败", "danger");
       } finally {
@@ -5077,6 +6466,7 @@
         showToast(`已切换到 ${broker} 模式`, "success");
         await loadBrokerData(true);
         await loadOverviewData(true);
+        enforceLiveApprovalPolicy(false);
       } catch (error) {
         showToast(error.message || "切换模式失败", "danger");
       } finally {
@@ -5836,7 +7226,33 @@
 
       $("analyzeBtn").addEventListener("click", () => handleAnalyze(false));
       $("executeBtn").addEventListener("click", () => handleAnalyze(true));
+      $("confirmExecuteBtn").addEventListener("click", handleConfirmExecute);
+      $("openRunHistoryBtn").addEventListener("click", () => openRunHistoryDrawer());
       $("dryRunBtn").addEventListener("click", handleDryRun);
+      $("executionPolicySelect").addEventListener("change", (event) => {
+        setExecutionPolicyMode(event.target.value);
+      });
+      $("qualityWindowSelect").addEventListener("change", (event) => {
+        const nextHours = Number.parseInt(event.target.value, 10);
+        state.agentQuality.windowHours = Number.isInteger(nextHours) ? nextHours : 24;
+        loadAgentQualityMetrics(false).catch((error) => showToast(error.message, "warning"));
+      });
+      $("qualityRefreshBtn").addEventListener("click", () => {
+        loadAgentQualityMetrics(false).catch((error) => showToast(error.message, "warning"));
+      });
+      ["approvalCoApproverInput", "approvalPassphraseInput", "approvalNoteInput"].forEach((id) => {
+        const field = $(id);
+        if (!field) {
+          return;
+        }
+        field.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter") {
+            return;
+          }
+          event.preventDefault();
+          handleConfirmExecute().catch((error) => showToast(error.message, "danger"));
+        });
+      });
       $("searchBtn").addEventListener("click", handleSearchQuote);
       $("quoteQuery").addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
@@ -5876,6 +7292,65 @@
         }
       });
       $("formModalForm").addEventListener("submit", handleModalSubmit);
+
+      $("runHistoryCloseBtn").addEventListener("click", closeRunHistoryDrawer);
+      $("runHistoryOverlay").addEventListener("click", (event) => {
+        if (event.target === $("runHistoryOverlay")) {
+          closeRunHistoryDrawer();
+        }
+      });
+      $("runHistoryReloadBtn").addEventListener("click", () => {
+        readRunHistoryFiltersFromUI();
+        loadRecentRunHistory(state.runHistory.limit || 20, false).catch((error) => showToast(error.message, "danger"));
+      });
+      $("runHistoryFilterBtn").addEventListener("click", () => {
+        applyRunHistoryFilters().catch((error) => showToast(error.message, "danger"));
+      });
+      $("runHistoryClearFilterBtn").addEventListener("click", () => {
+        clearRunHistoryFilters().catch((error) => showToast(error.message, "danger"));
+      });
+      $("runHistoryExportBtn").addEventListener("click", exportRunHistoryDetail);
+      ["runHistoryRunIdFilterInput", "runHistoryWorkflowRunIdInput", "runHistoryStatusSelect", "runHistoryStartedFromInput", "runHistoryStartedToInput"]
+        .forEach((id) => {
+          const field = $(id);
+          if (!field) {
+            return;
+          }
+          field.addEventListener("keydown", (event) => {
+            if (event.key !== "Enter") {
+              return;
+            }
+            event.preventDefault();
+            applyRunHistoryFilters().catch((error) => showToast(error.message, "danger"));
+          });
+          field.addEventListener("change", () => {
+            readRunHistoryFiltersFromUI();
+            updateRunHistoryFilterSummary();
+          });
+        });
+      $("runHistoryRunIdFilterInput").addEventListener("input", () => {
+        readRunHistoryFiltersFromUI();
+        updateRunHistoryFilterSummary();
+      });
+      $("runHistorySearchBtn").addEventListener("click", () => {
+        const runId = $("runHistoryInput").value.trim();
+        if (!runId) {
+          showToast("请输入 run_id", "warning");
+          return;
+        }
+        loadRunHistoryDetail(runId, false).catch((error) => showToast(error.message, "danger"));
+      });
+      $("runHistoryInput").addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") {
+          return;
+        }
+        event.preventDefault();
+        const runId = $("runHistoryInput").value.trim();
+        if (!runId) {
+          return;
+        }
+        loadRunHistoryDetail(runId, false).catch((error) => showToast(error.message, "danger"));
+      });
 
       const workflowCanvas = $("workflowCanvas");
       if (workflowCanvas) {
@@ -5960,9 +7435,10 @@
 
         if (action === "open-ai-config") return openAiConfigModal("save");
         if (action === "switch-ai-model") return openSwitchModelModal();
-        if (action === "switch-to-config") return switchToConfig(provider).catch((error) => showToast(error.message, "danger"));
+        if (action === "switch-to-config") return switchToConfig(actionTarget.dataset.provider).catch((error) => showToast(error.message, "danger"));
         if (action === "test-ai-config") return openAiConfigModal("test");
         if (action === "clear-ai-config") return clearAiConfig().catch((error) => showToast(error.message, "danger"));
+        if (action === "open-run-history-item") return loadRunHistoryDetail(actionTarget.dataset.runId, false).catch((error) => showToast(error.message, "danger"));
 
         if (action === "open-add-knowledge") return openKnowledgeModal();
         if (action === "open-add-knowledge-document") return openKnowledgeDocumentModal();
@@ -6067,6 +7543,7 @@
         return;
       }
       initUserSection();
+      loadExecutionPolicyMode();
       bindEvents();
       startClock();
       UiComponents.Header(PAGE_META.overview);
@@ -6075,6 +7552,8 @@
       $("searchResults").innerHTML = "<div class=\"empty\">先选择市场，再输入代码检索行情。</div>";
       $("recentOrdersList").innerHTML = "<div class=\"empty\">订单数据加载中...</div>";
       setCommandResult("还没有执行交易命令。");
+      renderDecisionPanels(null);
+      syncExecutionPolicyUI();
 
       await Promise.allSettled([
         loadOverviewData(true),
@@ -6089,6 +7568,7 @@
         loadWorkflowData(true),
         loadRiskRuleData(true)
       ]);
+      enforceLiveApprovalPolicy(true);
       renderOverview();
       syncBigscreenAutoRefresh();
       showToast("控制台已就绪", "success");
