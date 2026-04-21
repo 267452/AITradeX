@@ -2,6 +2,8 @@ package com.service;
 
 import com.repository.AdminModuleRepository;
 import com.repository.WorkflowRuntimeRepository;
+import com.domain.stream.WorkflowRunStreamEvent;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
@@ -14,11 +16,14 @@ public class WorkflowRuntimeService {
 
     private final WorkflowRuntimeRepository workflowRuntimeRepository;
     private final AdminModuleRepository adminModuleRepository;
+    private final StreamEventPublisher streamEventPublisher;
 
     public WorkflowRuntimeService(WorkflowRuntimeRepository workflowRuntimeRepository,
-                                  AdminModuleRepository adminModuleRepository) {
+                                  AdminModuleRepository adminModuleRepository,
+                                  StreamEventPublisher streamEventPublisher) {
         this.workflowRuntimeRepository = workflowRuntimeRepository;
         this.adminModuleRepository = adminModuleRepository;
+        this.streamEventPublisher = streamEventPublisher;
     }
 
     public WorkflowRunContext startRun(Long workflowId,
@@ -51,7 +56,16 @@ public class WorkflowRuntimeService {
         }
 
         long workflowRunId = workflowRuntimeRepository.createWorkflowRun(runId, workflowId, conversationId, inputPayload);
-        WorkflowRunContext context = new WorkflowRunContext(workflowRunId, runId, workflowId, conversationId);
+        OffsetDateTime startedAt = OffsetDateTime.now(ZoneOffset.UTC);
+        WorkflowRunContext context = new WorkflowRunContext(workflowRunId, runId, workflowId, conversationId, startedAt);
+        streamEventPublisher.publishWorkflowRun(WorkflowRunStreamEvent.of(
+                runId,
+                workflowRunId,
+                workflowId,
+                conversationId,
+                "running",
+                null,
+                startedAt));
 
         workflowRuntimeRepository.appendWorkflowRunStep(
                 workflowRunId,
@@ -176,6 +190,15 @@ public class WorkflowRuntimeService {
 
         workflowRuntimeRepository.completeWorkflowRun(context.workflowRunId(), outputPayload == null ? Map.of() : outputPayload);
         workflowRuntimeRepository.incrementWorkflowStats(context.workflowId());
+        long latencyMs = Duration.between(context.startedAt(), OffsetDateTime.now(ZoneOffset.UTC)).toMillis();
+        streamEventPublisher.publishWorkflowRun(WorkflowRunStreamEvent.of(
+                context.runId(),
+                context.workflowRunId(),
+                context.workflowId(),
+                context.conversationId(),
+                "completed",
+                Math.max(0L, latencyMs),
+                OffsetDateTime.now(ZoneOffset.UTC)));
     }
 
     public void failRun(WorkflowRunContext context, String errorMessage) {
@@ -194,6 +217,15 @@ public class WorkflowRuntimeService {
                 Map.of(),
                 safeError);
         workflowRuntimeRepository.failWorkflowRun(context.workflowRunId(), safeError, Map.of("error", safeError));
+        long latencyMs = Duration.between(context.startedAt(), OffsetDateTime.now(ZoneOffset.UTC)).toMillis();
+        streamEventPublisher.publishWorkflowRun(WorkflowRunStreamEvent.of(
+                context.runId(),
+                context.workflowRunId(),
+                context.workflowId(),
+                context.conversationId(),
+                "failed",
+                Math.max(0L, latencyMs),
+                OffsetDateTime.now(ZoneOffset.UTC)));
     }
 
     public static final class WorkflowRunContext {
@@ -201,14 +233,20 @@ public class WorkflowRuntimeService {
         private final String runId;
         private final Long workflowId;
         private final Long conversationId;
+        private final OffsetDateTime startedAt;
         private int stepOrder;
         private boolean closed;
 
-        private WorkflowRunContext(long workflowRunId, String runId, Long workflowId, Long conversationId) {
+        private WorkflowRunContext(long workflowRunId,
+                                   String runId,
+                                   Long workflowId,
+                                   Long conversationId,
+                                   OffsetDateTime startedAt) {
             this.workflowRunId = workflowRunId;
             this.runId = runId;
             this.workflowId = workflowId;
             this.conversationId = conversationId;
+            this.startedAt = startedAt;
             this.stepOrder = 1;
             this.closed = false;
         }
@@ -227,6 +265,10 @@ public class WorkflowRuntimeService {
 
         public Long conversationId() {
             return conversationId;
+        }
+
+        public OffsetDateTime startedAt() {
+            return startedAt;
         }
 
         public synchronized int nextStepOrder() {

@@ -5,6 +5,8 @@ import com.domain.request.ExecutionContext;
 import com.domain.request.SignalRequest;
 import com.domain.request.StrategyRunRequest;
 import com.domain.request.TradeCommandRequest;
+import com.domain.stream.OrderStatusStreamEvent;
+import com.domain.stream.RiskCheckStreamEvent;
 import com.domain.response.SignalOrderIds;
 import com.domain.response.RiskCheckResult;
 import com.domain.response.SignalProcessResponse;
@@ -34,16 +36,18 @@ public class TradeService {
     private final BrokerService brokerService;
     private final RiskService riskService;
     private final NotificationService notificationService;
+    private final StreamEventPublisher streamEventPublisher;
 
     public TradeService(TradeRepository tradeRepository, MarketDataRepository marketDataRepository,
                         AppProperties properties, BrokerService brokerService, RiskService riskService,
-                        NotificationService notificationService) {
+                        NotificationService notificationService, StreamEventPublisher streamEventPublisher) {
         this.tradeRepository = tradeRepository;
         this.marketDataRepository = marketDataRepository;
         this.properties = properties;
         this.brokerService = brokerService;
         this.riskService = riskService;
         this.notificationService = notificationService;
+        this.streamEventPublisher = streamEventPublisher;
     }
 
     public SignalProcessResponse processSignal(SignalRequest signal) {
@@ -56,6 +60,11 @@ public class TradeService {
         
         RiskCheckResult risk = riskService.checkRisk(signal, executionContext);
         logger.info("Risk check result: passed={}, reason={}", risk.passed(), risk.reason());
+        streamEventPublisher.publishRiskCheck(RiskCheckStreamEvent.of(
+                "comprehensive_risk_check",
+                risk.passed(),
+                risk.reason(),
+                OffsetDateTime.now(ZoneOffset.UTC)));
 
         Map<String, Object> riskLogContext = new LinkedHashMap<>();
         riskLogContext.put("strategy_name", signal.strategyName());
@@ -91,6 +100,14 @@ public class TradeService {
         long orderId = ids.orderId();
         logger.info("Signal created successfully: signalId={}, orderId={}, symbol={}", 
                     ids.signalId(), orderId, signal.symbol());
+        streamEventPublisher.publishOrderStatus(OrderStatusStreamEvent.of(
+                orderId,
+                signal.symbol(),
+                signal.side(),
+                signal.quantity(),
+                signal.price(),
+                "queued",
+                OffsetDateTime.now(ZoneOffset.UTC)));
         
         brokerService.executeOrderViaBroker(orderId);
         logger.info("Order queued for execution: orderId={}", orderId);

@@ -475,6 +475,47 @@
       display: flex;
     }
 
+    .page-view.active > * {
+      animation: pageSectionIn 0.24s ease both;
+    }
+
+    .page-view.active > :nth-child(2) {
+      animation-delay: 0.02s;
+    }
+
+    .page-view.active > :nth-child(3) {
+      animation-delay: 0.05s;
+    }
+
+    .page-view.active > :nth-child(4) {
+      animation-delay: 0.08s;
+    }
+
+    .page-view.active > :nth-child(5) {
+      animation-delay: 0.11s;
+    }
+
+    .page-view.active > :nth-child(6) {
+      animation-delay: 0.14s;
+    }
+
+    @keyframes pageSectionIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .page-view.active > * {
+        animation: none;
+      }
+    }
+
     .panel {
       background: var(--bg-card-soft);
       border: 1px solid #e2ebf3;
@@ -878,6 +919,7 @@
     .overview-focus-card {
       width: 100%;
       border: 1px solid #e0eaf2;
+      border-left: 4px solid transparent;
       border-radius: 12px;
       background: #ffffff;
       padding: 11px;
@@ -894,21 +936,25 @@
 
     .overview-focus-card.success {
       border-color: #cde8da;
+      border-left-color: #23b26f;
       background: #fcfffd;
     }
 
     .overview-focus-card.warning {
       border-color: #f2e2c5;
+      border-left-color: #eb9f31;
       background: #fffdfa;
     }
 
     .overview-focus-card.danger {
       border-color: #f1d2d9;
+      border-left-color: #df5a6a;
       background: #fffafb;
     }
 
     .overview-focus-card.info {
       border-color: #d4e1ee;
+      border-left-color: #5f87c7;
       background: #fcfdff;
     }
 
@@ -964,6 +1010,127 @@
       margin-top: 14px;
     }
 
+    .agent-collab-panel {
+      margin-top: 14px;
+      border: 1px solid #d7e6f2;
+      border-radius: 14px;
+      background:
+        linear-gradient(180deg, rgba(244, 251, 255, 0.98), rgba(255, 255, 255, 0.98)),
+        radial-gradient(circle at top right, rgba(45, 164, 154, 0.08), transparent 38%);
+      padding: 12px;
+    }
+
+    .agent-collab-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .agent-collab-head h4 {
+      margin: 0;
+      color: #163957;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .agent-collab-head p {
+      margin: 4px 0 0;
+      color: #69849d;
+      font-size: 12px;
+      line-height: 1.55;
+      max-width: 720px;
+    }
+
+    .agent-collab-summary {
+      margin-top: 10px;
+      border: 1px solid #dce9f3;
+      border-radius: 11px;
+      background: #ffffff;
+      color: #214763;
+      font-size: 12px;
+      line-height: 1.6;
+      padding: 10px 11px;
+    }
+
+    .agent-collab-grid {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .agent-stage-card {
+      border: 1px solid #dfe9f2;
+      border-left: 4px solid transparent;
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 10px;
+      min-height: 126px;
+    }
+
+    .agent-stage-card.success {
+      border-color: #cde8da;
+      border-left-color: #22a965;
+      background: #fcfffd;
+    }
+
+    .agent-stage-card.warning {
+      border-color: #f1dfbd;
+      border-left-color: #e59a2b;
+      background: #fffdfa;
+    }
+
+    .agent-stage-card.danger {
+      border-color: #efd1d9;
+      border-left-color: #dc5c6b;
+      background: #fffafb;
+    }
+
+    .agent-stage-card.info {
+      border-color: #d8e5f0;
+      border-left-color: #5f86c4;
+      background: #fbfdff;
+    }
+
+    .agent-stage-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .agent-stage-kicker {
+      color: #748ea6;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.28px;
+      line-height: 1.2;
+    }
+
+    .agent-stage-title {
+      margin-top: 5px;
+      color: #163957;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .agent-stage-desc {
+      margin-top: 8px;
+      color: #68839d;
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .agent-stage-meta {
+      margin-top: 8px;
+      color: #89a0b4;
+      font-size: 11px;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
     .overview-command-rail {
       display: grid;
       gap: 12px;
@@ -971,6 +1138,46 @@
 
     .overview-command-rail .trace-panel {
       margin-top: 0;
+    }
+
+    .overview-detail-block {
+      margin-top: 14px;
+      border: 1px solid #d7e6f2;
+      border-radius: 12px;
+      background: #fbfdff;
+      padding: 10px;
+    }
+
+    .overview-detail-block > summary {
+      list-style: none;
+      cursor: pointer;
+      color: #2c516f;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .overview-detail-block > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .overview-detail-block > summary::after {
+      content: "展开";
+      color: #6a849d;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .overview-detail-block[open] > summary::after {
+      content: "收起";
+    }
+
+    .overview-detail-block .overview-command-rail {
+      margin-top: 10px;
     }
 
     .overview-side-stack {
@@ -1101,9 +1308,18 @@
       gap: 14px;
     }
 
+    .bigscreen-secondary-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .bigscreen-flow-list .list-item,
     .bigscreen-event-list .list-item {
       align-items: flex-start;
+    }
+
+    .bigscreen-event-list .list-item {
+      border-left-width: 4px;
+      border-left-color: #d7e4f1;
     }
 
     .bigscreen-item-right {
@@ -1112,63 +1328,6 @@
       gap: 7px;
       flex-shrink: 0;
       margin-top: 1px;
-    }
-
-    .bigscreen-capacity {
-      display: grid;
-      gap: 10px;
-    }
-
-    .capacity-item {
-      border: 1px solid #e0e9f2;
-      border-radius: 11px;
-      background: #ffffff;
-      padding: 10px 12px;
-    }
-
-    .capacity-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 10px;
-    }
-
-    .capacity-label {
-      color: #1c4664;
-      font-size: 13px;
-      font-weight: 700;
-      line-height: 1.25;
-    }
-
-    .capacity-value {
-      color: #204d6f;
-      font-size: 12px;
-      font-weight: 700;
-      line-height: 1.2;
-      white-space: nowrap;
-    }
-
-    .capacity-track {
-      margin-top: 8px;
-      width: 100%;
-      height: 8px;
-      border-radius: 999px;
-      background: #e4eef6;
-      overflow: hidden;
-    }
-
-    .capacity-bar {
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #1db6a4, #2282b6);
-      transition: width 0.35s ease;
-    }
-
-    .capacity-meta {
-      margin-top: 6px;
-      color: #6b869f;
-      font-size: 12px;
-      line-height: 1.35;
     }
 
     .span-2 {
@@ -1373,6 +1532,13 @@
       border-radius: 12px;
       background: #fbfdff;
       padding: 10px;
+    }
+
+    .quality-panel.quality-inline {
+      margin-top: 0;
+      border: none;
+      background: transparent;
+      padding: 0;
     }
 
     .quality-head {
@@ -2000,6 +2166,36 @@
 
     .workflow-head-actions {
       align-items: center;
+      justify-content: flex-end;
+    }
+
+    .workflow-toolbar {
+      background: #ffffff;
+      border-color: #e5edf4;
+      box-shadow: none;
+    }
+
+    .workflow-list-panel .panel-body {
+      padding: 14px;
+    }
+
+    .workflow-list-summary {
+      margin-bottom: 12px;
+      border: 1px solid #e4ebf3;
+      border-radius: 12px;
+      background: #f8fafc;
+      color: #5f7890;
+      font-size: 12px;
+      line-height: 1.65;
+      padding: 10px 12px;
+    }
+
+    .workflow-detail-block {
+      margin-top: 14px;
+    }
+
+    .workflow-detail-block .panel-body {
+      padding: 12px 0 0;
     }
 
     .workflow-select-wrap {
@@ -2034,9 +2230,9 @@
     }
 
     .workflow-palette {
-      border: 1px solid #d7e5f0;
+      border: 1px solid #e2ebf3;
       border-radius: 13px;
-      background: #f8fcff;
+      background: #fbfcfe;
       padding: 10px;
       display: grid;
       align-content: start;
@@ -2051,7 +2247,7 @@
     }
 
     .wf-palette-item {
-      border: 1px solid #cbdcec;
+      border: 1px solid #dbe6ef;
       border-radius: 11px;
       background: #ffffff;
       padding: 9px 9px 8px;
@@ -2063,8 +2259,8 @@
     }
 
     .wf-palette-item:hover {
-      border-color: #76b6cf;
-      box-shadow: 0 10px 20px rgba(23, 74, 104, 0.12);
+      border-color: #9fbfd8;
+      box-shadow: 0 8px 18px rgba(23, 74, 104, 0.08);
       transform: translateY(-1px);
     }
 
@@ -2104,11 +2300,11 @@
     }
 
     .workflow-canvas-wrap {
-      border: 1px solid #d5e4f0;
+      border: 1px solid #e2ebf3;
       border-radius: 14px;
       overflow: hidden;
       background: #ffffff;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      box-shadow: none;
     }
 
     .workflow-canvas {
@@ -2116,9 +2312,9 @@
       min-height: 560px;
       overflow: hidden;
       background:
-        linear-gradient(90deg, rgba(127, 166, 193, 0.06) 1px, transparent 1px),
-        linear-gradient(180deg, rgba(127, 166, 193, 0.06) 1px, transparent 1px),
-        linear-gradient(180deg, #fbfdff, #f4f9fd);
+        linear-gradient(90deg, rgba(156, 178, 199, 0.08) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(156, 178, 199, 0.08) 1px, transparent 1px),
+        linear-gradient(180deg, #fdfefe, #f7fafc);
       background-size: 32px 32px, 32px 32px, 100% 100%;
     }
 
@@ -2160,29 +2356,29 @@
       position: absolute;
       width: 196px;
       min-height: 92px;
-      border: 1px solid #c8d9e8;
+      border: 1px solid #d8e4ed;
       border-radius: 12px;
       background: #ffffff;
-      box-shadow: 0 10px 22px rgba(18, 51, 78, 0.14);
+      box-shadow: 0 6px 16px rgba(28, 62, 89, 0.08);
       transition: box-shadow 0.2s ease, border-color 0.2s ease;
       overflow: visible;
     }
 
     .wf-node.selected {
-      border-color: #39aaae;
-      box-shadow: 0 16px 28px rgba(20, 126, 144, 0.22);
+      border-color: #58a0b7;
+      box-shadow: 0 10px 24px rgba(36, 115, 146, 0.14);
     }
 
     .wf-node.connect-source {
       border-color: #2679b2;
-      box-shadow: 0 16px 30px rgba(29, 101, 153, 0.24);
+      box-shadow: 0 10px 24px rgba(29, 101, 153, 0.16);
     }
 
     .wf-node-head {
       height: 32px;
       border-bottom: 1px solid #e3edf6;
       border-radius: 12px 12px 0 0;
-      background: linear-gradient(180deg, #ffffff, #f6fbff);
+      background: #ffffff;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -2256,9 +2452,9 @@
     }
 
     .workflow-inspector {
-      border: 1px solid #d7e5f0;
+      border: 1px solid #e2ebf3;
       border-radius: 13px;
-      background: #fbfdff;
+      background: #fcfdff;
       padding: 12px;
       display: grid;
       align-content: start;
@@ -2666,6 +2862,10 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .agent-collab-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
       .bigscreen-kpi-strip {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -2765,6 +2965,14 @@
         grid-template-columns: 1fr;
       }
 
+      .agent-collab-head {
+        flex-direction: column;
+      }
+
+      .agent-collab-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
       .bigscreen-hero .panel-body {
         flex-direction: column;
       }
@@ -2834,6 +3042,10 @@
         grid-template-columns: 1fr;
       }
 
+      .agent-collab-grid {
+        grid-template-columns: 1fr;
+      }
+
       .form-row {
         grid-template-columns: 1fr;
       }
@@ -2867,8 +3079,8 @@
             <div class="nav-text">总览中心</div>
           </div>
           <div class="nav-item" data-page="bigscreen">
-            <div class="nav-icon">屏</div>
-            <div class="nav-text">数据大屏</div>
+            <div class="nav-icon">数</div>
+            <div class="nav-text">数据中心</div>
           </div>
         </div>
 
@@ -2937,7 +3149,7 @@
         <div class="header-main">
           <p class="header-path" id="headerPath">AI 控制台 / 总览中心</p>
           <h1 class="header-title" id="pageTitle">总览中心</h1>
-          <p class="header-desc" id="pageDesc">统一查看核心运行指标、接入状态和高频操作入口。</p>
+          <p class="header-desc" id="pageDesc">先判断系统态势和优先事项，再进入关键操作。</p>
         </div>
 
         <div class="header-actions">
@@ -2986,7 +3198,7 @@
                 <div class="overview-posture-value" id="overviewPostureValue">评估中</div>
                 <div class="overview-posture-meta" id="overviewPostureMeta">正在检查关键链路是否完整。</div>
                 <div class="overview-posture-actions">
-                  <button class="btn btn-primary small" type="button" data-quick="goto-bigscreen">查看大屏</button>
+                  <button class="btn btn-primary small" type="button" data-quick="goto-bigscreen">查看数据中心</button>
                   <button class="btn btn-secondary small" type="button" data-quick="goto-workflow">进入工作流</button>
                 </div>
               </div>
@@ -2997,9 +3209,9 @@
 
           <div class="overview-section-head">
             <div class="overview-section-copy">
-              <span class="overview-section-kicker">ARCHITECTURE MAP</span>
-              <h3>按接入、决策、编排、治理四层看系统是否成链</h3>
-              <p>先判断哪一层缺口最大，再决定去哪个模块处理，避免一上来被操作细节淹没。</p>
+              <span class="overview-section-kicker">ARCHITECTURE SNAPSHOT</span>
+              <h3>先判断主链路是否成型，再决定今天第一步</h3>
+              <p>首页只展示成链结论和最高优先级动作，细节下沉到数据中心和专业模块。</p>
             </div>
           </div>
 
@@ -3020,8 +3232,8 @@
             <article class="panel">
               <div class="panel-head">
                 <div>
-                  <h3>调度焦点</h3>
-                  <p>当前最值得优先处理的补链动作和运行关注点。</p>
+                  <h3>今日优先事项</h3>
+                  <p>只保留最该先做的动作，避免被次要信息分散注意力。</p>
                 </div>
                 <span class="badge warning">FOCUS</span>
               </div>
@@ -3033,9 +3245,9 @@
 
           <div class="overview-section-head">
             <div class="overview-section-copy">
-              <span class="overview-section-kicker">CONTROL SURFACE</span>
-              <h3>指挥台保留能力，但按干预顺序重新组织</h3>
-              <p>先设模式和策略，再输入指令，最后在右侧查看决策卡与执行上下文。</p>
+              <span class="overview-section-kicker">EXECUTION ENTRY</span>
+              <h3>交易指挥台只保留主操作链路</h3>
+              <p>设置模式、输入指令、执行分析。决策细节按需展开，不再和主操作抢注意力。</p>
             </div>
           </div>
 
@@ -3049,59 +3261,72 @@
                 <span class="badge success">COCKPIT</span>
               </div>
               <div class="panel-body">
-                <div class="overview-command-layout">
-                  <div class="overview-command-main">
-                    <div class="overview-control-strip">
-                      <div class="field">
-                        <label for="brokerModeSelect">交易模式</label>
-                        <select id="brokerModeSelect">
-                          <option value="paper">paper</option>
-                          <option value="gtja">gtja</option>
-                          <option value="real">real</option>
-                          <option value="okx">okx</option>
-                          <option value="usstock">usstock</option>
-                        </select>
-                      </div>
-                      <label class="field">
-                        <span>执行策略</span>
-                        <select id="executionPolicySelect">
-                          <option value="auto">自动执行</option>
-                          <option value="approval">确认后执行</option>
-                        </select>
-                      </label>
-                      <div class="field">
-                        <label>&nbsp;</label>
-                        <div class="overview-inline-actions">
-                          <button class="btn btn-secondary" id="applyBrokerModeBtn">切换交易模式</button>
-                          <button class="btn btn-secondary" id="openRunHistoryBtn">运行回放</button>
-                        </div>
-                      </div>
-                    </div>
-
+                <div class="overview-command-main">
+                  <div class="overview-control-strip">
                     <div class="field">
-                      <label for="commandInput">交易指令</label>
-                      <textarea id="commandInput" placeholder="例如：买入 600519 100&#10;运行策略 BTC-USDT 50"></textarea>
+                      <label for="brokerModeSelect">交易模式</label>
+                      <select id="brokerModeSelect">
+                        <option value="paper">paper</option>
+                        <option value="gtja">gtja</option>
+                        <option value="real">real</option>
+                        <option value="okx">okx</option>
+                        <option value="usstock">usstock</option>
+                      </select>
                     </div>
-
-                    <div class="command-actions">
-                      <button class="btn btn-primary" id="analyzeBtn">AI 分析</button>
-                      <button class="btn btn-primary" id="executeBtn">AI 分析并执行</button>
-                      <button class="btn btn-secondary" id="dryRunBtn">Dry Run</button>
-                    </div>
-
-                    <div class="command-confirm-row">
-                      <button class="btn btn-secondary" id="confirmExecuteBtn" disabled>确认执行建议指令</button>
-                      <div class="approval-inline" id="liveApprovalInline">
-                        <input class="approval-input" id="approvalCoApproverInput" type="text" placeholder="复核人（必填）">
-                        <input class="approval-input" id="approvalPassphraseInput" type="password" placeholder="审批口令（必填）">
-                        <input class="approval-input" id="approvalNoteInput" type="text" placeholder="审批备注（可选）">
+                    <label class="field">
+                      <span>执行策略</span>
+                      <select id="executionPolicySelect">
+                        <option value="auto">自动执行</option>
+                        <option value="approval">确认后执行</option>
+                      </select>
+                    </label>
+                    <div class="field">
+                      <label>&nbsp;</label>
+                      <div class="overview-inline-actions">
+                        <button class="btn btn-secondary" id="applyBrokerModeBtn">切换交易模式</button>
+                        <button class="btn btn-secondary" id="openRunHistoryBtn">运行回放</button>
                       </div>
-                      <span class="item-meta" id="pendingCommandHint">暂无待确认指令</span>
                     </div>
-
-                    <div class="result-box" id="commandResult">还没有执行交易命令。</div>
                   </div>
 
+                  <div class="field">
+                    <label for="commandInput">交易指令</label>
+                    <textarea id="commandInput" placeholder="例如：买入 600519 100&#10;运行策略 BTC-USDT 50"></textarea>
+                  </div>
+
+                  <section class="agent-collab-panel">
+                    <div class="agent-collab-head">
+                      <div>
+                        <h4>多 Agent 协作链</h4>
+                        <p>现在首页直接展示 5 个角色如何分工协作：先识别意图，再补事实、做风控、决定是否执行，最后整理成用户可读结论。</p>
+                      </div>
+                      <span class="badge info">MULTI AGENT</span>
+                    </div>
+                    <div class="agent-collab-summary" id="agentCollabSummary">当前协作链已接入 5 个角色，发起分析后会展示每一步状态、摘要与运行上下文。</div>
+                    <div class="agent-collab-grid" id="agentCollabGrid"></div>
+                  </section>
+
+                  <div class="command-actions">
+                    <button class="btn btn-primary" id="analyzeBtn">AI 分析</button>
+                    <button class="btn btn-primary" id="executeBtn">AI 分析并执行</button>
+                    <button class="btn btn-secondary" id="dryRunBtn">Dry Run</button>
+                  </div>
+
+                  <div class="command-confirm-row">
+                    <button class="btn btn-secondary" id="confirmExecuteBtn" disabled>确认执行建议指令</button>
+                    <div class="approval-inline" id="liveApprovalInline">
+                      <input class="approval-input" id="approvalCoApproverInput" type="text" placeholder="复核人（必填）">
+                      <input class="approval-input" id="approvalPassphraseInput" type="password" placeholder="审批口令（必填）">
+                      <input class="approval-input" id="approvalNoteInput" type="text" placeholder="审批备注（可选）">
+                    </div>
+                    <span class="item-meta" id="pendingCommandHint">暂无待确认指令</span>
+                  </div>
+
+                  <div class="result-box" id="commandResult">还没有执行交易命令。</div>
+                </div>
+
+                <details class="overview-detail-block">
+                  <summary>查看完整 Trace 与调试细节（决策卡片 / 执行上下文 / Agent Trace）</summary>
                   <div class="overview-command-rail">
                     <section class="decision-card">
                       <h4 class="decision-title">Agent 决策卡片</h4>
@@ -3119,26 +3344,7 @@
                       <div id="agentTracePanel" class="decision-placeholder">尚未产生 trace 记录。</div>
                     </div>
                   </div>
-                </div>
-
-                <div class="quality-panel">
-                  <div class="quality-head">
-                    <div>
-                      <h4 class="decision-title">Agent 质量评分</h4>
-                      <p class="decision-subtitle">成功率、风控拒绝率与延迟趋势（按运行回放汇总）</p>
-                    </div>
-                    <div class="quality-actions">
-                      <select id="qualityWindowSelect">
-                        <option value="6">近 6 小时</option>
-                        <option value="24" selected>近 24 小时</option>
-                        <option value="72">近 72 小时</option>
-                      </select>
-                      <button class="btn btn-secondary small" id="qualityRefreshBtn">刷新质量</button>
-                    </div>
-                  </div>
-                  <div class="quality-kpi-grid" id="agentQualityKpiGrid"></div>
-                  <div class="quality-trend-grid" id="agentQualityTrendGrid"></div>
-                </div>
+                </details>
               </div>
             </article>
 
@@ -3146,8 +3352,8 @@
               <article class="panel">
                 <div class="panel-head">
                   <div>
-                    <h3>运行脉搏</h3>
-                    <p>保留最近交易活动，作为首页右侧的即时反馈。</p>
+                    <h3>最近运行</h3>
+                    <p>只保留最近执行反馈，帮助你快速判断是否需要介入。</p>
                   </div>
                   <span class="badge info" id="recentOrdersBadge">0</span>
                 </div>
@@ -3159,10 +3365,10 @@
               <article class="panel">
                 <div class="panel-head">
                   <div>
-                    <h3>架构导航</h3>
-                    <p>常用补链入口集中在这里，避免在页面里四处跳找。</p>
+                    <h3>更多操作</h3>
+                    <p>低频动作统一收纳到这里，不打断首页主链路。</p>
                   </div>
-                  <span class="badge success">ACTIONS</span>
+                  <span class="badge info">MORE</span>
                 </div>
                 <div class="panel-body">
                   <div class="quick-grid" id="quickActionList"></div>
@@ -3170,57 +3376,17 @@
               </article>
             </div>
           </div>
-
-          <div class="overview-grid overview-support-grid">
-            <article class="panel span-2">
-              <div class="panel-head">
-                <div>
-                  <h3>市场入口</h3>
-                  <p>保留行情检索，但下沉到辅助区，不和主链路抢注意力。</p>
-                </div>
-                <span class="badge info">MARKET</span>
-              </div>
-              <div class="panel-body">
-                <div class="search-row">
-                  <select id="quoteMarket">
-                    <option value="cn_stock">A股</option>
-                    <option value="cn_convertible">可转债</option>
-                    <option value="crypto">区块链</option>
-                    <option value="futures">期货</option>
-                    <option value="hk_stock">港股</option>
-                    <option value="us_stock">美股</option>
-                  </select>
-                  <input id="quoteQuery" type="text" placeholder="输入代码、股票名或 BTC-USDT">
-                  <button class="btn btn-secondary" id="searchBtn">搜索</button>
-                </div>
-                <div class="list-box" id="searchResults"></div>
-              </div>
-            </article>
-
-            <article class="panel">
-              <div class="panel-head">
-                <div>
-                  <h3>组件状态</h3>
-                  <p>保留模块级状态，但作为补充信息而不是首页主角。</p>
-                </div>
-                <span class="badge info">STATUS</span>
-              </div>
-              <div class="panel-body">
-                <div class="status-list" id="moduleStatusList"></div>
-              </div>
-            </article>
-          </div>
         </section>
 
         <section class="page-view" id="page-bigscreen">
           <div class="page-toolbar">
             <div>
-              <h2 class="toolbar-title">数据大屏</h2>
-              <p class="toolbar-desc">先看运行结论，再下钻链路指标、风险事件与处理动作。</p>
+              <h2 class="toolbar-title">数据中心</h2>
+              <p class="toolbar-desc">集中观察实时指标、异常事件和执行流变化。</p>
             </div>
             <div class="action-row">
               <button class="btn btn-secondary small" id="bigscreenAutoBtn" data-action="toggle-bigscreen-auto">自动刷新: 开</button>
-              <button class="btn btn-secondary small" data-action="reload-bigscreen">刷新大屏</button>
+              <button class="btn btn-secondary small" data-action="reload-bigscreen">刷新中心</button>
             </div>
           </div>
 
@@ -3228,7 +3394,7 @@
             <div class="panel-body">
               <div>
                 <span class="bigscreen-live-tag">LIVE DATA</span>
-                <h2 class="bigscreen-title">执行链路运行态势</h2>
+                <h2 class="bigscreen-title">数据中心：实时运行观察</h2>
                 <p class="bigscreen-subtitle" id="bigscreenSummaryText">正在汇聚交易、风控、会话与编排数据...</p>
               </div>
               <div class="bigscreen-last-wrap">
@@ -3243,18 +3409,43 @@
           <article class="panel">
             <div class="panel-head">
               <div>
-                <h3>主链路指标</h3>
-                <p>先看吞吐与延迟，再判断是否需要下钻热点标的。</p>
+                <h3>主链路实时指标</h3>
+                <p>优先观察吞吐、延迟和失败态势，快速定位是否需要介入。</p>
               </div>
               <span class="badge info" id="bigscreenFlinkModeTag">--</span>
             </div>
             <div class="panel-body">
               <div class="meta-grid" id="bigscreenFlinkStats"></div>
-              <div class="list-box bigscreen-event-list" id="bigscreenFlinkHotSymbols"></div>
             </div>
           </article>
 
           <div class="bigscreen-layout">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <h3>实时执行流</h3>
+                  <p>最近订单状态变化，按时间查看链路节奏</p>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="list-box bigscreen-flow-list" id="bigscreenFlowList"></div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <h3>异常与建议动作</h3>
+                  <p>只展示需要关注的事件，避免正常信息淹没异常信号。</p>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="list-box bigscreen-event-list" id="bigscreenEventList"></div>
+              </div>
+            </article>
+          </div>
+
+          <div class="overview-grid bigscreen-secondary-grid">
             <article class="panel">
               <div class="panel-head">
                 <div>
@@ -3270,41 +3461,69 @@
             <article class="panel">
               <div class="panel-head">
                 <div>
-                  <h3>实时执行流</h3>
-                  <p>最近订单状态变化，按时间查看链路节奏</p>
+                  <h3>热点标的</h3>
+                  <p>聚焦近 15 分钟内最活跃标的，便于下钻具体执行路径。</p>
                 </div>
               </div>
               <div class="panel-body">
-                <div class="list-box bigscreen-flow-list" id="bigscreenFlowList"></div>
+                <div class="list-box bigscreen-event-list" id="bigscreenFlinkHotSymbols"></div>
               </div>
             </article>
           </div>
 
-          <div class="overview-grid">
-            <article class="panel span-2">
-              <div class="panel-head">
-                <div>
-                  <h3>覆盖度与余量</h3>
-                  <p>可用能力、治理覆盖和会话稳定度</p>
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Agent 质量评分</h3>
+                <p>成功率、风控拒绝率与延迟趋势（按运行回放汇总）</p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="quality-panel quality-inline">
+                <div class="quality-head">
+                  <div>
+                    <h4 class="decision-title">质量窗口</h4>
+                    <p class="decision-subtitle">按时间窗跟踪模型执行稳定度与风险拒绝强度</p>
+                  </div>
+                  <div class="quality-actions">
+                    <select id="qualityWindowSelect">
+                      <option value="6">近 6 小时</option>
+                      <option value="24" selected>近 24 小时</option>
+                      <option value="72">近 72 小时</option>
+                    </select>
+                    <button class="btn btn-secondary small" id="qualityRefreshBtn">刷新质量</button>
+                  </div>
                 </div>
+                <div class="quality-kpi-grid" id="agentQualityKpiGrid"></div>
+                <div class="quality-trend-grid" id="agentQualityTrendGrid"></div>
               </div>
-              <div class="panel-body">
-                <div class="bigscreen-capacity" id="bigscreenCapacity"></div>
-              </div>
-            </article>
+            </div>
+          </article>
 
-            <article class="panel">
-              <div class="panel-head">
-                <div>
-                  <h3>风险与建议动作</h3>
-                  <p>按优先级呈现告警、缺口和下一步处理建议</p>
-                </div>
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>行情检索</h3>
+                <p>作为观察辅助能力，放在数据中心统一管理，不占用首页主操作区。</p>
               </div>
-              <div class="panel-body">
-                <div class="list-box bigscreen-event-list" id="bigscreenEventList"></div>
+              <span class="badge info">MARKET</span>
+            </div>
+            <div class="panel-body">
+              <div class="search-row">
+                <select id="quoteMarket">
+                  <option value="cn_stock">A股</option>
+                  <option value="cn_convertible">可转债</option>
+                  <option value="crypto">区块链</option>
+                  <option value="futures">期货</option>
+                  <option value="hk_stock">港股</option>
+                  <option value="us_stock">美股</option>
+                </select>
+                <input id="quoteQuery" type="text" placeholder="输入代码、股票名或 BTC-USDT">
+                <button class="btn btn-secondary" id="searchBtn">搜索</button>
               </div>
-            </article>
-          </div>
+              <div class="list-box" id="searchResults"></div>
+            </div>
+          </article>
         </section>
 
         <section class="page-view" id="page-broker">
@@ -3586,10 +3805,11 @@
         </section>
 
         <section class="page-view" id="page-workflow">
-          <div class="page-toolbar">
-            <div>
+          <div class="page-toolbar workflow-toolbar">
+            <div class="toolbar-intro">
               <h2 class="toolbar-title">工作流设计</h2>
-              <p class="toolbar-desc">先看资产与发布覆盖，再进入拓扑编辑和节点调优。</p>
+              <p class="toolbar-desc">像飞书那样先把流程清单和发布状态讲清楚，再按需进入拓扑编辑，不让运营口径和画布同时挤在首页。</p>
+              <div class="toolbar-tags" id="workflowToolbarTags"></div>
             </div>
             <div class="action-row">
               <button class="btn btn-primary small" data-action="open-add-workflow">新增工作流</button>
@@ -3597,38 +3817,24 @@
             </div>
           </div>
 
-          <article class="panel hero-panel">
-            <div class="panel-body">
-              <div>
-                <h3 class="hero-title">工作流设计：先看发布结论，再进拓扑编辑</h3>
-                <p class="hero-desc" id="workflowSummaryText">正在汇总流程资产、发布状态与运行质量...</p>
-              </div>
-              <div class="hero-tagline" id="workflowPostureHint">
-                <strong>编排态势</strong>
-                正在计算中
-              </div>
-            </div>
-          </article>
-
-          <div class="meta-grid" id="workflowStats"></div>
-
-          <article class="panel">
+          <article class="panel workflow-list-panel">
             <div class="panel-head">
               <div>
-                <h3>编排优先事项</h3>
-                <p>聚焦拓扑完整性、发布覆盖和回放质量</p>
+                <h3>流程清单</h3>
+                <p>先确认哪条流程已发布、哪条还在草稿中，再决定是否进入编辑。</p>
               </div>
             </div>
             <div class="panel-body">
-              <div class="status-list" id="workflowFocusList"></div>
+              <div class="workflow-list-summary" id="workflowListSummary">正在整理流程资产和发布状态...</div>
+              <div id="workflowsTable"></div>
             </div>
           </article>
 
-          <article class="panel workflow-composer-panel">
+          <article class="panel workflow-composer-panel" id="workflowEditorPanel">
             <div class="panel-head">
               <div>
-                <h3>主工作区：可视化拓扑编辑</h3>
-                <p>拖拽建模、连线校验、节点属性调优都在同一画布完成。</p>
+                <h3>拓扑编辑</h3>
+                <p>从上方清单选中一条流程后，再在这里调整节点、连线和配置。</p>
               </div>
               <div class="action-row workflow-head-actions">
                 <label class="workflow-select-wrap">
@@ -3656,25 +3862,10 @@
             </div>
           </article>
 
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>流程资产清单</h3>
-                <p>版本、状态、分类与运行次数</p>
-              </div>
-            </div>
-            <div class="panel-body" id="workflowsTable"></div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>节点明细</h3>
-                <p>按流程查看节点顺序、类型与配置说明</p>
-              </div>
-            </div>
+          <details class="overview-detail-block workflow-detail-block">
+            <summary>查看节点明细</summary>
             <div class="panel-body" id="workflowNodesTable"></div>
-          </article>
+          </details>
         </section>
       </main>
     </div>
@@ -3770,11 +3961,11 @@
     const PAGE_META = {
       overview: {
         title: "总览中心",
-        desc: "统一查看核心运行指标、接入状态和高频操作入口。"
+        desc: "先判断系统态势和优先事项，再进入关键操作。"
       },
       bigscreen: {
-        title: "数据大屏",
-        desc: "先看运行结论，再下钻链路指标、风险事件与处理动作。"
+        title: "数据中心",
+        desc: "集中观察实时链路、异常事件和执行流变化。"
       },
       broker: {
         title: "接入管理",
@@ -3806,7 +3997,7 @@
       },
       workflow: {
         title: "工作流设计",
-        desc: "围绕流程资产、拓扑设计与发布质量做持续治理。"
+        desc: "先看流程清单与发布状态，再按需进入拓扑编辑。"
       },
       risk: {
         title: "治理控制台",
@@ -3816,9 +4007,9 @@
 
     const PAGE_TOOLBAR_BRIEF = {
       bigscreen: {
-        title: "运行结论优先",
-        desc: "先读稳定性结论，再进入吞吐、延迟、风险事件和热点标的明细。",
-        tags: ["结论先行", "链路观察", "事件处置"]
+        title: "实时观察优先",
+        desc: "先看吞吐、延迟和异常流，再决定是否下钻执行细节。",
+        tags: ["实时指标", "异常追踪", "链路下钻"]
       },
       broker: {
         title: "接入焦点",
@@ -3861,9 +4052,9 @@
         tags: ["技能模板", "工具绑定", "能力覆盖"]
       },
       workflow: {
-        title: "编排闭环优先",
-        desc: "先判断流程资产和发布状态，再进入拓扑编辑与节点细化。",
-        tags: ["资产状态", "拓扑编辑", "发布校验"]
+        title: "清单优先",
+        desc: "先从流程清单判断发布状态，再进入拓扑编辑，避免画布和状态信息互相打扰。",
+        tags: ["流程清单", "拓扑编辑", "发布状态"]
       }
     };
 
@@ -3940,6 +4131,39 @@
       { type: "mcp_tool", label: "MCP 工具", desc: "调用行情、资讯或业务插件。" },
       { type: "llm", label: "模型节点", desc: "执行提示词推理与内容生成。" },
       { type: "end", label: "结束节点", desc: "流程收口并输出执行结果。" }
+    ];
+
+    const AGENT_STAGE_LIBRARY = [
+      {
+        role: "intent_router",
+        kicker: "STAGE 01",
+        title: "意图路由",
+        desc: "识别这是交易、研究、账户查看还是风控复核，并提取标的与执行意图。"
+      },
+      {
+        role: "market_analyst",
+        kicker: "STAGE 02",
+        title: "行情分析",
+        desc: "补齐报价、趋势、账户与上下文事实，避免后续判断只靠一句自然语言。"
+      },
+      {
+        role: "risk_guardian",
+        kicker: "STAGE 03",
+        title: "风控复核",
+        desc: "生成候选信号并做无副作用预检，判断这次请求能不能进入执行队列。"
+      },
+      {
+        role: "execution_agent",
+        kicker: "STAGE 04",
+        title: "执行代理",
+        desc: "在分析模式输出建议指令，在执行模式把通过风控的信号送入交易链路。"
+      },
+      {
+        role: "summary_agent",
+        kicker: "STAGE 05",
+        title: "结果总结",
+        desc: "把结构化结论翻译成可读回复，并把结果回传给首页和运行回放。"
+      }
     ];
 
     let workflowDragState = null;
@@ -4359,87 +4583,144 @@
 
     async function refreshCurrentPage() {
       await loadPageData(state.activePage, false);
-      if (state.activePage !== "overview") {
+      if (state.activePage !== "overview" && state.activePage !== "bigscreen") {
         await loadOverviewData(true);
       }
       showToast("页面数据已刷新", "success");
     }
 
-    async function loadOverviewData(silent = false) {
-      const requests = await Promise.allSettled([
-        apiRequest("/monitor/summary"),
-        apiRequest("/broker/mode"),
-        apiRequest("/broker/accounts?limit=100"),
-        apiRequest("/ai/config"),
-        apiRequest("/admin/knowledge/bases"),
-        apiRequest("/admin/conversations"),
-        apiRequest("/admin/mcp/tools"),
-        apiRequest("/admin/workflows"),
-        apiRequest("/admin/risk/rules"),
-        apiRequest("/admin/notification-channels"),
-        apiRequest(buildWorkflowQualityQuery())
-      ]);
-
-      if (requests[0].status === "fulfilled") state.monitorSummary = requests[0].value;
-      if (requests[1].status === "fulfilled") state.brokerMode = requests[1].value;
-      if (requests[2].status === "fulfilled") state.brokerAccounts = requests[2].value || [];
-      if (requests[3].status === "fulfilled") state.aiConfig = requests[3].value;
-      if (requests[4].status === "fulfilled") state.knowledgeBases = requests[4].value || [];
-      if (requests[5].status === "fulfilled") state.conversations = requests[5].value || [];
-      if (requests[6].status === "fulfilled") state.mcpTools = requests[6].value || [];
-      if (requests[7].status === "fulfilled") state.workflows = requests[7].value || [];
-      if (requests[8].status === "fulfilled") state.riskRules = requests[8].value || [];
-      if (requests[9].status === "fulfilled") state.notificationChannels = requests[9].value || [];
-      if (requests[10].status === "fulfilled") applyAgentQualityData(requests[10].value || {});
-
-      if (!silent) {
-        requests.forEach((result) => {
-          if (result.status === "rejected") {
-            showToast(result.reason?.message || "部分总览数据加载失败", "warning");
-          }
-        });
+    function applyConsoleSnapshotField(field, value) {
+      if (field === "monitorSummary") {
+        state.monitorSummary = value;
+        return;
       }
+      if (field === "brokerMode") {
+        state.brokerMode = value;
+        return;
+      }
+      if (field === "brokerAccounts") {
+        state.brokerAccounts = value || [];
+        return;
+      }
+      if (field === "aiConfig") {
+        state.aiConfig = value;
+        return;
+      }
+      if (field === "knowledgeBases") {
+        state.knowledgeBases = value || [];
+        return;
+      }
+      if (field === "conversations") {
+        state.conversations = value || [];
+        return;
+      }
+      if (field === "mcpTools") {
+        state.mcpTools = value || [];
+        return;
+      }
+      if (field === "workflows") {
+        state.workflows = value || [];
+        return;
+      }
+      if (field === "riskRules") {
+        state.riskRules = value || [];
+        return;
+      }
+      if (field === "notificationChannels") {
+        state.notificationChannels = value || [];
+        return;
+      }
+      if (field === "conversationInsights") {
+        state.conversationInsights = value;
+        return;
+      }
+      if (field === "flinkMetrics") {
+        state.flinkMetrics = value;
+        return;
+      }
+      if (field === "agentQuality") {
+        applyAgentQualityData(value || {});
+      }
+    }
+
+    async function loadConsoleSnapshot(options = {}) {
+      const {
+        includeKnowledgeBases = false,
+        includeAgentQuality = false,
+        includeConversationInsights = false,
+        includeFlinkMetrics = false
+      } = options;
+
+      const jobs = [
+        { field: "monitorSummary", request: () => apiRequest("/monitor/summary") },
+        { field: "brokerMode", request: () => apiRequest("/broker/mode") },
+        { field: "brokerAccounts", request: () => apiRequest("/broker/accounts?limit=100") },
+        { field: "aiConfig", request: () => apiRequest("/ai/config") },
+        { field: "conversations", request: () => apiRequest("/admin/conversations") },
+        { field: "mcpTools", request: () => apiRequest("/admin/mcp/tools") },
+        { field: "workflows", request: () => apiRequest("/admin/workflows") },
+        { field: "riskRules", request: () => apiRequest("/admin/risk/rules") },
+        { field: "notificationChannels", request: () => apiRequest("/admin/notification-channels") }
+      ];
+
+      if (includeKnowledgeBases) {
+        jobs.push({ field: "knowledgeBases", request: () => apiRequest("/admin/knowledge/bases") });
+      }
+      if (includeConversationInsights) {
+        jobs.push({ field: "conversationInsights", request: () => apiRequest("/admin/conversations/insights") });
+      }
+      if (includeFlinkMetrics) {
+        jobs.push({ field: "flinkMetrics", request: () => apiRequest("/monitor/flink/metrics") });
+      }
+      if (includeAgentQuality) {
+        jobs.push({ field: "agentQuality", request: () => apiRequest(buildWorkflowQualityQuery()) });
+      }
+
+      const settled = await Promise.allSettled(jobs.map((job) => job.request()));
+      const failures = [];
+
+      settled.forEach((result, index) => {
+        const field = jobs[index].field;
+        if (result.status === "fulfilled") {
+          applyConsoleSnapshotField(field, result.value);
+          return;
+        }
+        failures.push(result.reason);
+      });
+
+      return failures;
+    }
+
+    function notifySnapshotFailures(failures, fallbackMessage, silent = false) {
+      if (silent || !Array.isArray(failures) || !failures.length) {
+        return;
+      }
+      showToast(failures[0]?.message || fallbackMessage, "warning");
+      if (failures.length > 1) {
+        showToast(`另有 ${formatNumber(failures.length - 1)} 项数据加载失败`, "warning");
+      }
+    }
+
+    async function loadOverviewData(silent = false) {
+      const failures = await loadConsoleSnapshot({
+        includeKnowledgeBases: true,
+        includeAgentQuality: true
+      });
+      notifySnapshotFailures(failures, "部分总览数据加载失败", silent);
 
       enforceLiveApprovalPolicy(true);
       renderOverview();
     }
 
     async function loadBigscreenData(silent = false) {
-      const requests = await Promise.allSettled([
-        apiRequest("/monitor/summary"),
-        apiRequest("/broker/mode"),
-        apiRequest("/broker/accounts?limit=100"),
-        apiRequest("/ai/config"),
-        apiRequest("/admin/workflows"),
-        apiRequest("/admin/mcp/tools"),
-        apiRequest("/admin/notification-channels"),
-        apiRequest("/admin/risk/rules"),
-        apiRequest("/admin/conversations"),
-        apiRequest("/admin/conversations/insights"),
-        apiRequest("/monitor/flink/metrics")
-      ]);
-
-      if (requests[0].status === "fulfilled") state.monitorSummary = requests[0].value;
-      if (requests[1].status === "fulfilled") state.brokerMode = requests[1].value;
-      if (requests[2].status === "fulfilled") state.brokerAccounts = requests[2].value || [];
-      if (requests[3].status === "fulfilled") state.aiConfig = requests[3].value;
-      if (requests[4].status === "fulfilled") state.workflows = requests[4].value || [];
-      if (requests[5].status === "fulfilled") state.mcpTools = requests[5].value || [];
-      if (requests[6].status === "fulfilled") state.notificationChannels = requests[6].value || [];
-      if (requests[7].status === "fulfilled") state.riskRules = requests[7].value || [];
-      if (requests[8].status === "fulfilled") state.conversations = requests[8].value || [];
-      if (requests[9].status === "fulfilled") state.conversationInsights = requests[9].value;
-      if (requests[10].status === "fulfilled") state.flinkMetrics = requests[10].value;
+      const failures = await loadConsoleSnapshot({
+        includeConversationInsights: true,
+        includeFlinkMetrics: true,
+        includeAgentQuality: true
+      });
 
       state.bigscreen.lastRefreshedAt = new Date().toISOString();
-
-      if (!silent) {
-        requests.forEach((result) => {
-          if (result.status === "rejected") {
-            showToast(result.reason?.message || "部分大屏数据加载失败", "warning");
-          }
-        });
-      }
+      notifySnapshotFailures(failures, "部分数据中心数据加载失败", silent);
 
       renderBigscreen();
       syncBigscreenAutoRefresh();
@@ -4678,6 +4959,111 @@
       `;
     }
 
+    function buildOverviewFocusItems({
+      hasBroker,
+      activeAccounts,
+      hasAi,
+      workflowCount,
+      enabledRiskCount,
+      enabledNotificationCount,
+      ordersQueued,
+      qualityRunCount,
+      qualityWindowHours,
+      successRate,
+      avgLatencyMs
+    }) {
+      const focusItems = [];
+      if (!hasBroker) {
+        focusItems.push({
+          title: "优先补齐交易接入",
+          desc: "没有账户时，首页只能看态势，无法形成真实执行闭环。",
+          tone: "danger",
+          action: "add-broker",
+          cta: "去新增"
+        });
+      } else if (activeAccounts === 0) {
+        focusItems.push({
+          title: "检查激活账户",
+          desc: "已配置账户但未激活，执行链路会在入口层停住。",
+          tone: "warning",
+          action: "goto-broker",
+          cta: "去检查"
+        });
+      }
+      if (!hasAi) {
+        focusItems.push({
+          title: "配置模型引擎",
+          desc: "AI 模型和 API Key 未就绪，决策层无法为指挥台提供建议指令。",
+          tone: "warning",
+          action: "ai-config",
+          cta: "去配置"
+        });
+      }
+      if (workflowCount === 0) {
+        focusItems.push({
+          title: "建立标准工作流",
+          desc: "把高频操作沉淀成流程，首页才能真正承担“指挥中台”的角色。",
+          tone: "warning",
+          action: "add-workflow",
+          cta: "去新建"
+        });
+      }
+      if (enabledRiskCount === 0) {
+        focusItems.push({
+          title: "补上风控规则",
+          desc: "治理层缺失时，不建议直接推进自动执行。",
+          tone: "danger",
+          action: "goto-risk",
+          cta: "去补齐"
+        });
+      }
+      if (enabledNotificationCount === 0) {
+        focusItems.push({
+          title: "开启通知通道",
+          desc: "没有告警和回执，系统运行风险不容易被及时感知。",
+          tone: "warning",
+          action: "goto-notification",
+          cta: "去配置"
+        });
+      }
+      if (ordersQueued > 0) {
+        focusItems.push({
+          title: "关注排队订单",
+          desc: `当前有 ${formatNumber(ordersQueued)} 笔订单待处理，建议打开数据中心观察流转状态。`,
+          tone: "warning",
+          action: "goto-bigscreen",
+          cta: "去查看"
+        });
+      }
+      if (qualityRunCount > 0) {
+        focusItems.push({
+          title: "复盘 Agent 质量",
+          desc: `近 ${formatNumber(qualityWindowHours)} 小时成功率 ${formatPercent(successRate, 1)}，平均延迟 ${formatNumber(avgLatencyMs)} ms。`,
+          tone: successRate >= 85 ? "success" : "warning",
+          action: "goto-workflow",
+          cta: "去复盘"
+        });
+      }
+      if (!focusItems.length) {
+        focusItems.push({
+          title: "链路已成型",
+          desc: "可以直接使用指挥台执行分析，然后到数据中心观察全局链路态势。",
+          tone: "success",
+          action: "goto-bigscreen",
+          cta: "去查看"
+        });
+      }
+      return focusItems;
+    }
+
+    function renderOverviewQuickActions() {
+      return [
+        UiComponents.QuickAction({ title: "补交易接入", desc: "券商或交易所账号配置", action: "add-broker" }),
+        UiComponents.QuickAction({ title: "校准模型引擎", desc: "供应商、模型与密钥设置", action: "ai-config" }),
+        UiComponents.QuickAction({ title: "沉淀工作流", desc: "定义编排节点与状态", action: "add-workflow" })
+      ].join("");
+    }
+
     function renderOverview() {
       const summary = state.monitorSummary || {};
       const ordersQueued = Number(pick(summary, "orders_queued", "ordersQueued") ?? 0);
@@ -4733,7 +5119,7 @@
         postureTone = ordersQueued > 0 ? "warning" : "success";
         postureValue = ordersQueued > 0 ? "运行关注" : "稳态就绪";
         postureMeta = ordersQueued > 0
-          ? `当前有 ${formatNumber(ordersQueued)} 笔订单待处理，建议先关注右侧运行脉搏与数据大屏。`
+          ? `当前有 ${formatNumber(ordersQueued)} 笔订单待处理，建议先关注最近运行并进入数据中心。`
           : "四层架构已经成链，可直接从交易指挥台发起分析和执行。";
       } else if (hasBroker || hasAi || workflowCount > 0 || enabledRiskCount > 0) {
         postureTone = "warning";
@@ -4845,124 +5231,22 @@
         })
       ].join("");
 
-      const focusItems = [];
-      if (!hasBroker) {
-        focusItems.push({
-          title: "优先补齐交易接入",
-          desc: "没有账户时，首页只能看态势，无法形成真实执行闭环。",
-          tone: "danger",
-          action: "add-broker",
-          cta: "去新增"
-        });
-      } else if (activeAccounts === 0) {
-        focusItems.push({
-          title: "检查激活账户",
-          desc: "已配置账户但未激活，执行链路会在入口层停住。",
-          tone: "warning",
-          action: "goto-broker",
-          cta: "去检查"
-        });
-      }
-      if (!hasAi) {
-        focusItems.push({
-          title: "配置模型引擎",
-          desc: "AI 模型和 API Key 未就绪，决策层无法为指挥台提供建议指令。",
-          tone: "warning",
-          action: "ai-config",
-          cta: "去配置"
-        });
-      }
-      if (workflowCount === 0) {
-        focusItems.push({
-          title: "建立标准工作流",
-          desc: "把高频操作沉淀成流程，首页才能真正承担“指挥中台”的角色。",
-          tone: "warning",
-          action: "add-workflow",
-          cta: "去新建"
-        });
-      }
-      if (enabledRiskCount === 0) {
-        focusItems.push({
-          title: "补上风控规则",
-          desc: "治理层缺失时，不建议直接推进自动执行。",
-          tone: "danger",
-          action: "goto-risk",
-          cta: "去补齐"
-        });
-      }
-      if (enabledNotificationCount === 0) {
-        focusItems.push({
-          title: "开启通知通道",
-          desc: "没有告警和回执，系统运行风险不容易被及时感知。",
-          tone: "warning",
-          action: "goto-notification",
-          cta: "去配置"
-        });
-      }
-      if (ordersQueued > 0) {
-        focusItems.push({
-          title: "关注排队订单",
-          desc: `当前有 ${formatNumber(ordersQueued)} 笔订单待处理，建议打开大屏观察流转状态。`,
-          tone: "warning",
-          action: "goto-bigscreen",
-          cta: "去查看"
-        });
-      }
-      if (qualityRunCount > 0) {
-        focusItems.push({
-          title: "复盘 Agent 质量",
-          desc: `近 ${formatNumber(qualityWindowHours)} 小时成功率 ${formatPercent(successRate, 1)}，平均延迟 ${formatNumber(avgLatencyMs)} ms。`,
-          tone: successRate >= 85 ? "success" : "warning",
-          action: "goto-workflow",
-          cta: "去复盘"
-        });
-      }
-      if (!focusItems.length) {
-        focusItems.push({
-          title: "链路已成型",
-          desc: "可以直接使用指挥台执行分析，然后到数据大屏观察全局链路态势。",
-          tone: "success",
-          action: "goto-bigscreen",
-          cta: "去查看"
-        });
-      }
-      $("overviewFocusList").innerHTML = focusItems.slice(0, 4).map(renderOverviewFocusItem).join("");
+      const focusItems = buildOverviewFocusItems({
+        hasBroker,
+        activeAccounts,
+        hasAi,
+        workflowCount,
+        enabledRiskCount,
+        enabledNotificationCount,
+        ordersQueued,
+        qualityRunCount,
+        qualityWindowHours,
+        successRate,
+        avgLatencyMs
+      });
+      $("overviewFocusList").innerHTML = focusItems.slice(0, 3).map(renderOverviewFocusItem).join("");
 
-      $("moduleStatusList").innerHTML = [
-        UiComponents.StatusItem({
-          title: "接入与执行",
-          desc: hasBroker ? `${formatNumber(brokerAccounts.length)} 个账户已接入，${formatNumber(activeAccounts)} 个已激活` : "交易入口尚未建立",
-          tone: hasBroker && activeAccounts > 0 ? "success" : hasBroker ? "warning" : "danger",
-          tag: hasBroker && activeAccounts > 0 ? "就绪" : hasBroker ? "关注" : "缺失"
-        }),
-        UiComponents.StatusItem({
-          title: "模型与知识",
-          desc: hasAi ? `${provider} · ${model}，知识库 ${formatNumber(knowledgeCount)} 个` : "决策层尚未配置可用模型",
-          tone: hasAi ? "success" : "warning",
-          tag: hasAi ? "就绪" : "待配置"
-        }),
-        UiComponents.StatusItem({
-          title: "编排与工具",
-          desc: `工作流 ${formatNumber(workflowCount)} 条，MCP 工具 ${formatNumber(mcpCount)} 个`,
-          tone: workflowCount > 0 ? "success" : mcpCount > 0 ? "info" : "warning",
-          tag: workflowCount > 0 ? "在线" : mcpCount > 0 ? "初始化" : "待建"
-        }),
-        UiComponents.StatusItem({
-          title: "治理与告警",
-          desc: `风控规则 ${formatNumber(enabledRiskCount)} 条，通知通道 ${formatNumber(enabledNotificationCount)} 条`,
-          tone: enabledRiskCount > 0 && enabledNotificationCount > 0 ? "success" : enabledRiskCount > 0 || enabledNotificationCount > 0 ? "warning" : "danger",
-          tag: enabledRiskCount > 0 && enabledNotificationCount > 0 ? "闭环" : "关注"
-        })
-      ].join("");
-
-      $("quickActionList").innerHTML = [
-        UiComponents.QuickAction({ title: "补交易接入", desc: "券商或交易所账号配置", action: "add-broker" }),
-        UiComponents.QuickAction({ title: "校准模型引擎", desc: "供应商、模型与密钥设置", action: "ai-config" }),
-        UiComponents.QuickAction({ title: "补知识底座", desc: "录入知识库与文档规模", action: "add-knowledge" }),
-        UiComponents.QuickAction({ title: "沉淀工作流", desc: "定义编排节点与状态", action: "add-workflow" }),
-        UiComponents.QuickAction({ title: "运行回测", desc: "验证策略与执行前提", action: "run-backtest" }),
-        UiComponents.QuickAction({ title: "导入行情", desc: "通过 CSV 路径导入 Bars", action: "import-csv" })
-      ].join("");
+      $("quickActionList").innerHTML = renderOverviewQuickActions();
 
       const recentOrders = pick(summary, "recent_orders", "recentOrders") || [];
       renderRecentOrders(recentOrders);
@@ -4989,20 +5273,157 @@
       `;
     }
 
-    function renderCapacityItem({ label, value, meta }) {
-      const safeValue = Math.max(0, Math.min(100, Number(value) || 0));
-      return `
-        <article class="capacity-item">
-          <div class="capacity-head">
-            <div class="capacity-label">${escapeHtml(label)}</div>
-            <div class="capacity-value">${safeValue}%</div>
+    function renderBigscreenHotSymbols(hotSymbols) {
+      if (!hotSymbols.length) {
+        return "<div class=\"empty\">近 15 分钟暂无热点标的数据。</div>";
+      }
+      return hotSymbols.map((row, index) => `
+        <div class="list-item">
+          <div>
+            <div class="item-title">热点 #${index + 1} · ${escapeHtml(pick(row, "symbol") || "--")}</div>
+            <div class="item-meta">近 15 分钟触发 ${formatNumber(pick(row, "order_count", "orderCount") || 0)} 次</div>
           </div>
-          <div class="capacity-track">
-            <div class="capacity-bar" style="width:${safeValue}%;"></div>
+        </div>
+      `).join("");
+    }
+
+    function renderBigscreenHealthList({
+      activeAccounts,
+      hasAi,
+      workflowCount,
+      riskEnabledCount,
+      channelEnabledCount,
+      mcpCount,
+      flinkEnabled,
+      flinkDataReady,
+      fromFlinkSnapshot,
+      p95WorkflowLatencyMs5m,
+      watermarkDelayMs,
+      failedRuns5m,
+      flinkHealthy
+    }) {
+      return [
+        UiComponents.StatusItem({
+          title: "交易通道",
+          desc: activeAccounts > 0 ? `${activeAccounts} 个激活账户在线` : "暂无激活账户，执行链将阻塞",
+          tone: activeAccounts > 0 ? "success" : "danger",
+          tag: activeAccounts > 0 ? "就绪" : "阻塞"
+        }),
+        UiComponents.StatusItem({
+          title: "AI 引擎",
+          desc: hasAi ? `${pick(state.aiConfig, "provider")} · ${pick(state.aiConfig, "model")}` : "模型 API Key 未完整配置",
+          tone: hasAi ? "success" : "warning",
+          tag: statusTag(hasAi ? "success" : "warning")
+        }),
+        UiComponents.StatusItem({
+          title: "工作流执行",
+          desc: workflowCount > 0 ? `已发布 ${workflowCount} 条流程定义` : "暂无可用工作流定义",
+          tone: workflowCount > 0 ? "success" : "warning",
+          tag: workflowCount > 0 ? "就绪" : "关注"
+        }),
+        UiComponents.StatusItem({
+          title: "风险与通知",
+          desc: `启用风控 ${riskEnabledCount} 条 · 启用通知 ${channelEnabledCount} 条`,
+          tone: riskEnabledCount > 0 && channelEnabledCount > 0 ? "success" : "warning",
+          tag: riskEnabledCount > 0 && channelEnabledCount > 0 ? "闭环" : "待补齐"
+        }),
+        UiComponents.StatusItem({
+          title: "MCP 工具",
+          desc: mcpCount > 0 ? `${mcpCount} 个工具可调用` : "尚未接入 MCP 工具",
+          tone: mcpCount > 0 ? "success" : "info",
+          tag: mcpCount > 0 ? "就绪" : "观察"
+        }),
+        UiComponents.StatusItem({
+          title: "Flink 计算",
+          desc: flinkEnabled
+            ? flinkDataReady
+              ? `${fromFlinkSnapshot ? "Snapshot" : "Decision"} · P95 ${formatNumber(p95WorkflowLatencyMs5m)} ms · 水位延迟 ${formatNumber(watermarkDelayMs)} ms · 失败 ${formatNumber(failedRuns5m)}`
+              : "Flink 已启用，但尚未收到实时数据。"
+            : "Flink 计算未启用，当前仅展示基础统计。",
+          tone: flinkHealthy ? "success" : flinkEnabled ? (flinkDataReady ? "warning" : "danger") : "info",
+          tag: flinkHealthy ? "就绪" : flinkEnabled ? (flinkDataReady ? "关注" : "阻塞") : "观察"
+        })
+      ].join("");
+    }
+
+    function renderBigscreenFlowList(recentOrders) {
+      if (!recentOrders.length) {
+        return "<div class=\"empty\">暂无执行流水，请先发起交易或策略执行。</div>";
+      }
+      return recentOrders.slice(0, 10).map((order) => {
+        const symbol = pick(order, "symbol") || "--";
+        const side = String(pick(order, "side") || "--").toUpperCase();
+        const quantity = pick(order, "quantity") ?? "--";
+        const status = String(pick(order, "status") || "--");
+        const statusTone = toneClass(normalizeToneFromStatus(status));
+        return `
+          <div class="list-item">
+            <div>
+              <div class="item-title">${escapeHtml(symbol)} · ${escapeHtml(side)} · ${escapeHtml(quantity)}</div>
+              <div class="item-meta">订单 #${escapeHtml(pick(order, "id") || "--")} · ${escapeHtml(formatDateTime(pick(order, "created_at", "createdAt")))}</div>
+            </div>
+            <div class="bigscreen-item-right">
+              <span class="badge ${statusTone}">${escapeHtml(status.toUpperCase())}</span>
+            </div>
           </div>
-          <div class="capacity-meta">${escapeHtml(meta)}</div>
-        </article>
-      `;
+        `;
+      }).join("");
+    }
+
+    function buildBigscreenEvents({
+      queuedOrdersNow,
+      hasAi,
+      riskEnabledCount,
+      channelEnabledCount,
+      flinkEnabled,
+      flinkDataReady,
+      failedRuns5m,
+      watermarkDelayMs,
+      riskRejectRate5m,
+      hotSymbols,
+      workflows
+    }) {
+      const events = [];
+      if (queuedOrdersNow > 0) {
+        events.push(`执行队列中有 ${formatNumber(queuedOrdersNow)} 笔订单等待成交，建议：优先检查实时执行流是否卡在同一状态。`);
+      } else {
+        events.push("当前无排队订单，执行链路处于可接单状态。");
+      }
+      if (!hasAi) {
+        events.push("AI 引擎未完全就绪，建议：先在模型管理补齐 API Key 与模型参数。");
+      }
+      if (riskEnabledCount === 0) {
+        events.push("暂无启用风控规则，建议：先补数量或金额上限规则，再开放自动执行。");
+      }
+      if (channelEnabledCount === 0) {
+        events.push("通知渠道未启用，建议：先接入回执通道，避免异常成交无提醒。");
+      }
+      if (!flinkEnabled) {
+        events.push("实时计算未开启，建议：开启后再基于吞吐和延迟做调优决策。");
+      } else if (!flinkDataReady) {
+        events.push("实时数据未就绪，建议：检查 Flink 作业写入快照表或决策表的链路。");
+      } else {
+        if (failedRuns5m > 0) {
+          events.push(`近 5 分钟实时计算失败 ${failedRuns5m} 次，建议：先排查失败节点日志。`);
+        }
+        if (watermarkDelayMs > 60000) {
+          events.push(`水位延迟 ${formatNumber(watermarkDelayMs)} ms，建议：优先检查消费积压和下游写入速度。`);
+        }
+        if (riskRejectRate5m > 25) {
+          events.push(`近 5 分钟风控拒绝率 ${formatPercent(riskRejectRate5m, 1)}，建议：复核阈值是否过严。`);
+        }
+        if (hotSymbols.length > 0) {
+          events.push(`热点标的 ${pick(hotSymbols[0], "symbol") || "--"} 触发最频繁，建议：重点查看该标的执行路径。`);
+        }
+      }
+      if (workflows.length > 0) {
+        const topWorkflow = [...workflows]
+          .sort((a, b) => Number(pick(b, "run_count", "runCount") || 0) - Number(pick(a, "run_count", "runCount") || 0))[0];
+        if (topWorkflow) {
+          events.push(`高频流程：${pick(topWorkflow, "name") || "--"}（运行 ${formatNumber(pick(topWorkflow, "run_count", "runCount") || 0)} 次）。`);
+        }
+      }
+      return events;
     }
 
     function renderBigscreen() {
@@ -5053,25 +5474,23 @@
 
       const fillRate = ordersTotal > 0 ? ((ordersFilled / ordersTotal) * 100).toFixed(1) : "0.0";
       const queuePressure = Math.min(100, Math.round((queuedOrdersNow / Math.max(1, ordersTotal)) * 100));
-      const runtimeCoverage = Math.min(100, Math.round(((workflowCount + mcpCount + activeAccounts) / 15) * 100));
-      const securityCoverage = Math.min(100, Math.round(((riskEnabledCount + channelEnabledCount) / 12) * 100));
-      const aiReadiness = hasAi ? 100 : 38;
-      const conversationStability = conversationCount === 0
-        ? 42
-        : Math.max(30, Math.min(100, Math.round(100 - (riskSessionCount / conversationCount) * 100)));
       const computeBacklog1m = Math.max(0, sourceEvents1m - processedEvents1m);
       const fromFlinkSnapshot = flinkDataSource === "flink_snapshot";
-      const flinkHealthy = flinkEnabled && fromFlinkSnapshot && failedRuns5m === 0 && watermarkDelayMs <= 30000;
-      const snapshotHint = fromFlinkSnapshot
+      const fromFlinkDecision = flinkDataSource === "flink_decision_signal";
+      const flinkDataReady = fromFlinkSnapshot || fromFlinkDecision;
+      const flinkHealthy = flinkEnabled && flinkDataReady && failedRuns5m === 0 && watermarkDelayMs <= 30000;
+      const computeHint = fromFlinkSnapshot
         ? `快照时间 ${formatDateTime(lastComputeAt)}`
-        : "未读取到 Flink 快照数据";
+        : fromFlinkDecision
+          ? `决策时间 ${formatDateTime(lastComputeAt)}`
+          : "未读取到 Flink 实时数据";
 
       const blockers = [];
       if (activeAccounts === 0) blockers.push("交易接入");
       if (!hasAi) blockers.push("AI 引擎");
       if (workflowCount === 0) blockers.push("流程编排");
       if (riskEnabledCount === 0 || channelEnabledCount === 0) blockers.push("治理覆盖");
-      if (!flinkEnabled || !fromFlinkSnapshot) blockers.push("实时计算");
+      if (!flinkEnabled || !flinkDataReady) blockers.push("实时计算");
 
       let conclusionLabel = "稳态运行";
       if (blockers.length > 0) {
@@ -5083,15 +5502,15 @@
 
       const flinkModeTag = $("bigscreenFlinkModeTag");
       if (flinkModeTag) {
-        const badgeTone = !flinkEnabled ? "info" : fromFlinkSnapshot ? (flinkHealthy ? "success" : "warning") : "danger";
+        const badgeTone = !flinkEnabled ? "info" : flinkDataReady ? (flinkHealthy ? "success" : "warning") : "danger";
         flinkModeTag.className = `badge ${badgeTone}`;
         flinkModeTag.textContent = flinkEnabled
-          ? `实时计算 · ${flinkEngine.toUpperCase()} · ${fromFlinkSnapshot ? "已接入" : "待接入"}`
+          ? `实时计算 · ${flinkEngine.toUpperCase()} · ${flinkDataReady ? "已接入" : "待接入"}`
           : "实时计算 · 未开启";
       }
 
       $("bigscreenSummaryText").textContent =
-        `【${conclusionLabel}】订单总量 ${formatNumber(ordersTotal)}，成交率 ${fillRate}% ，当前排队 ${formatNumber(queuedOrdersNow)} 单；实时计算 1 分钟处理 ${formatNumber(processedEvents1m)} 条，水位延迟 ${formatNumber(watermarkDelayMs)} ms，${snapshotHint}。`;
+        `【${conclusionLabel}】订单总量 ${formatNumber(ordersTotal)}，成交率 ${fillRate}% ，当前排队 ${formatNumber(queuedOrdersNow)} 单；实时计算 1 分钟处理 ${formatNumber(processedEvents1m)} 条，水位延迟 ${formatNumber(watermarkDelayMs)} ms，${computeHint}。`;
 
       const refreshedText = state.bigscreen.lastRefreshedAt
         ? formatDateTime(state.bigscreen.lastRefreshedAt)
@@ -5149,149 +5568,40 @@
         `<div class="meta-card"><div class="meta-label">最近计算时间</div><div class="meta-value" style="font-size: 14px;">${escapeHtml(formatDateTime(lastComputeAt))}</div></div>`
       ].join("");
 
-      if (!hotSymbols.length) {
-        $("bigscreenFlinkHotSymbols").innerHTML = "<div class=\"empty\">近 15 分钟暂无热点标的数据。</div>";
-      } else {
-        $("bigscreenFlinkHotSymbols").innerHTML = hotSymbols.map((row, index) => `
-          <div class="list-item">
-            <div>
-              <div class="item-title">热点 #${index + 1} · ${escapeHtml(pick(row, "symbol") || "--")}</div>
-              <div class="item-meta">近 15 分钟触发 ${formatNumber(pick(row, "order_count", "orderCount") || 0)} 笔订单</div>
-            </div>
-          </div>
-        `).join("");
-      }
+      $("bigscreenFlinkHotSymbols").innerHTML = renderBigscreenHotSymbols(hotSymbols);
 
-      $("bigscreenHealthList").innerHTML = [
-        UiComponents.StatusItem({
-          title: "交易通道",
-          desc: activeAccounts > 0 ? `${activeAccounts} 个激活账户在线` : "暂无激活账户，执行链将阻塞",
-          tone: activeAccounts > 0 ? "success" : "danger",
-          tag: activeAccounts > 0 ? "就绪" : "阻塞"
-        }),
-        UiComponents.StatusItem({
-          title: "AI 引擎",
-          desc: hasAi ? `${pick(state.aiConfig, "provider")} · ${pick(state.aiConfig, "model")}` : "模型 API Key 未完整配置",
-          tone: hasAi ? "success" : "warning",
-          tag: statusTag(hasAi ? "success" : "warning")
-        }),
-        UiComponents.StatusItem({
-          title: "工作流执行",
-          desc: workflowCount > 0 ? `已发布 ${workflowCount} 条流程定义` : "暂无可用工作流定义",
-          tone: workflowCount > 0 ? "success" : "warning",
-          tag: workflowCount > 0 ? "就绪" : "关注"
-        }),
-        UiComponents.StatusItem({
-          title: "风险与通知",
-          desc: `启用风控 ${riskEnabledCount} 条 · 启用通知 ${channelEnabledCount} 条`,
-          tone: riskEnabledCount > 0 && channelEnabledCount > 0 ? "success" : "warning",
-          tag: riskEnabledCount > 0 && channelEnabledCount > 0 ? "闭环" : "待补齐"
-        }),
-        UiComponents.StatusItem({
-          title: "MCP 工具",
-          desc: mcpCount > 0 ? `${mcpCount} 个工具可调用` : "尚未接入 MCP 工具",
-          tone: mcpCount > 0 ? "success" : "info",
-          tag: mcpCount > 0 ? "就绪" : "观察"
-        }),
-        UiComponents.StatusItem({
-          title: "Flink 计算",
-          desc: flinkEnabled
-            ? fromFlinkSnapshot
-              ? `P95 ${formatNumber(p95WorkflowLatencyMs5m)} ms · 水位延迟 ${formatNumber(watermarkDelayMs)} ms · 失败 ${formatNumber(failedRuns5m)}`
-              : "Flink 已启用，但尚未收到快照表数据。"
-            : "Flink 计算未启用，当前仅展示基础统计。",
-          tone: flinkHealthy ? "success" : flinkEnabled ? (fromFlinkSnapshot ? "warning" : "danger") : "info",
-          tag: flinkHealthy ? "就绪" : flinkEnabled ? (fromFlinkSnapshot ? "关注" : "阻塞") : "观察"
-        })
-      ].join("");
+      $("bigscreenHealthList").innerHTML = renderBigscreenHealthList({
+        activeAccounts,
+        hasAi,
+        workflowCount,
+        riskEnabledCount,
+        channelEnabledCount,
+        mcpCount,
+        flinkEnabled,
+        flinkDataReady,
+        fromFlinkSnapshot,
+        p95WorkflowLatencyMs5m,
+        watermarkDelayMs,
+        failedRuns5m,
+        flinkHealthy
+      });
 
       const recentOrders = pick(summary, "recent_orders", "recentOrders") || [];
-      if (!recentOrders.length) {
-        $("bigscreenFlowList").innerHTML = "<div class=\"empty\">暂无执行流水，请先发起交易或策略执行。</div>";
-      } else {
-        $("bigscreenFlowList").innerHTML = recentOrders.slice(0, 10).map((order) => {
-          const symbol = pick(order, "symbol") || "--";
-          const side = String(pick(order, "side") || "--").toUpperCase();
-          const quantity = pick(order, "quantity") ?? "--";
-          const status = String(pick(order, "status") || "--");
-          const statusTone = toneClass(normalizeToneFromStatus(status));
-          return `
-            <div class="list-item">
-              <div>
-                <div class="item-title">${escapeHtml(symbol)} · ${escapeHtml(side)} · ${escapeHtml(quantity)}</div>
-                <div class="item-meta">订单 #${escapeHtml(pick(order, "id") || "--")} · ${escapeHtml(formatDateTime(pick(order, "created_at", "createdAt")))}</div>
-              </div>
-              <div class="bigscreen-item-right">
-                <span class="badge ${statusTone}">${escapeHtml(status.toUpperCase())}</span>
-              </div>
-            </div>
-          `;
-        }).join("");
-      }
+      $("bigscreenFlowList").innerHTML = renderBigscreenFlowList(recentOrders);
 
-      $("bigscreenCapacity").innerHTML = [
-        renderCapacityItem({
-          label: "AI 决策可用度",
-          value: aiReadiness,
-          meta: hasAi ? "模型配置完整，可直接进入执行链路。" : "请在模型管理补齐 API Key 与模型参数。"
-        }),
-        renderCapacityItem({
-          label: "执行通道覆盖度",
-          value: runtimeCoverage,
-          meta: `账户 ${activeAccounts} · 工作流 ${workflowCount} · MCP ${mcpCount}`
-        }),
-        renderCapacityItem({
-          label: "风控与通知覆盖度",
-          value: securityCoverage,
-          meta: `风控规则 ${riskEnabledCount} · 通知渠道 ${channelEnabledCount}`
-        }),
-        renderCapacityItem({
-          label: "会话稳定度",
-          value: conversationStability,
-          meta: `风险会话 ${riskSessionCount} / 在管会话 ${conversationCount}`
-        })
-      ].join("");
-
-      const events = [];
-      if (queuedOrdersNow > 0) {
-        events.push(`执行队列中有 ${formatNumber(queuedOrdersNow)} 笔订单等待成交，建议：优先检查实时执行流是否卡在同一状态。`);
-      } else {
-        events.push("当前无排队订单，执行链路处于可接单状态。");
-      }
-      if (!hasAi) {
-        events.push("AI 引擎未完全就绪，建议：先在模型管理补齐 API Key 与模型参数。");
-      }
-      if (riskEnabledCount === 0) {
-        events.push("暂无启用风控规则，建议：先补数量或金额上限规则，再开放自动执行。");
-      }
-      if (channelEnabledCount === 0) {
-        events.push("通知渠道未启用，建议：先接入回执通道，避免异常成交无提醒。");
-      }
-      if (!flinkEnabled) {
-        events.push("实时计算未开启，建议：开启后再基于吞吐和延迟做调优决策。");
-      } else if (!fromFlinkSnapshot) {
-        events.push("实时快照未就绪，建议：检查 Flink 作业写入 `flink_compute_snapshot` 的链路。");
-      } else {
-        if (failedRuns5m > 0) {
-          events.push(`近 5 分钟实时计算失败 ${failedRuns5m} 次，建议：先排查失败节点日志。`);
-        }
-        if (watermarkDelayMs > 60000) {
-          events.push(`水位延迟 ${formatNumber(watermarkDelayMs)} ms，建议：优先检查消费积压和下游写入速度。`);
-        }
-        if (riskRejectRate5m > 25) {
-          events.push(`近 5 分钟风控拒绝率 ${formatPercent(riskRejectRate5m, 1)}，建议：复核阈值是否过严。`);
-        }
-        if (hotSymbols.length > 0) {
-          events.push(`热点标的 ${pick(hotSymbols[0], "symbol") || "--"} 触发最频繁，建议：重点查看该标的执行路径。`);
-        }
-      }
-      if (workflowCount > 0) {
-        const topWorkflow = [...workflows]
-          .sort((a, b) => Number(pick(b, "run_count", "runCount") || 0) - Number(pick(a, "run_count", "runCount") || 0))[0];
-        if (topWorkflow) {
-          events.push(`高频流程：${pick(topWorkflow, "name") || "--"}（运行 ${formatNumber(pick(topWorkflow, "run_count", "runCount") || 0)} 次）。`);
-        }
-      }
+      const events = buildBigscreenEvents({
+        queuedOrdersNow,
+        hasAi,
+        riskEnabledCount,
+        channelEnabledCount,
+        flinkEnabled,
+        flinkDataReady,
+        failedRuns5m,
+        watermarkDelayMs,
+        riskRejectRate5m,
+        hotSymbols,
+        workflows
+      });
 
       $("bigscreenEventList").innerHTML = events.slice(0, 6).map((text) => `
         <div class="list-item">
@@ -5686,60 +5996,24 @@
           .filter(Boolean)
       ).size;
 
-      const postureText = workflows.length === 0
-        ? "待建链"
-        : publishedCount === 0
-          ? "待发布"
-          : draftCount > 0
-            ? "发布中"
-            : "编排就绪";
-      const postureHint = workflows.length === 0
-        ? "当前没有流程资产，建议先沉淀主路径流程。"
-        : publishedCount === 0
-          ? "流程已创建但尚未形成发布闭环，建议先完成关键流程发布。"
-          : draftCount > 0
-            ? `已有 ${formatNumber(publishedCount)} 条已发布流程，仍有 ${formatNumber(draftCount)} 条草稿待完善。`
-            : "流程资产与发布状态稳定，可将重点转向质量和效率优化。";
+      const workflowToolbarTags = $("workflowToolbarTags");
+      if (workflowToolbarTags) {
+        workflowToolbarTags.innerHTML = [
+          `流程 ${formatNumber(workflows.length)} 条`,
+          publishedCount > 0 ? `已发布 ${formatNumber(publishedCount)}` : "未发布",
+          draftCount > 0 ? `草稿 ${formatNumber(draftCount)}` : "无草稿",
+          workflowNodes.length > 0 ? `节点 ${formatNumber(workflowNodes.length)}` : "待建节点"
+        ].map((text) => `<span class="toolbar-tag">${escapeHtml(text)}</span>`).join("");
+      }
 
-      $("workflowSummaryText").textContent =
-        workflows.length === 0
-          ? "当前编排资产为空，先建立主路径流程，再进入拓扑精调。"
-          : `当前共有 ${formatNumber(workflows.length)} 条流程，已发布 ${formatNumber(publishedCount)} 条，节点总数 ${formatNumber(workflowNodes.length)}。请先确认发布覆盖，再下钻拓扑细节。`;
-      $("workflowPostureHint").innerHTML = `<strong>编排态势</strong>${escapeHtml(postureText)} · ${escapeHtml(postureHint)}`;
-
-      $("workflowStats").innerHTML = [
-        `<div class="meta-card"><div class="meta-label">流程资产</div><div class="meta-value">${formatNumber(workflows.length)}</div><div class="item-meta">累计运行 ${formatNumber(totalRuns)} 次</div></div>`,
-        `<div class="meta-card"><div class="meta-label">发布覆盖</div><div class="meta-value">${formatNumber(publishedCount)}</div><div class="item-meta">草稿 ${formatNumber(draftCount)} 条</div></div>`,
-        `<div class="meta-card"><div class="meta-label">节点规模</div><div class="meta-value">${formatNumber(workflowNodes.length)}</div><div class="item-meta">类型 ${formatNumber(nodeTypeCount)} 种</div></div>`,
-        `<div class="meta-card"><div class="meta-label">质量回放</div><div class="meta-value">${qualityRunCount > 0 ? formatPercent(successRate, 1) : "--"}</div><div class="item-meta">近 ${formatNumber(qualityWindowHours)} 小时 · 平均 ${qualityRunCount > 0 ? `${formatNumber(avgLatencyMs)} ms` : "--"}</div></div>`
-      ].join("");
-
-      $("workflowFocusList").innerHTML = [
-        UiComponents.StatusItem({
-          title: "发布覆盖",
-          desc: publishedCount > 0
-            ? `已发布 ${formatNumber(publishedCount)} 条流程，可支撑核心执行链。`
-            : "尚无已发布流程，建议优先补齐主路径发布。",
-          tone: publishedCount > 0 ? "success" : "danger",
-          tag: publishedCount > 0 ? "就绪" : "阻塞"
-        }),
-        UiComponents.StatusItem({
-          title: "拓扑完整性",
-          desc: workflowNodes.length > 0
-            ? `节点总数 ${formatNumber(workflowNodes.length)}，建议检查关键节点是否都已连线。`
-            : "暂无节点定义，建议先在主工作区创建基础节点。",
-          tone: workflowNodes.length > 0 ? "info" : "warning",
-          tag: workflowNodes.length > 0 ? "观察" : "关注"
-        }),
-        UiComponents.StatusItem({
-          title: "质量信号",
-          desc: qualityRunCount > 0
-            ? `近窗成功率 ${formatPercent(successRate, 1)}，平均延迟 ${formatNumber(avgLatencyMs)} ms。`
-            : "暂无运行回放数据，建议先执行一次端到端验证。",
-          tone: qualityRunCount === 0 ? "info" : successRate >= 85 ? "success" : "warning",
-          tag: qualityRunCount === 0 ? "观察" : successRate >= 85 ? "就绪" : "关注"
-        })
-      ].join("");
+      const workflowListSummary = $("workflowListSummary");
+      if (workflowListSummary) {
+        workflowListSummary.textContent = workflows.length === 0
+          ? "还没有流程资产。建议先新增一条主路径流程，再进入拓扑编辑。"
+          : publishedCount === 0
+            ? `当前共有 ${formatNumber(workflows.length)} 条流程，但都还没有发布。先把主路径流程发布，再进入拓扑编辑会更清晰。`
+            : `当前共有 ${formatNumber(workflows.length)} 条流程，已发布 ${formatNumber(publishedCount)} 条，草稿 ${formatNumber(draftCount)} 条，节点总数 ${formatNumber(workflowNodes.length)}。列表负责看发布状态，拓扑编辑放在下一层处理。`;
+      }
 
       renderTable("workflowsTable", [
         {
@@ -5760,6 +6034,7 @@
         {
           label: "操作",
           render: (row) => `
+            <button class="mini-btn" data-action="focus-workflow-editor" data-id="${escapeHtml(pick(row, "id"))}">进入编辑</button>
             <button class="mini-btn" data-action="edit-workflow" data-id="${escapeHtml(pick(row, "id"))}">编辑</button>
             <button class="mini-btn danger" data-action="delete-workflow" data-id="${escapeHtml(pick(row, "id"))}">删除</button>
           `
@@ -5781,6 +6056,25 @@
       ], workflowNodes, "暂无节点明细，建议先在主工作区创建并连线节点。");
 
       renderWorkflowComposer();
+    }
+
+    function focusWorkflowEditor(workflowId) {
+      const nextId = Number(workflowId);
+      if (!nextId) {
+        return;
+      }
+      state.workflowEditor.workflowId = nextId;
+      state.workflowGraphLoadedFor = null;
+      state.workflowEditor.selectedNodeId = null;
+      state.workflowEditor.connectFromId = null;
+      renderWorkflowComposer();
+      loadWorkflowGraph(nextId, false).catch((error) => {
+        showToast(error.message || "工作流拓扑加载失败", "danger");
+      });
+      const editorPanel = $("workflowEditorPanel");
+      if (editorPanel) {
+        editorPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }
 
     function summarizeWorkflowNodeConfig(rawValue) {
@@ -6469,6 +6763,60 @@
       return "info";
     }
 
+    function resolveAgentStageMeta(role, step, executionContext) {
+      const runId = String(pick(executionContext, "run_id", "runId") || "").trim();
+      if (!step) {
+        return runId ? `等待该角色输出 · ${runId}` : "等待发起分析";
+      }
+      const status = String(pick(step, "status") || "--").toUpperCase();
+      return runId ? `${status} · ${runId}` : status;
+    }
+
+    function renderAgentCollaborationPanel(data) {
+      const summaryBox = $("agentCollabSummary");
+      const grid = $("agentCollabGrid");
+      if (!summaryBox || !grid) {
+        return;
+      }
+
+      const agent = data && typeof data === "object" ? (pick(data, "agent") || {}) : {};
+      const decisionCard = pick(agent, "decision_card", "decisionCard") || {};
+      const executionContext = pick(data, "execution_context", "executionContext") || {};
+      const trace = Array.isArray(pick(agent, "trace")) ? pick(agent, "trace") : [];
+      const traceMap = new Map(trace.map((step) => [String(pick(step, "role") || ""), step]));
+      const runId = String(pick(executionContext, "run_id", "runId") || "").trim();
+      const decision = String(pick(decisionCard, "decision") || "--").toUpperCase();
+      const executionStatus = String(pick(decisionCard, "execution_status", "executionStatus") || "--").toUpperCase();
+      const mode = String(pick(decisionCard, "mode") || "--");
+
+      if (!data || typeof data !== "object") {
+        summaryBox.textContent = "当前协作链已接入 5 个角色，发起分析后这里会展示每一步状态、当前模式和 run_id，让用户直接看到多 Agent 如何接力完成一条请求。";
+      } else {
+        summaryBox.textContent = `本次请求按 5 个角色串行协作完成。当前模式 ${mode}，决策 ${decision}，执行状态 ${executionStatus}${runId ? `，运行标识 ${runId}` : ""}。`;
+      }
+
+      grid.innerHTML = AGENT_STAGE_LIBRARY.map((stage) => {
+        const step = traceMap.get(stage.role);
+        const status = step ? String(pick(step, "status") || "info") : "pending";
+        const tone = normalizeDecisionTone(status);
+        const summary = step ? String(pick(step, "summary") || stage.desc) : stage.desc;
+        const meta = resolveAgentStageMeta(stage.role, step, executionContext);
+        return `
+          <article class="agent-stage-card ${toneClass(tone)}">
+            <div class="agent-stage-top">
+              <div>
+                <div class="agent-stage-kicker">${escapeHtml(stage.kicker)}</div>
+                <div class="agent-stage-title">${escapeHtml(stage.title)}</div>
+              </div>
+              <span class="badge ${toneClass(tone)}">${escapeHtml(String(status).toUpperCase())}</span>
+            </div>
+            <div class="agent-stage-desc">${escapeHtml(summary)}</div>
+            <div class="agent-stage-meta">${escapeHtml(meta)}</div>
+          </article>
+        `;
+      }).join("");
+    }
+
     function updatePendingCommand(command, executed = false) {
       const suggestion = String(command || "").trim();
       const hint = $("pendingCommandHint");
@@ -7100,6 +7448,7 @@
         decisionPanel.textContent = "等待执行 AI 分析后展示。";
         contextPanel.textContent = "尚未生成执行上下文。";
         tracePanel.textContent = "尚未产生 trace 记录。";
+        renderAgentCollaborationPanel(null);
         updatePendingCommand("", false);
         return;
       }
@@ -7225,6 +7574,7 @@
         }).join("");
       }
 
+      renderAgentCollaborationPanel(data);
       updatePendingCommand(commandSuggestion, executed);
     }
 
@@ -8314,7 +8664,7 @@
         if (action === "toggle-bigscreen-auto") {
           state.bigscreen.autoRefresh = !state.bigscreen.autoRefresh;
           syncBigscreenAutoRefresh();
-          showToast(`大屏自动刷新已${state.bigscreen.autoRefresh ? "开启" : "关闭"}`, "success");
+          showToast(`数据中心自动刷新已${state.bigscreen.autoRefresh ? "开启" : "关闭"}`, "success");
           return;
         }
 

@@ -3,12 +3,15 @@ package com.service;
 import com.config.AppProperties;
 import com.domain.entity.BrokerAccountEntity;
 import com.domain.entity.OrderEntity;
+import com.domain.stream.OrderStatusStreamEvent;
 import com.domain.response.OrderExecutionResult;
 import com.repository.BrokerAccountRepository;
 import com.repository.MarketDataRepository;
 import com.repository.SystemSettingRepository;
 import com.repository.TradeRepository;
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -25,17 +28,20 @@ public class BrokerService {
     private final TradeRepository tradeRepository;
     private final MarketDataRepository marketDataRepository;
     private final AppProperties properties;
+    private final StreamEventPublisher streamEventPublisher;
 
     public BrokerService(SystemSettingRepository systemSettingRepository,
                          BrokerAccountRepository brokerAccountRepository,
                          TradeRepository tradeRepository,
                          MarketDataRepository marketDataRepository,
-                         AppProperties properties) {
+                         AppProperties properties,
+                         StreamEventPublisher streamEventPublisher) {
         this.systemSettingRepository = systemSettingRepository;
         this.brokerAccountRepository = brokerAccountRepository;
         this.tradeRepository = tradeRepository;
         this.marketDataRepository = marketDataRepository;
         this.properties = properties;
+        this.streamEventPublisher = streamEventPublisher;
     }
 
     public Map<String, Object> currentBrokerInfo() {
@@ -93,7 +99,17 @@ public class BrokerService {
             return new OrderExecutionResult(false, "order_not_found", orderId, null);
         }
         String brokerOrderId = prefix + "-" + UUID.randomUUID().toString().replace("-", "").substring(0, 16);
-        tradeRepository.markOrderSubmitted(orderId, brokerOrderId);
+        boolean submitted = tradeRepository.markOrderSubmitted(orderId, brokerOrderId);
+        if (submitted) {
+            streamEventPublisher.publishOrderStatus(OrderStatusStreamEvent.of(
+                    orderId,
+                    order.symbol(),
+                    order.side(),
+                    order.quantity(),
+                    order.price(),
+                    "submitted",
+                    OffsetDateTime.now(ZoneOffset.UTC)));
+        }
         BigDecimal rawPrice = order.price();
         if (rawPrice == null) {
             Map<String, Object> bar = marketDataRepository.getLatestBar(order.symbol(), "1m");
@@ -106,6 +122,15 @@ public class BrokerService {
         BigDecimal fillPrice = "buy".equals(order.side())
                 ? rawPrice.multiply(factor)
                 : rawPrice.divide(factor, 8, java.math.RoundingMode.HALF_UP);
-        return tradeRepository.executeOrderFill(orderId, fillPrice, brokerOrderId);
+        OrderExecutionResult result = tradeRepository.executeOrderFill(orderId, fillPrice, brokerOrderId);
+        streamEventPublisher.publishOrderStatus(OrderStatusStreamEvent.of(
+                orderId,
+                order.symbol(),
+                order.side(),
+                order.quantity(),
+                fillPrice,
+                result.ok() ? "filled" : (result.status() == null ? "failed" : result.status()),
+                OffsetDateTime.now(ZoneOffset.UTC)));
+        return result;
     }
 }

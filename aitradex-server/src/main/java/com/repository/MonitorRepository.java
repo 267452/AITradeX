@@ -93,6 +93,9 @@ public class MonitorRepository {
         if (!flinkEnabled) {
             return emptyFlinkMetrics(false, normalizedEngine, normalizedJobName, "flink_disabled");
         }
+        if ("decision".equalsIgnoreCase(normalizedEngine)) {
+            return loadFlinkDecisionMetrics(normalizedEngine, normalizedJobName);
+        }
         try {
             List<Map<String, Object>> rows = jdbcTemplate.queryForList("""
                     SELECT
@@ -156,6 +159,73 @@ public class MonitorRepository {
         } catch (Exception e) {
             return emptyFlinkMetrics(true, normalizedEngine, normalizedJobName, "flink_snapshot_unavailable");
         }
+    }
+
+    public List<Map<String, Object>> listFlinkDecisionSignals(int limit, String symbol, String side, Boolean riskGatePassed) {
+        int safeLimit = Math.max(1, Math.min(100, limit));
+        String safeSymbol = symbol == null ? "" : symbol.trim();
+        String safeSide = side == null ? "" : side.trim();
+
+        StringBuilder sql = new StringBuilder("""
+                SELECT
+                    decision_id,
+                    symbol,
+                    side,
+                    confidence,
+                    trigger_price,
+                    reference_price,
+                    price_change_bps,
+                    window_seconds,
+                    risk_gate_passed,
+                    risk_reject_rate_5m,
+                    risk_context,
+                    decision_reason,
+                    source_event_time,
+                    computed_at,
+                    decision_latency_ms,
+                    consumed
+                FROM flink_decision_signal
+                WHERE 1 = 1
+                """);
+        List<Object> params = new ArrayList<>();
+        if (!safeSymbol.isEmpty()) {
+            sql.append(" AND symbol ILIKE ? ");
+            params.add("%" + safeSymbol + "%");
+        }
+        if (!safeSide.isEmpty()) {
+            sql.append(" AND LOWER(side) = LOWER(?) ");
+            params.add(safeSide);
+        }
+        if (riskGatePassed != null) {
+            sql.append(" AND risk_gate_passed = ? ");
+            params.add(riskGatePassed);
+        }
+        sql.append(" ORDER BY computed_at DESC LIMIT ? ");
+        params.add(safeLimit);
+
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql.toString(), params.toArray());
+        List<Map<String, Object>> output = new ArrayList<>();
+        for (Map<String, Object> row : rows) {
+            Map<String, Object> item = new LinkedHashMap<>();
+            item.put("decision_id", row.get("decision_id"));
+            item.put("symbol", row.get("symbol"));
+            item.put("side", row.get("side"));
+            item.put("confidence", toDecimal(row.get("confidence")));
+            item.put("trigger_price", toDecimal(row.get("trigger_price")));
+            item.put("reference_price", toDecimal(row.get("reference_price")));
+            item.put("price_change_bps", toInt(row.get("price_change_bps")));
+            item.put("window_seconds", toInt(row.get("window_seconds")));
+            item.put("risk_gate_passed", Boolean.TRUE.equals(row.get("risk_gate_passed")));
+            item.put("risk_reject_rate_5m", toDecimal(row.get("risk_reject_rate_5m")));
+            item.put("risk_context", String.valueOf(row.getOrDefault("risk_context", "")));
+            item.put("decision_reason", String.valueOf(row.getOrDefault("decision_reason", "")));
+            item.put("source_event_time", toOffsetDateTime(row.get("source_event_time")));
+            item.put("computed_at", toOffsetDateTime(row.get("computed_at")));
+            item.put("decision_latency_ms", toLong(row.get("decision_latency_ms")));
+            item.put("consumed", Boolean.TRUE.equals(row.get("consumed")));
+            output.add(item);
+        }
+        return output;
     }
 
     public List<Map<String, Object>> listWorkflowRuns(int limit,
@@ -392,6 +462,97 @@ public class MonitorRepository {
                 0,
                 List.of(),
                 null);
+    }
+
+    private FlinkComputeMetricsResponse loadFlinkDecisionMetrics(String engineMode, String jobName) {
+        try {
+            Map<String, Object> row = jdbcTemplate.queryForMap("""
+                    SELECT
+                        COUNT(*) FILTER (WHERE computed_at >= NOW() - INTERVAL '1 minute')::int AS source_events_1m,
+                        COUNT(*) FILTER (WHERE computed_at >= NOW() - INTERVAL '5 minute')::int AS source_events_5m,
+                        COUNT(*) FILTER (WHERE computed_at >= NOW() - INTERVAL '1 minute')::int AS processed_events_1m,
+                        COUNT(*) FILTER (WHERE computed_at >= NOW() - INTERVAL '5 minute')::int AS processed_events_5m,
+                        COALESCE(
+                            ROUND(
+                                (100.0 * COUNT(*) FILTER (
+                                    WHERE computed_at >= NOW() - INTERVAL '5 minute' AND side = 'buy'
+                                ) / NULLIF(COUNT(*) FILTER (WHERE computed_at >= NOW() - INTERVAL '5 minute'), 0))::numeric,
+                                4
+                            ),
+                            0
+                        ) AS order_fill_rate_5m,
+                        COALESCE(
+                            ROUND(
+                                (100.0 * COUNT(*) FILTER (
+                                    WHERE computed_at >= NOW() - INTERVAL '5 minute' AND risk_gate_passed = FALSE
+                                ) / NULLIF(COUNT(*) FILTER (WHERE computed_at >= NOW() - INTERVAL '5 minute'), 0))::numeric,
+                                4
+                            ),
+                            0
+                        ) AS risk_reject_rate_5m,
+                        COALESCE(
+                            ROUND(
+                                AVG(decision_latency_ms) FILTER (
+                                    WHERE computed_at >= NOW() - INTERVAL '5 minute'
+                                )::numeric,
+                                0
+                            ),
+                            0
+                        )::bigint AS avg_workflow_latency_ms_5m,
+                        COALESCE(
+                            ROUND(
+                                (
+                                    PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY decision_latency_ms)
+                                ) FILTER (WHERE computed_at >= NOW() - INTERVAL '5 minute')::numeric,
+                                0
+                            ),
+                            0
+                        )::bigint AS p95_workflow_latency_ms_5m,
+                        COALESCE(MAX(decision_latency_ms), 0)::bigint AS watermark_delay_ms,
+                        COUNT(*) FILTER (WHERE consumed = FALSE)::int AS queued_orders_now,
+                        0::int AS active_runs_now,
+                        COUNT(*) FILTER (WHERE computed_at >= NOW() - INTERVAL '5 minute' AND side = 'buy')::int AS completed_runs_5m,
+                        COUNT(*) FILTER (WHERE computed_at >= NOW() - INTERVAL '5 minute' AND side = 'sell')::int AS failed_runs_5m,
+                        MAX(computed_at) AS computed_at
+                    FROM flink_decision_signal
+                    """);
+
+            List<FlinkHotSymbolResponse> hotSymbols = jdbcTemplate.query("""
+                    SELECT symbol, COUNT(*)::int AS order_count
+                    FROM flink_decision_signal
+                    WHERE computed_at >= NOW() - INTERVAL '15 minute'
+                    GROUP BY symbol
+                    ORDER BY order_count DESC, symbol ASC
+                    LIMIT 6
+                    """, (rs, rowNum) -> new FlinkHotSymbolResponse(
+                    rs.getString("symbol"),
+                    rs.getInt("order_count")));
+
+            OffsetDateTime computedAt = toOffsetDateTime(row.get("computed_at"));
+            String dataSource = computedAt == null ? "flink_decision_signal_missing" : "flink_decision_signal";
+            return new FlinkComputeMetricsResponse(
+                    true,
+                    engineMode,
+                    jobName,
+                    dataSource,
+                    toInt(row.get("source_events_1m")),
+                    toInt(row.get("source_events_5m")),
+                    toInt(row.get("processed_events_1m")),
+                    toInt(row.get("processed_events_5m")),
+                    toDecimal(row.get("order_fill_rate_5m")),
+                    toDecimal(row.get("risk_reject_rate_5m")),
+                    toLong(row.get("avg_workflow_latency_ms_5m")),
+                    toLong(row.get("p95_workflow_latency_ms_5m")),
+                    toLong(row.get("watermark_delay_ms")),
+                    toInt(row.get("queued_orders_now")),
+                    toInt(row.get("active_runs_now")),
+                    toInt(row.get("completed_runs_5m")),
+                    toInt(row.get("failed_runs_5m")),
+                    hotSymbols,
+                    computedAt);
+        } catch (Exception e) {
+            return emptyFlinkMetrics(true, engineMode, jobName, "flink_decision_signal_unavailable");
+        }
     }
 
     private Integer toInt(Object value) {

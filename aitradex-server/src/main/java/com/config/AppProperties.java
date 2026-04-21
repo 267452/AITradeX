@@ -13,6 +13,14 @@ public class AppProperties {
     private int gtjaQuoteTimeoutSec = 5;
     private String credentialsFernetKey = "";
     private String redisUrl = "redis://redis:6379/0";
+    private boolean streamEnabled = false;
+    private String streamBootstrapServers = "redpanda:9092";
+    private String streamIngestToken = "";
+    private String streamTopicMarketTick = "aitradex.market.tick.norm";
+    private String streamTopicOrderEvent = "aitradex.trade.order.event";
+    private String streamTopicRiskEvent = "aitradex.trade.risk.event";
+    private String streamTopicWorkflowEvent = "aitradex.workflow.run.event";
+    private String streamTopicDecisionSignal = "aitradex.trade.decision.signal";
     private int riskMaxQty = 100000;
     private BigDecimal riskMaxNotional = new BigDecimal("2000000");
     private boolean riskAllowShort = false;
@@ -95,6 +103,70 @@ public class AppProperties {
 
     public void setRedisUrl(String redisUrl) {
         this.redisUrl = redisUrl;
+    }
+
+    public boolean isStreamEnabled() {
+        return streamEnabled;
+    }
+
+    public void setStreamEnabled(boolean streamEnabled) {
+        this.streamEnabled = streamEnabled;
+    }
+
+    public String getStreamBootstrapServers() {
+        return streamBootstrapServers;
+    }
+
+    public void setStreamBootstrapServers(String streamBootstrapServers) {
+        this.streamBootstrapServers = streamBootstrapServers;
+    }
+
+    public String getStreamIngestToken() {
+        return streamIngestToken;
+    }
+
+    public void setStreamIngestToken(String streamIngestToken) {
+        this.streamIngestToken = streamIngestToken;
+    }
+
+    public String getStreamTopicMarketTick() {
+        return streamTopicMarketTick;
+    }
+
+    public void setStreamTopicMarketTick(String streamTopicMarketTick) {
+        this.streamTopicMarketTick = streamTopicMarketTick;
+    }
+
+    public String getStreamTopicOrderEvent() {
+        return streamTopicOrderEvent;
+    }
+
+    public void setStreamTopicOrderEvent(String streamTopicOrderEvent) {
+        this.streamTopicOrderEvent = streamTopicOrderEvent;
+    }
+
+    public String getStreamTopicRiskEvent() {
+        return streamTopicRiskEvent;
+    }
+
+    public void setStreamTopicRiskEvent(String streamTopicRiskEvent) {
+        this.streamTopicRiskEvent = streamTopicRiskEvent;
+    }
+
+    public String getStreamTopicWorkflowEvent() {
+        return streamTopicWorkflowEvent;
+    }
+
+    public void setStreamTopicWorkflowEvent(String streamTopicWorkflowEvent) {
+        this.streamTopicWorkflowEvent = streamTopicWorkflowEvent;
+    }
+
+    public String getStreamTopicDecisionSignal() {
+        return streamTopicDecisionSignal;
+    }
+
+    public void setStreamTopicDecisionSignal(String streamTopicDecisionSignal) {
+        this.streamTopicDecisionSignal = streamTopicDecisionSignal;
     }
 
     public int getRiskMaxQty() {

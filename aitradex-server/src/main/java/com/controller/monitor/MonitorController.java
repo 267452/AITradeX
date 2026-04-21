@@ -47,6 +47,15 @@ public class MonitorController {
                 properties.getFlinkJobName()));
     }
 
+    @GetMapping("/flink/decision-signals")
+    public ApiResponse<List<Map<String, Object>>> flinkDecisionSignals(
+            @RequestParam(defaultValue = "20") int limit,
+            @RequestParam(required = false) String symbol,
+            @RequestParam(required = false) String side,
+            @RequestParam(required = false) Boolean riskGatePassed) {
+        return ApiResponse.success(monitorRepository.listFlinkDecisionSignals(limit, symbol, side, riskGatePassed));
+    }
+
     @GetMapping("/risk/rules")
     public ApiResponse<Map<String, Object>> riskRules() {
         return ApiResponse.success(Map.of(
