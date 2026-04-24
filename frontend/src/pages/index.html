@@ -226,9 +226,57 @@
 
     .header-path {
       margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      line-height: 1.2;
+    }
+
+    .header-path-root {
+      display: inline-flex;
+      align-items: center;
+      height: 22px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid #d8e5ef;
+      background: rgba(255, 255, 255, 0.92);
+      color: #6a839b;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.34px;
+      white-space: nowrap;
+    }
+
+    .header-path-current {
+      color: #20435f;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12px;
+    }
+
+    .header-main.is-primary-path .header-path {
+      display: grid;
+      gap: 8px;
+    }
+
+    .header-main.is-primary-path .header-path-root {
+      height: auto;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: #6f899f;
       font-size: 11px;
-      color: #6b829d;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.44px;
+    }
+
+    .header-main.is-primary-path .header-path-current {
+      color: #12304b;
+      font-size: clamp(24px, 2.2vw, 30px);
+      line-height: 1.08;
+      font-weight: 700;
+      letter-spacing: -0.45px;
     }
 
     .header-title {
@@ -552,203 +600,6 @@
       padding: 15px;
     }
 
-    .hero-panel .panel-body {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 20px;
-      background: #fafdff;
-    }
-
-    .hero-title {
-      margin: 0;
-      color: #12314e;
-      font-size: 19px;
-      line-height: 1.35;
-    }
-
-    .hero-desc {
-      margin: 8px 0 0;
-      color: #4f6883;
-      font-size: 12px;
-      line-height: 1.55;
-      max-width: 620px;
-    }
-
-    .hero-tagline {
-      min-width: 210px;
-      border: 1px solid #d6e5f1;
-      border-radius: 12px;
-      padding: 10px 12px;
-      background: #ffffff;
-      color: #1f4865;
-      font-size: 12px;
-      line-height: 1.6;
-    }
-
-    .hero-tagline strong {
-      display: block;
-      color: #11324f;
-      font-size: 13px;
-      margin-bottom: 4px;
-    }
-
-    .overview-hero-panel .panel-body {
-      display: flex;
-      justify-content: space-between;
-      align-items: stretch;
-      gap: 18px;
-      background: #fafdff;
-    }
-
-    .overview-hero-main {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .overview-kicker {
-      display: inline-flex;
-      align-items: center;
-      height: 22px;
-      border-radius: 999px;
-      padding: 0 9px;
-      font-size: 10px;
-      letter-spacing: 0.3px;
-      font-weight: 700;
-      color: #135170;
-      border: 1px solid #d5e5f1;
-      background: #ffffff;
-    }
-
-    .overview-hero-title {
-      margin: 10px 0 0;
-      color: #10324f;
-      font-size: 24px;
-      line-height: 1.2;
-      letter-spacing: 0.1px;
-    }
-
-    .overview-hero-desc {
-      margin: 10px 0 0;
-      max-width: 700px;
-      color: #4d6983;
-      font-size: 12px;
-      line-height: 1.6;
-    }
-
-    .overview-hero-tags {
-      margin-top: 14px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .overview-hero-tag {
-      display: inline-flex;
-      align-items: center;
-      min-height: 27px;
-      border-radius: 999px;
-      padding: 0 10px;
-      border: 1px solid #d9e6f1;
-      background: #ffffff;
-      color: #214a69;
-      font-size: 11px;
-      font-weight: 600;
-    }
-
-    .overview-posture-card {
-      width: min(340px, 100%);
-      border: 1px solid #dbe7f0;
-      border-radius: 14px;
-      padding: 14px;
-      background: #ffffff;
-    }
-
-    .overview-posture-card.success {
-      border-color: #cfe8db;
-      background: #fcfffd;
-    }
-
-    .overview-posture-card.warning {
-      border-color: #f3e3c8;
-      background: #fffdfa;
-    }
-
-    .overview-posture-card.danger {
-      border-color: #f2d6dc;
-      background: #fffafb;
-    }
-
-    .overview-posture-card.info {
-      border-color: #d5e2ef;
-      background: #fcfdff;
-    }
-
-    .overview-posture-label {
-      color: #6a849d;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.2px;
-    }
-
-    .overview-posture-value {
-      margin-top: 8px;
-      color: #12324e;
-      font-size: 24px;
-      font-weight: 700;
-      line-height: 1.15;
-      letter-spacing: -0.5px;
-    }
-
-    .overview-posture-meta {
-      margin-top: 8px;
-      color: #5f7994;
-      font-size: 12px;
-      line-height: 1.6;
-    }
-
-    .overview-posture-actions {
-      margin-top: 14px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .overview-section-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 14px;
-    }
-
-    .overview-section-kicker {
-      display: inline-flex;
-      align-items: center;
-      height: 22px;
-      border-radius: 999px;
-      padding: 0 9px;
-      border: 1px solid #dce7f1;
-      background: #ffffff;
-      color: #6d859d;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.35px;
-    }
-
-    .overview-section-copy h3 {
-      margin: 8px 0 0;
-      color: #12314d;
-      font-size: 18px;
-      line-height: 1.3;
-    }
-
-    .overview-section-copy p {
-      margin: 5px 0 0;
-      color: #647c95;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -811,6 +662,14 @@
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
+    }
+
+    .overview-cockpit-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .overview-cockpit-grid > .span-2 {
+      grid-column: 1 / -1;
     }
 
     .overview-lane-list {
@@ -981,9 +840,13 @@
 
     .overview-command-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
-      gap: 14px;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 360px);
+      gap: 16px;
       align-items: flex-start;
+    }
+
+    .overview-command-main-column {
+      min-width: 0;
     }
 
     .overview-control-strip {
@@ -1008,6 +871,143 @@
 
     .overview-command-main > .command-actions {
       margin-top: 14px;
+    }
+
+    .agent-collab-card {
+      border: 1px solid #d7e6f2;
+      border-radius: 14px;
+      background:
+        linear-gradient(180deg, rgba(244, 251, 255, 0.98), rgba(255, 255, 255, 0.98)),
+        radial-gradient(circle at top right, rgba(45, 164, 154, 0.08), transparent 38%);
+      overflow: hidden;
+    }
+
+    .agent-collab-card > summary {
+      list-style: none;
+      cursor: pointer;
+      position: relative;
+      padding: 14px;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .agent-collab-card > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .agent-collab-card > summary::after {
+      content: "展开";
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      color: #6a849d;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .agent-collab-card[open] > summary::after {
+      content: "收起";
+    }
+
+    .agent-collab-card-copy {
+      padding-right: 52px;
+    }
+
+    .agent-collab-card-kicker {
+      color: #6c88a3;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.32px;
+    }
+
+    .agent-collab-card-title-row {
+      margin-top: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .agent-collab-card-title-row h4 {
+      margin: 0;
+      color: #163957;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .agent-collab-card-badge {
+      height: 22px;
+      border-radius: 999px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #d6e4ef;
+      background: #ffffff;
+      color: #54728f;
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .agent-collab-card-badge.state-idle {
+      border-color: #d4e3ef;
+      color: #5a7894;
+    }
+
+    .agent-collab-card-badge.state-active {
+      border-color: #d7e6f3;
+      background: #f7fbff;
+      color: #446b92;
+    }
+
+    .agent-collab-card-badge.state-blocked {
+      border-color: #efd1d9;
+      background: #fff6f8;
+      color: #c55e70;
+    }
+
+    .agent-collab-card-badge.state-completed {
+      border-color: #d4e8dc;
+      background: #f7fcf9;
+      color: #2f8c5b;
+    }
+
+    .agent-collab-card-peek {
+      margin: 8px 0 0;
+      color: #69849d;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .agent-collab-card-body {
+      padding: 0 14px 14px;
+      border-top: 1px solid #deebf4;
+    }
+
+    .overview-side-fold-card .overview-side-card-body {
+      padding: 0 14px 14px;
+      border-top: 1px solid #deebf4;
+    }
+
+    .overview-side-fold-card .stats-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .overview-side-fold-card .stat-card {
+      min-height: 0;
+      padding: 12px;
+    }
+
+    .overview-side-fold-card .stat-value {
+      font-size: 24px;
+    }
+
+    .overview-side-fold-card .overview-priority-tip {
+      margin: 12px 0 10px;
+    }
+
+    .overview-side-fold-card .overview-focus-list {
+      gap: 10px;
     }
 
     .agent-collab-panel {
@@ -1140,111 +1140,85 @@
       margin-top: 0;
     }
 
-    .overview-detail-block {
-      margin-top: 14px;
-      border: 1px solid #d7e6f2;
-      border-radius: 12px;
-      background: #fbfdff;
-      padding: 10px;
-    }
-
-    .overview-detail-block > summary {
-      list-style: none;
-      cursor: pointer;
-      color: #2c516f;
-      font-size: 12px;
-      font-weight: 700;
-      line-height: 1.5;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .overview-detail-block > summary::-webkit-details-marker {
-      display: none;
-    }
-
-    .overview-detail-block > summary::after {
-      content: "展开";
-      color: #6a849d;
-      font-size: 11px;
-      font-weight: 600;
-    }
-
-    .overview-detail-block[open] > summary::after {
-      content: "收起";
-    }
-
-    .overview-detail-block .overview-command-rail {
-      margin-top: 10px;
-    }
-
     .overview-side-stack {
       display: grid;
-      gap: 14px;
+      gap: 10px;
       align-content: start;
     }
 
-    .bigscreen-hero .panel-body {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 18px;
-      background: #fafdff;
+    .side-sortable-stack.is-sorting {
+      user-select: none;
     }
 
-    .bigscreen-live-tag {
+    .side-sortable-stack .overview-side-nav-card {
+      transition: transform 0.18s ease, opacity 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .side-sortable-stack .overview-side-nav-card.is-dragging {
+      opacity: 0.44;
+      transform: scale(0.985);
+      border-style: dashed;
+    }
+
+    .overview-side-sort-handle {
+      position: absolute;
+      right: 40px;
+      top: 13px;
+      width: 22px;
+      height: 22px;
+      border: 1px solid #d7e4ef;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #6f88a1;
       display: inline-flex;
       align-items: center;
-      height: 22px;
-      border-radius: 999px;
-      padding: 0 9px;
-      font-size: 10px;
-      letter-spacing: 0.3px;
-      font-weight: 700;
-      color: #11506f;
-      border: 1px solid #d4e4f0;
-      background: #ffffff;
+      justify-content: center;
+      font-size: 14px;
+      line-height: 1;
+      cursor: grab;
+      transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+      z-index: 2;
     }
 
-    .bigscreen-title {
-      margin: 10px 0 0;
-      color: #11324e;
-      font-size: 22px;
-      line-height: 1.2;
-      letter-spacing: 0.2px;
+    .overview-side-sort-handle:hover {
+      border-color: #9fc2dc;
+      color: #2d5f84;
+      transform: translateY(-1px);
     }
 
-    .bigscreen-subtitle {
-      margin: 8px 0 0;
-      color: #4d6984;
-      font-size: 12px;
-      line-height: 1.55;
-      max-width: 700px;
+    .overview-side-sort-handle:active {
+      cursor: grabbing;
+      transform: scale(0.96);
     }
 
-    .bigscreen-last-wrap {
-      min-width: 216px;
-      border: 1px solid #d6e5f1;
-      border-radius: 12px;
-      padding: 10px 12px;
-      background: #ffffff;
+    .agent-collab-card .agent-collab-summary {
+      margin-top: 12px;
     }
 
-    .bigscreen-last-label {
-      color: #67839d;
-      font-size: 12px;
-      font-weight: 600;
-      line-height: 1.2;
+    .agent-collab-card .agent-collab-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
     }
 
-    .bigscreen-last-time {
-      margin-top: 5px;
-      color: #173d5b;
-      font-size: 16px;
-      font-weight: 700;
-      line-height: 1.25;
+    .agent-collab-card .agent-stage-card {
+      min-height: 0;
+    }
+
+    .agent-collab-card .agent-stage-card::after {
+      right: auto;
+      left: 18px;
+      top: auto;
+      bottom: -11px;
+      width: 2px;
+      height: 11px;
+      transform: none;
+    }
+
+    .overview-detail-stack,
+    .bigscreen-detail-stack {
+      margin-top: 10px;
+      display: grid;
+      gap: 14px;
     }
 
     .bigscreen-kpi-strip {
@@ -1308,8 +1282,41 @@
       gap: 14px;
     }
 
+    .bigscreen-console-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 360px);
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .module-shell-card {
+      position: relative;
+      padding: 18px;
+      border-color: #b8d8ea;
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(250, 253, 255, 0.98), rgba(242, 249, 253, 0.94)),
+        radial-gradient(circle at 0% 0%, rgba(55, 139, 182, 0.1), transparent 42%);
+      box-shadow: 0 22px 46px rgba(28, 62, 90, 0.1), inset 0 0 0 1px rgba(57, 172, 201, 0.08);
+    }
+
+    .bigscreen-main-column {
+      min-width: 0;
+      display: grid;
+      gap: 14px;
+    }
+
+    .bigscreen-side-stack .status-list,
+    .bigscreen-side-stack .quality-panel,
+    .bigscreen-side-stack .search-row,
+    .bigscreen-side-stack .list-box {
+      min-width: 0;
+    }
+
     .bigscreen-secondary-grid {
+      display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
     }
 
     .bigscreen-flow-list .list-item,
@@ -2054,66 +2061,6 @@
       border-bottom: none;
     }
 
-    .page-toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 14px;
-      flex-wrap: wrap;
-      border: 1px solid #e1eaf2;
-      border-radius: 12px;
-      padding: 12px 14px;
-      background: #fbfdff;
-      box-shadow: 0 2px 10px rgba(27, 63, 92, 0.04);
-    }
-
-    .toolbar-intro {
-      min-width: 280px;
-      max-width: 760px;
-    }
-
-    .toolbar-title {
-      color: #143452;
-      font-size: 16px;
-      font-weight: 700;
-      margin: 0;
-      line-height: 1.25;
-    }
-
-    .toolbar-desc {
-      margin: 6px 0 0;
-      color: #5e7893;
-      font-size: 12px;
-      line-height: 1.55;
-    }
-
-    .toolbar-tags {
-      margin-top: 8px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .toolbar-tag {
-      display: inline-flex;
-      align-items: center;
-      border: 1px solid #d8e5f0;
-      background: #ffffff;
-      color: #5b7791;
-      border-radius: 999px;
-      padding: 1px 8px;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.1px;
-      line-height: 1.45;
-    }
-
-    .page-toolbar .action-row {
-      margin-left: auto;
-      align-self: center;
-      justify-content: flex-end;
-    }
-
     .action-row {
       display: inline-flex;
       gap: 6px;
@@ -2167,16 +2114,6 @@
     .workflow-head-actions {
       align-items: center;
       justify-content: flex-end;
-    }
-
-    .workflow-toolbar {
-      background: #ffffff;
-      border-color: #e5edf4;
-      box-shadow: none;
-    }
-
-    .workflow-list-panel .panel-body {
-      padding: 14px;
     }
 
     .workflow-list-summary {
@@ -2870,6 +2807,11 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .bigscreen-console-layout,
+      .module-console-layout {
+        grid-template-columns: 1fr;
+      }
+
       .bigscreen-layout {
         grid-template-columns: 1fr;
       }
@@ -2944,23 +2886,6 @@
         padding: 14px;
       }
 
-      .hero-panel .panel-body {
-        flex-direction: column;
-      }
-
-      .overview-hero-panel .panel-body {
-        flex-direction: column;
-      }
-
-      .overview-posture-card {
-        width: 100%;
-      }
-
-      .overview-section-head {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
       .overview-control-strip {
         grid-template-columns: 1fr;
       }
@@ -2971,10 +2896,6 @@
 
       .agent-collab-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .bigscreen-hero .panel-body {
-        flex-direction: column;
       }
 
       .workflow-composer {
@@ -2989,10 +2910,6 @@
         min-width: 130px;
       }
 
-      .page-toolbar .action-row {
-        width: 100%;
-        justify-content: flex-start;
-      }
     }
 
     @media (max-width: 760px) {
@@ -3014,6 +2931,11 @@
       }
 
       .bigscreen-kpi-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .bigscreen-console-layout,
+      .module-console-layout {
         grid-template-columns: 1fr;
       }
 
@@ -3056,6 +2978,1749 @@
 
       .modal-body .field.full {
         grid-column: auto;
+      }
+    }
+
+    /* ===== Cockpit Redesign (Overview + Bigscreen) ===== */
+    :root {
+      --bg-root: #060b14;
+      --bg-sidebar: #0a111f;
+      --bg-sidebar-elev: #101b2e;
+      --bg-panel: #0d1626;
+      --bg-panel-soft: #111f35;
+      --bg-card: #14243b;
+      --bg-card-soft: #101b2f;
+      --text-strong: #f1f7ff;
+      --text-main: #b4c5da;
+      --text-muted: #7f95ae;
+      --text-light: #dde9f8;
+      --line-dark: rgba(125, 151, 183, 0.24);
+      --line-soft: rgba(122, 147, 176, 0.3);
+      --brand: #27c3a4;
+      --brand-strong: #1a8fb2;
+      --brand-soft: rgba(39, 195, 164, 0.16);
+      --good: #42cf88;
+      --warn: #f5ad4b;
+      --bad: #f06d7a;
+      --info: #7d9dd3;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+      --shadow-panel: 0 20px 40px rgba(0, 0, 0, 0.36);
+      --shadow-card: 0 8px 22px rgba(0, 0, 0, 0.26);
+    }
+
+    html,
+    body {
+      background:
+        radial-gradient(circle at 16% -8%, rgba(42, 124, 216, 0.18), transparent 38%),
+        radial-gradient(circle at 88% -10%, rgba(38, 198, 162, 0.17), transparent 42%),
+        var(--bg-root);
+      color: var(--text-main);
+    }
+
+    .sidebar {
+      background:
+        linear-gradient(180deg, rgba(9, 16, 28, 0.98), rgba(7, 13, 23, 0.98)),
+        var(--bg-sidebar);
+      border-right: 1px solid rgba(121, 151, 188, 0.2);
+      box-shadow: 18px 0 44px rgba(0, 0, 0, 0.45);
+    }
+
+    .sidebar-brand {
+      border-bottom-color: rgba(127, 159, 196, 0.16);
+    }
+
+    .brand-mark {
+      border-radius: 13px;
+      background: linear-gradient(135deg, #2ad4ae, #2677be);
+      box-shadow: 0 12px 26px rgba(24, 129, 183, 0.36);
+    }
+
+    .brand-copy h1 {
+      color: #eaf3ff;
+    }
+
+    .brand-copy p {
+      color: rgba(173, 195, 221, 0.76);
+    }
+
+    .nav-title {
+      color: rgba(150, 177, 209, 0.52);
+    }
+
+    .nav-item {
+      margin: 5px 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      color: rgba(201, 220, 242, 0.74);
+    }
+
+    .nav-item:hover {
+      background: rgba(45, 73, 111, 0.44);
+      border-color: rgba(109, 151, 194, 0.26);
+      color: #ecf6ff;
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(35, 172, 149, 0.24), rgba(40, 102, 164, 0.32));
+      border-color: rgba(72, 174, 204, 0.46);
+      color: #f5fdff;
+      box-shadow: 0 14px 28px rgba(7, 34, 64, 0.44);
+    }
+
+    .nav-icon {
+      background: rgba(179, 210, 241, 0.12);
+      color: rgba(220, 237, 255, 0.86);
+    }
+
+    .nav-item.active .nav-icon {
+      background: rgba(180, 237, 232, 0.2);
+    }
+
+    .sidebar-foot {
+      border-top-color: rgba(125, 158, 194, 0.16);
+      color: rgba(149, 177, 208, 0.64);
+    }
+
+    .top-header {
+      height: 88px;
+      border-bottom: 1px solid rgba(113, 141, 173, 0.22);
+      background:
+        linear-gradient(180deg, rgba(10, 18, 31, 0.95), rgba(8, 15, 26, 0.95)),
+        var(--bg-panel);
+      backdrop-filter: blur(10px);
+    }
+
+    .header-path-root {
+      border-color: rgba(111, 140, 169, 0.3);
+      background: rgba(15, 28, 46, 0.82);
+      color: #88a0ba;
+    }
+
+    .header-path-current {
+      color: #a8bfd7;
+    }
+
+    .header-main.is-primary-path .header-path-root {
+      color: #7891aa;
+    }
+
+    .header-main.is-primary-path .header-path-current {
+      color: #edf6ff;
+      text-shadow: 0 0 24px rgba(63, 168, 201, 0.16);
+    }
+
+    .header-title {
+      color: #ecf4ff;
+      font-size: 22px;
+      letter-spacing: 0.2px;
+    }
+
+    .header-desc {
+      color: #90a6bd;
+    }
+
+    .chip {
+      border-color: rgba(119, 147, 177, 0.32);
+      background: rgba(16, 29, 48, 0.86);
+      color: #c4d6ec;
+      backdrop-filter: blur(2px);
+    }
+
+    .chip.success {
+      border-color: rgba(94, 211, 145, 0.5);
+      background: rgba(57, 169, 118, 0.18);
+      color: #a5efc7;
+    }
+
+    .chip.warning {
+      border-color: rgba(245, 173, 75, 0.52);
+      background: rgba(245, 173, 75, 0.16);
+      color: #ffcd84;
+    }
+
+    .chip.danger {
+      border-color: rgba(240, 109, 122, 0.54);
+      background: rgba(240, 109, 122, 0.16);
+      color: #ffb4be;
+    }
+
+    .chip-label {
+      color: #8ba1b9;
+    }
+
+    .chip .dot {
+      box-shadow: 0 0 0 4px rgba(66, 207, 136, 0.22);
+    }
+
+    .chip.warning .dot {
+      box-shadow: 0 0 0 4px rgba(245, 173, 75, 0.22);
+    }
+
+    .chip.danger .dot {
+      box-shadow: 0 0 0 4px rgba(240, 109, 122, 0.24);
+    }
+
+    .btn {
+      border-radius: 11px;
+      border-color: transparent;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2ac9a9, #277dc1);
+      color: #eafffb;
+      box-shadow: 0 12px 24px rgba(23, 116, 178, 0.35);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      box-shadow: 0 14px 30px rgba(19, 95, 156, 0.42);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(17, 31, 51, 0.92);
+      border-color: rgba(114, 145, 177, 0.34);
+      color: #bfd2e8;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      border-color: rgba(132, 170, 207, 0.58);
+      color: #ebf5ff;
+      background: rgba(24, 39, 62, 0.96);
+    }
+
+    .btn-emphasis {
+      min-width: 150px;
+    }
+
+    .account-trigger {
+      border-color: rgba(114, 143, 173, 0.38);
+      background: rgba(16, 30, 49, 0.9);
+      color: #d2e2f4;
+    }
+
+    .account-trigger:hover {
+      border-color: rgba(120, 166, 205, 0.62);
+      box-shadow: 0 12px 24px rgba(8, 24, 42, 0.5);
+    }
+
+    .account-dropdown {
+      border-color: rgba(120, 151, 184, 0.3);
+      background: #111c30;
+      box-shadow: 0 24px 44px rgba(0, 0, 0, 0.45);
+    }
+
+    .account-head {
+      border-bottom-color: rgba(116, 144, 172, 0.26);
+      background: #15243b;
+    }
+
+    .account-name {
+      color: #e8f3ff;
+    }
+
+    .account-mail {
+      color: #9ab2cb;
+    }
+
+    .menu-action {
+      border-top-color: rgba(111, 143, 173, 0.22);
+      background: #111c30;
+      color: #b8cde4;
+    }
+
+    .menu-action:hover {
+      background: #15263f;
+    }
+
+    .menu-action.danger {
+      color: #ef8392;
+    }
+
+    .menu-action.danger:hover {
+      background: rgba(136, 45, 62, 0.2);
+    }
+
+    .main-panel {
+      padding: 22px;
+      gap: 18px;
+    }
+
+    .page-view {
+      gap: 18px;
+    }
+
+    .panel {
+      border: 1px solid rgba(117, 145, 175, 0.22);
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(16, 28, 47, 0.96), rgba(12, 22, 38, 0.96));
+      box-shadow: var(--shadow-panel);
+      overflow: hidden;
+    }
+
+    .panel-tier-1 {
+      border-color: rgba(83, 142, 200, 0.42);
+      box-shadow: 0 22px 44px rgba(0, 0, 0, 0.42);
+    }
+
+    .panel-tier-2 {
+      border-color: rgba(109, 142, 175, 0.28);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.34);
+    }
+
+    .panel-tier-3 {
+      border-color: rgba(108, 138, 168, 0.22);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .panel-head {
+      padding: 15px 18px;
+      border-bottom: 1px solid rgba(114, 143, 173, 0.24);
+      background: linear-gradient(180deg, rgba(20, 34, 56, 0.78), rgba(15, 27, 45, 0.78));
+    }
+
+    .panel-head h3 {
+      color: #ebf4ff;
+      font-size: 16px;
+      letter-spacing: 0.1px;
+    }
+
+    .panel-head p {
+      color: #8ea6bf;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .panel-body {
+      padding: 18px;
+    }
+
+    .badge {
+      min-width: 52px;
+      height: 24px;
+      font-size: 10px;
+      letter-spacing: 0.2px;
+      font-weight: 700;
+    }
+
+    .badge.success {
+      border-color: rgba(94, 211, 145, 0.44);
+      background: rgba(63, 193, 130, 0.16);
+      color: #82e8b0;
+    }
+
+    .badge.warning {
+      border-color: rgba(245, 173, 75, 0.46);
+      background: rgba(245, 173, 75, 0.16);
+      color: #ffc06a;
+    }
+
+    .badge.danger {
+      border-color: rgba(240, 109, 122, 0.46);
+      background: rgba(240, 109, 122, 0.16);
+      color: #ff9ca7;
+    }
+
+    .badge.info {
+      border-color: rgba(125, 157, 211, 0.45);
+      background: rgba(125, 157, 211, 0.14);
+      color: #a9c2ea;
+    }
+
+    .field label {
+      color: #8da4bf;
+      font-size: 12px;
+    }
+
+    .field input,
+    .field select,
+    .field textarea,
+    .search-row select,
+    .search-row input,
+    .quality-actions select,
+    .approval-input {
+      border-color: rgba(114, 143, 173, 0.4);
+      background: rgba(13, 25, 42, 0.92);
+      color: #e3effd;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus,
+    .search-row select:focus,
+    .search-row input:focus,
+    .approval-input:focus {
+      border-color: rgba(88, 174, 220, 0.82);
+      box-shadow: 0 0 0 3px rgba(54, 140, 205, 0.2);
+    }
+
+    .result-box,
+    .decision-card,
+    .trace-panel,
+    .decision-placeholder,
+    .quality-panel,
+    .run-detail-box,
+    .run-history-item {
+      border-color: rgba(111, 141, 172, 0.3);
+      background: rgba(14, 25, 42, 0.86);
+      color: #bcd1e8;
+    }
+
+    .decision-title,
+    .trace-role {
+      color: #d9e9fc;
+    }
+
+    .decision-subtitle,
+    .trace-summary,
+    .trace-io,
+    .item-meta,
+    .status-desc,
+    .quick-desc,
+    .meta-label {
+      color: #849cb6;
+    }
+
+    .decision-item {
+      border-color: rgba(112, 140, 168, 0.28);
+      background: rgba(18, 30, 49, 0.84);
+    }
+
+    .decision-item-label {
+      color: #8ca3bc;
+    }
+
+    .decision-item-value,
+    .item-title,
+    .status-title,
+    .quick-title,
+    .meta-value,
+    .value-strong {
+      color: #e6f0fc;
+    }
+
+    .status-item,
+    .quick-action,
+    .list-item,
+    .meta-card,
+    .quality-kpi-card,
+    .quality-trend-item {
+      border-color: rgba(112, 141, 170, 0.28);
+      background: rgba(16, 28, 46, 0.9);
+    }
+
+    .quick-action:hover,
+    .list-item:hover {
+      border-color: rgba(126, 171, 211, 0.56);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+    }
+
+    .empty {
+      border-color: rgba(114, 143, 173, 0.34);
+      background: rgba(13, 24, 40, 0.78);
+      color: #88a0ba;
+    }
+
+    .overview-first-screen {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.95fr);
+      gap: 16px;
+    }
+
+    #page-overview .stats-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      border-color: rgba(111, 140, 168, 0.3);
+      background: rgba(15, 27, 45, 0.9);
+      padding: 13px 14px;
+      min-height: 118px;
+      position: relative;
+    }
+
+    .stat-card.success {
+      border-color: rgba(84, 204, 142, 0.44);
+      background: linear-gradient(180deg, rgba(18, 42, 35, 0.9), rgba(14, 28, 42, 0.9));
+    }
+
+    .stat-card.warning {
+      border-color: rgba(245, 173, 75, 0.46);
+      background: linear-gradient(180deg, rgba(45, 34, 22, 0.9), rgba(15, 28, 45, 0.9));
+    }
+
+    .stat-card.danger {
+      border-color: rgba(240, 109, 122, 0.48);
+      background: linear-gradient(180deg, rgba(49, 23, 28, 0.9), rgba(16, 28, 45, 0.9));
+    }
+
+    .stat-card.info {
+      border-color: rgba(125, 157, 211, 0.38);
+      background: linear-gradient(180deg, rgba(21, 34, 54, 0.9), rgba(15, 28, 45, 0.9));
+    }
+
+    .stat-label {
+      color: #92a8bf;
+    }
+
+    .stat-icon {
+      background: rgba(101, 145, 196, 0.2);
+      color: #b9d0eb;
+    }
+
+    .stat-value {
+      color: #f2f8ff;
+      font-size: 30px;
+      letter-spacing: -0.6px;
+    }
+
+    .stat-meta {
+      color: #89a1bb;
+    }
+
+    .stat-tag {
+      margin-top: 10px;
+    }
+
+    .overview-priority-panel {
+      border-color: rgba(245, 173, 75, 0.42);
+    }
+
+    .overview-priority-panel .panel-head {
+      background: linear-gradient(180deg, rgba(47, 34, 19, 0.56), rgba(21, 31, 48, 0.8));
+    }
+
+    .overview-priority-tip {
+      border: 1px solid rgba(245, 173, 75, 0.42);
+      background: rgba(245, 173, 75, 0.12);
+      color: #f0bf78;
+      border-radius: 11px;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .overview-focus-list {
+      gap: 10px;
+    }
+
+    .overview-focus-card {
+      border-color: rgba(110, 138, 166, 0.34);
+      border-left-width: 4px;
+      border-radius: 12px;
+      background: rgba(15, 27, 45, 0.86);
+      padding: 12px;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .overview-focus-card:hover {
+      transform: translateY(-1px);
+      border-color: rgba(134, 173, 210, 0.58);
+      box-shadow: 0 14px 24px rgba(0, 0, 0, 0.32);
+    }
+
+    .overview-focus-title {
+      color: #eaf3ff;
+      font-size: 13px;
+    }
+
+    .overview-focus-desc {
+      color: #89a2bc;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    .overview-lane-list {
+      gap: 14px;
+    }
+
+    .overview-lane {
+      border-color: rgba(111, 141, 171, 0.34);
+      background: rgba(15, 27, 45, 0.9);
+      border-radius: 13px;
+      padding: 14px;
+    }
+
+    .overview-lane-title {
+      color: #eaf3ff;
+      font-size: 17px;
+      margin-top: 8px;
+    }
+
+    .overview-lane-desc {
+      color: #8aa2bd;
+      font-size: 12px;
+      margin-top: 7px;
+    }
+
+    .overview-lane-step {
+      background: rgba(125, 157, 211, 0.16);
+      color: #a9c2ea;
+      border: 1px solid rgba(125, 157, 211, 0.34);
+    }
+
+    .overview-lane-metrics {
+      gap: 10px;
+      margin-top: 13px;
+    }
+
+    .overview-lane-metric {
+      border-color: rgba(111, 141, 171, 0.3);
+      background: rgba(16, 29, 47, 0.82);
+      min-height: 68px;
+      padding: 9px 10px;
+    }
+
+    .overview-lane-metric-label {
+      color: #86a0bb;
+    }
+
+    .overview-lane-metric-value {
+      color: #e4effd;
+    }
+
+    .overview-command-panel {
+      border-color: rgba(57, 172, 201, 0.42);
+      box-shadow: 0 24px 46px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(57, 172, 201, 0.16) inset;
+    }
+
+    .overview-command-panel .panel-head {
+      background:
+        radial-gradient(circle at 94% 20%, rgba(46, 167, 194, 0.24), transparent 50%),
+        linear-gradient(180deg, rgba(19, 34, 55, 0.95), rgba(14, 27, 45, 0.95));
+    }
+
+    .overview-command-stage-strip {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 0;
+    }
+
+    .overview-stage-chip {
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid rgba(110, 139, 168, 0.36);
+      background: rgba(16, 30, 50, 0.88);
+      color: #98b1cb;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .overview-stage-chip.active {
+      border-color: rgba(63, 189, 207, 0.62);
+      background: rgba(41, 154, 187, 0.2);
+      color: #d0f2ff;
+      box-shadow: 0 0 16px rgba(41, 154, 187, 0.2);
+    }
+
+    .overview-command-main > .field,
+    .overview-command-main > .command-actions,
+    .overview-command-main > .command-confirm-row,
+    .overview-command-main > .result-box {
+      margin-top: 14px;
+    }
+
+    .overview-control-strip {
+      grid-template-columns: 190px 190px minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .overview-inline-actions {
+      gap: 10px;
+    }
+
+    .command-actions {
+      gap: 10px;
+    }
+
+    .command-confirm-row {
+      border: 1px dashed rgba(111, 140, 170, 0.38);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(14, 26, 43, 0.65);
+    }
+
+    #confirmExecuteBtn:not(:disabled) {
+      border-color: rgba(68, 184, 140, 0.54);
+      background: rgba(34, 165, 120, 0.18);
+      color: #b8f0d4;
+    }
+
+    .overview-command-main-column {
+      display: grid;
+      gap: 14px;
+    }
+
+    .agent-collab-panel {
+      margin-top: 14px;
+      border-color: rgba(112, 141, 170, 0.32);
+      border-radius: 14px;
+      background:
+        linear-gradient(180deg, rgba(15, 28, 47, 0.96), rgba(12, 23, 39, 0.96)),
+        radial-gradient(circle at 8% 0%, rgba(74, 137, 220, 0.15), transparent 48%);
+      padding: 14px;
+    }
+
+    .agent-collab-card {
+      border-color: rgba(112, 141, 170, 0.32);
+      border-radius: 16px;
+      background:
+        linear-gradient(180deg, rgba(15, 28, 47, 0.96), rgba(12, 23, 39, 0.96)),
+        radial-gradient(circle at 0% 0%, rgba(74, 137, 220, 0.16), transparent 52%);
+      box-shadow: 0 18px 34px rgba(0, 0, 0, 0.28);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .agent-collab-card:hover {
+      border-color: rgba(94, 171, 210, 0.4);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.34), 0 0 0 1px rgba(73, 163, 204, 0.12) inset;
+      transform: translateY(-1px);
+    }
+
+    .agent-collab-card > summary {
+      padding: 16px;
+    }
+
+    .agent-collab-card > summary::after {
+      top: 16px;
+      right: 16px;
+      color: #86a1bd;
+    }
+
+    .agent-collab-card > summary:hover {
+      background: rgba(18, 34, 55, 0.42);
+    }
+
+    .agent-collab-card-copy {
+      padding-right: 56px;
+    }
+
+    .agent-collab-card-kicker {
+      color: #82a0bd;
+    }
+
+    .agent-collab-card-title-row h4 {
+      color: #ecf5ff;
+      font-size: 15px;
+    }
+
+    .agent-collab-card-badge {
+      border-color: rgba(110, 139, 167, 0.38);
+      background: rgba(16, 30, 50, 0.78);
+      color: #96aec8;
+    }
+
+    .agent-collab-card-badge.state-idle {
+      border-color: rgba(110, 139, 167, 0.38);
+      background: rgba(16, 30, 50, 0.78);
+      color: #96aec8;
+    }
+
+    .agent-collab-card-badge.state-active {
+      border-color: rgba(82, 182, 225, 0.56);
+      background: rgba(82, 182, 225, 0.18);
+      color: #c6ecff;
+    }
+
+    .agent-collab-card-badge.state-blocked {
+      border-color: rgba(240, 109, 122, 0.58);
+      background: rgba(240, 109, 122, 0.18);
+      color: #ffc2cb;
+    }
+
+    .agent-collab-card-badge.state-completed {
+      border-color: rgba(85, 204, 142, 0.54);
+      background: rgba(65, 187, 126, 0.18);
+      color: #a2f1c8;
+    }
+
+    .agent-collab-card-peek {
+      color: #8ea6c0;
+    }
+
+    .agent-collab-card-body {
+      padding: 0 16px 16px;
+      border-top-color: rgba(110, 139, 167, 0.22);
+    }
+
+    .overview-side-nav-card {
+      border-color: rgba(103, 130, 156, 0.22);
+      border-radius: 14px;
+      background:
+        linear-gradient(180deg, rgba(12, 22, 37, 0.82), rgba(10, 19, 33, 0.78)),
+        radial-gradient(circle at 0% 0%, rgba(70, 127, 196, 0.08), transparent 48%);
+      box-shadow: none;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .overview-side-nav-card:hover {
+      transform: none;
+      border-color: rgba(116, 149, 180, 0.34);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
+    }
+
+    .overview-side-nav-card[open] {
+      border-color: rgba(123, 157, 190, 0.34);
+      background:
+        linear-gradient(180deg, rgba(15, 28, 47, 0.94), rgba(11, 22, 37, 0.92)),
+        radial-gradient(circle at 0% 0%, rgba(70, 127, 196, 0.12), transparent 52%);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.22);
+    }
+
+    .overview-side-nav-card > summary {
+      padding: 13px 14px 13px 16px;
+    }
+
+    .side-sortable-stack.is-sorting .overview-side-nav-card {
+      cursor: grabbing;
+    }
+
+    .side-sortable-stack .overview-side-nav-card.is-dragging {
+      opacity: 0.42;
+      border-color: rgba(82, 182, 225, 0.5);
+      box-shadow: 0 16px 28px rgba(0, 0, 0, 0.28);
+    }
+
+    .overview-side-sort-handle {
+      right: 42px;
+      border-color: rgba(107, 136, 164, 0.34);
+      background: rgba(15, 28, 45, 0.78);
+      color: #819ab5;
+    }
+
+    .overview-side-sort-handle:hover {
+      border-color: rgba(82, 182, 225, 0.5);
+      background: rgba(27, 50, 78, 0.86);
+      color: #cfefff;
+    }
+
+    .overview-side-nav-card > summary::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 11px;
+      bottom: 11px;
+      width: 3px;
+      border-radius: 0 999px 999px 0;
+      background: rgba(110, 139, 167, 0.34);
+    }
+
+    .overview-side-nav-card.side-nav-agent > summary::before {
+      background: rgba(82, 182, 225, 0.72);
+    }
+
+    .overview-side-nav-card.side-nav-debug > summary::before {
+      background: rgba(156, 125, 255, 0.64);
+    }
+
+    .overview-side-nav-card.side-nav-status > summary::before {
+      background: rgba(125, 157, 211, 0.48);
+    }
+
+    .overview-side-nav-card.side-nav-focus > summary::before {
+      background: rgba(245, 173, 75, 0.7);
+    }
+
+    .overview-side-nav-card.side-nav-aux > summary::before {
+      background: rgba(126, 146, 170, 0.48);
+    }
+
+    .overview-side-nav-card > summary::after {
+      content: ">";
+      top: 50%;
+      right: 14px;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(106, 133, 160, 0.34);
+      background: rgba(13, 24, 39, 0.72);
+      color: #86a1bd;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1;
+      transform: translateY(-50%);
+      transition: transform 0.2s ease, color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .overview-side-nav-card[open] > summary::after {
+      content: ">";
+      color: #d8ecff;
+      border-color: rgba(82, 182, 225, 0.4);
+      background: rgba(32, 68, 102, 0.5);
+      transform: translateY(-50%) rotate(90deg);
+    }
+
+    .overview-side-nav-card > summary:hover {
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .overview-side-nav-card .agent-collab-card-copy {
+      padding-right: 72px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .overview-side-nav-card .agent-collab-card-kicker {
+      color: #738da8;
+      font-size: 10px;
+      letter-spacing: 0.42px;
+    }
+
+    .overview-side-nav-card .agent-collab-card-title-row {
+      margin-top: 0;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .overview-side-nav-card .agent-collab-card-title-row h4 {
+      color: #e8f2ff;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    .overview-side-nav-card .agent-collab-card-peek {
+      margin: 0;
+      color: #7f98b3;
+      font-size: 12px;
+      line-height: 1.45;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .overview-side-nav-card[open] .agent-collab-card-peek {
+      color: #9cb3ca;
+    }
+
+    .overview-side-nav-card .agent-collab-card-badge {
+      height: 20px;
+      padding: 0 9px;
+      background: rgba(15, 28, 45, 0.72);
+      font-size: 10px;
+      flex-shrink: 0;
+    }
+
+    .overview-side-nav-card .agent-collab-card-badge.state-idle {
+      border-color: rgba(110, 139, 167, 0.34);
+      background: rgba(15, 28, 45, 0.72);
+      color: #95aec8;
+    }
+
+    .overview-side-nav-card .agent-collab-card-badge.state-active {
+      border-color: rgba(82, 182, 225, 0.48);
+      background: rgba(82, 182, 225, 0.16);
+      color: #c6ecff;
+    }
+
+    .overview-side-nav-card .agent-collab-card-badge.state-blocked {
+      border-color: rgba(240, 109, 122, 0.48);
+      background: rgba(240, 109, 122, 0.14);
+      color: #ffc4cd;
+    }
+
+    .overview-side-nav-card .agent-collab-card-badge.state-completed {
+      border-color: rgba(85, 204, 142, 0.46);
+      background: rgba(65, 187, 126, 0.14);
+      color: #a5f0c9;
+    }
+
+    .overview-side-nav-card .agent-collab-card-body,
+    .overview-side-nav-card .overview-side-card-body {
+      padding: 0 14px 14px;
+      border-top: 1px solid rgba(107, 136, 164, 0.18);
+      background: linear-gradient(180deg, rgba(12, 22, 37, 0.24), rgba(10, 19, 33, 0));
+    }
+
+    .overview-side-nav-card .agent-collab-summary {
+      border-color: rgba(107, 136, 164, 0.18);
+      background: rgba(13, 24, 39, 0.68);
+      color: #a4bdd7;
+      border-radius: 11px;
+    }
+
+    .overview-side-nav-card .stat-card,
+    .overview-side-nav-card .overview-focus-card {
+      background: rgba(13, 24, 39, 0.74);
+      box-shadow: none;
+    }
+
+    .overview-side-nav-card .overview-focus-card:hover {
+      transform: none;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.16);
+    }
+
+    .overview-side-nav-card .overview-priority-tip {
+      border-color: rgba(245, 173, 75, 0.28);
+      background: rgba(245, 173, 75, 0.08);
+      color: #dfb06d;
+    }
+
+    .overview-side-nav-card .quick-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .overview-side-section + .overview-side-section {
+      margin-top: 12px;
+    }
+
+    .overview-side-section {
+      border: 1px solid rgba(107, 136, 164, 0.18);
+      border-radius: 12px;
+      background: rgba(13, 24, 39, 0.42);
+      padding: 12px;
+    }
+
+    .overview-side-section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .overview-side-section-head h5 {
+      margin: 0;
+      color: #dceaf9;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .overview-side-section .list-box {
+      background: transparent;
+      border: 0;
+      padding: 0;
+      gap: 8px;
+    }
+
+    .overview-side-fold-card .overview-side-card-body {
+      padding: 0 16px 16px;
+      border-top-color: rgba(110, 139, 167, 0.22);
+    }
+
+    .agent-collab-head h4 {
+      color: #ecf5ff;
+      font-size: 15px;
+    }
+
+    .agent-collab-head p {
+      color: #8ea6c0;
+    }
+
+    .agent-collab-summary {
+      border-color: rgba(110, 139, 167, 0.34);
+      background: rgba(16, 30, 49, 0.9);
+      color: #abc2da;
+      border-radius: 12px;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .agent-collab-grid {
+      margin-top: 12px;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .agent-collab-card .agent-collab-summary {
+      margin-top: 14px;
+    }
+
+    .agent-collab-card .agent-collab-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .overview-side-fold-card .stats-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .overview-side-fold-card .stat-card {
+      min-height: 0;
+      padding: 12px;
+    }
+
+    .overview-side-fold-card .stat-value {
+      font-size: 24px;
+    }
+
+    .overview-side-fold-card .overview-priority-tip {
+      margin: 14px 0 10px;
+    }
+
+    .overview-side-fold-card .overview-focus-list {
+      gap: 10px;
+    }
+
+    .agent-stage-card {
+      position: relative;
+      border-color: rgba(110, 139, 168, 0.34);
+      border-left-width: 3px;
+      border-radius: 12px;
+      background: rgba(16, 28, 46, 0.9);
+      min-height: 128px;
+      padding: 11px 10px;
+      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .agent-stage-card::after {
+      content: "";
+      position: absolute;
+      right: -10px;
+      top: 50%;
+      width: 10px;
+      height: 2px;
+      background: rgba(123, 152, 183, 0.46);
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .agent-stage-card:last-child::after {
+      display: none;
+    }
+
+    .agent-collab-card .agent-stage-card {
+      min-height: 0;
+      padding: 12px;
+    }
+
+    .agent-collab-card .agent-stage-card::after {
+      right: auto;
+      left: 20px;
+      top: auto;
+      bottom: -12px;
+      width: 2px;
+      height: 12px;
+      background: rgba(123, 152, 183, 0.4);
+      transform: none;
+    }
+
+    .agent-stage-card.stage-completed {
+      border-color: rgba(85, 204, 142, 0.46);
+      border-left-color: #42cf88;
+      background: rgba(16, 39, 34, 0.62);
+    }
+
+    .agent-stage-card.stage-current {
+      border-color: rgba(82, 182, 225, 0.62);
+      border-left-color: #4ab5e1;
+      background: linear-gradient(180deg, rgba(22, 52, 80, 0.86), rgba(14, 31, 49, 0.92));
+      box-shadow: 0 0 0 1px rgba(82, 182, 225, 0.24), 0 0 22px rgba(82, 182, 225, 0.22);
+      transform: translateY(-1px);
+    }
+
+    .agent-stage-card.stage-blocked {
+      border-color: rgba(240, 109, 122, 0.56);
+      border-left-color: #f06d7a;
+      background: rgba(52, 20, 28, 0.74);
+    }
+
+    .agent-stage-kicker {
+      color: #8ca4be;
+    }
+
+    .agent-stage-title {
+      color: #e7f1fe;
+      font-size: 13px;
+    }
+
+    .agent-stage-desc {
+      color: #89a2bd;
+      font-size: 11px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .agent-stage-meta {
+      color: #7f98b3;
+      font-size: 11px;
+      margin-top: 7px;
+    }
+
+    .agent-stage-state {
+      height: 22px;
+      padding: 0 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(110, 139, 167, 0.42);
+      background: rgba(16, 30, 50, 0.8);
+      color: #95aec8;
+      font-size: 10px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .agent-stage-state.completed {
+      border-color: rgba(85, 204, 142, 0.56);
+      background: rgba(65, 187, 126, 0.2);
+      color: #9aefc1;
+    }
+
+    .agent-stage-state.current {
+      border-color: rgba(82, 182, 225, 0.62);
+      background: rgba(82, 182, 225, 0.2);
+      color: #c5ecff;
+    }
+
+    .agent-stage-state.blocked {
+      border-color: rgba(240, 109, 122, 0.6);
+      background: rgba(240, 109, 122, 0.2);
+      color: #ffc2ca;
+    }
+
+    .overview-aux-detail .panel {
+      background: rgba(13, 24, 40, 0.9);
+    }
+
+    .quick-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .bigscreen-kpi {
+      border-color: rgba(111, 141, 170, 0.32);
+      background: rgba(15, 27, 45, 0.9);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .bigscreen-kpi-label {
+      color: #8fa6bf;
+    }
+
+    .bigscreen-kpi-value {
+      color: #f0f7ff;
+      font-size: 23px;
+    }
+
+    .bigscreen-kpi-meta {
+      color: #849eb8;
+    }
+
+    .bigscreen-main-column .bigscreen-kpi-strip {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .bigscreen-side-stack .overview-side-card-body {
+      padding: 0 14px 14px;
+    }
+
+    .bigscreen-side-stack .status-list {
+      gap: 10px;
+    }
+
+    .bigscreen-side-stack .quality-head {
+      align-items: flex-start;
+    }
+
+    .bigscreen-side-stack .quality-actions {
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
+    .bigscreen-side-stack .quality-actions select,
+    .bigscreen-side-stack .quality-actions .btn {
+      flex: 1 1 140px;
+    }
+
+    .bigscreen-side-stack .quality-kpi-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .bigscreen-side-stack .quality-trend-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .overview-side-nav-card.side-nav-search .search-row {
+      flex-direction: column;
+    }
+
+    .overview-side-nav-card.side-nav-search .search-row select {
+      flex: 1 1 auto;
+    }
+
+    .overview-side-nav-card.side-nav-search .search-row .btn {
+      width: 100%;
+    }
+
+    .bigscreen-side-stack .bigscreen-event-list .list-item,
+    .bigscreen-side-stack .bigscreen-flow-list .list-item {
+      background: rgba(13, 24, 39, 0.52);
+    }
+
+    .module-console-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 360px);
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .module-shell-card {
+      padding: 18px;
+      border-color: rgba(57, 172, 201, 0.42);
+      border-radius: 20px;
+      background:
+        linear-gradient(180deg, rgba(16, 29, 49, 0.94), rgba(9, 18, 32, 0.92)),
+        radial-gradient(circle at 0% 0%, rgba(82, 182, 225, 0.13), transparent 42%),
+        radial-gradient(circle at 100% 0%, rgba(76, 203, 136, 0.08), transparent 38%);
+      box-shadow: 0 24px 46px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(57, 172, 201, 0.16) inset;
+    }
+
+    .module-main-column {
+      min-width: 0;
+      display: grid;
+      gap: 14px;
+    }
+
+    .module-console-layout.module-shell-card {
+      align-items: stretch;
+    }
+
+    .module-console-layout.module-shell-card .module-main-column {
+      gap: 0;
+    }
+
+    .module-console-layout.module-shell-card .module-main-column > .panel {
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      overflow: visible;
+    }
+
+    .module-console-layout.module-shell-card .module-main-column > .panel + .panel {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(107, 136, 164, 0.2);
+    }
+
+    .module-console-layout.module-shell-card .module-main-column > .panel > .panel-head {
+      padding: 0 0 13px;
+      border-bottom: 1px solid rgba(107, 136, 164, 0.2);
+      background: transparent;
+    }
+
+    .module-console-layout.module-shell-card .module-main-column > .panel > .panel-body {
+      padding: 15px 0 0;
+    }
+
+    .module-side-stack {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .module-side-card-body {
+      padding: 0 14px 14px;
+      border-top: 1px solid rgba(107, 136, 164, 0.18);
+      background: linear-gradient(180deg, rgba(12, 22, 37, 0.24), rgba(10, 19, 33, 0));
+    }
+
+    .module-side-card-body .meta-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .module-side-card-body .meta-card,
+    .module-side-card-body .table-wrap,
+    .module-side-card-body .list-box,
+    .module-side-card-body .status-list {
+      min-width: 0;
+    }
+
+    .module-side-card-body .meta-card {
+      min-height: 0;
+    }
+
+    .module-action-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .module-action-stack .btn,
+    .module-side-card-body .action-row .btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .module-side-card-body .action-row,
+    .module-side-card-body .workflow-head-actions {
+      display: grid;
+      gap: 10px;
+    }
+
+    .module-side-card-body .workflow-select-wrap {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .module-side-card-body .workflow-select-wrap select {
+      width: 100%;
+    }
+
+    .module-side-card-body .quick-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .module-side-card-body .quality-actions {
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
+    .module-side-card-body .quality-actions select,
+    .module-side-card-body .quality-actions .btn {
+      flex: 1 1 140px;
+    }
+
+    #page-workflow .workflow-studio-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    #page-workflow .workflow-list-column,
+    #page-workflow .workflow-editor-column {
+      min-width: 0;
+    }
+
+    #page-workflow .workflow-list-panel,
+    #page-workflow .workflow-editor-workbench {
+      border-color: rgba(107, 136, 164, 0.22);
+      background: linear-gradient(180deg, rgba(13, 24, 39, 0.9), rgba(10, 19, 33, 0.88));
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.26);
+    }
+
+    #page-workflow .workflow-editor-workbench .panel-head {
+      align-items: flex-start;
+    }
+
+    #page-workflow .workflow-editor-workbench .panel-head p {
+      margin-top: 6px;
+      max-width: 620px;
+    }
+
+    #page-workflow .workflow-editor-workbench-body {
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+    }
+
+    #page-workflow .workflow-editor-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    #page-workflow .workflow-editor-toolbar .workflow-select-wrap {
+      flex: 1 1 240px;
+      min-width: 240px;
+    }
+
+    #page-workflow .workflow-editor-toolbar .btn {
+      flex: 0 0 auto;
+    }
+
+    #page-workflow .workflow-workbench-grid {
+      grid-template-columns: 188px minmax(0, 1fr) 272px;
+      min-height: 620px;
+    }
+
+    #page-workflow .workflow-support-fold {
+      border: 1px solid rgba(107, 136, 164, 0.18);
+      border-radius: 14px;
+      background: rgba(12, 22, 37, 0.54);
+      overflow: hidden;
+    }
+
+    #page-workflow .workflow-support-fold > summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 14px;
+      color: #dce9f7;
+    }
+
+    #page-workflow .workflow-support-fold > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    #page-workflow .workflow-support-fold > summary::after {
+      content: ">";
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(106, 133, 160, 0.34);
+      background: rgba(13, 24, 39, 0.72);
+      color: #86a1bd;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1;
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    #page-workflow .workflow-support-fold[open] > summary::after {
+      transform: rotate(90deg);
+    }
+
+    #page-workflow .workflow-support-summary {
+      display: grid;
+      gap: 4px;
+    }
+
+    #page-workflow .workflow-support-kicker {
+      color: #7f98b3;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.36px;
+    }
+
+    #page-workflow .workflow-support-title {
+      color: #e8f2ff;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    #page-workflow .workflow-support-meta {
+      color: #8ba3bd;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    #page-workflow .workflow-support-grid {
+      display: grid;
+      grid-template-columns: minmax(210px, 230px) minmax(0, 1fr);
+      gap: 14px;
+      padding: 0 14px 14px;
+      border-top: 1px solid rgba(107, 136, 164, 0.18);
+    }
+
+    #page-workflow .workflow-support-block {
+      border: 1px solid rgba(107, 136, 164, 0.18);
+      border-radius: 12px;
+      background: rgba(13, 24, 39, 0.42);
+      padding: 12px;
+      min-width: 0;
+    }
+
+    #page-workflow .workflow-support-block h5 {
+      margin: 0 0 10px;
+      color: #dceaf9;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    #page-workflow #workflowNodesTable .table-wrap {
+      margin-top: 0;
+    }
+
+    @media (max-width: 1460px) {
+      #page-workflow .workflow-studio-layout {
+        grid-template-columns: 1fr;
+      }
+
+      #page-workflow .workflow-workbench-grid {
+        grid-template-columns: 1fr;
+        min-height: 0;
+      }
+
+      #page-workflow .workflow-support-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .module-side-card-body .quality-kpi-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .module-side-card-body .quality-trend-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .module-side-card-body .search-row {
+      flex-direction: column;
+    }
+
+    .module-side-card-body .search-row select {
+      flex: 1 1 auto;
+    }
+
+    .module-side-card-body .search-row .btn {
+      width: 100%;
+    }
+
+    .overview-side-nav-card.side-nav-action > summary::before {
+      background: rgba(126, 146, 170, 0.48);
+    }
+
+    .overview-side-nav-card.side-nav-summary > summary::before {
+      background: rgba(125, 157, 211, 0.48);
+    }
+
+    .overview-side-nav-card.side-nav-library > summary::before {
+      background: rgba(76, 203, 136, 0.6);
+    }
+
+    .overview-side-nav-card.side-nav-insight > summary::before {
+      background: rgba(245, 173, 75, 0.7);
+    }
+
+    .overview-side-nav-card.side-nav-health > summary::before {
+      background: rgba(76, 203, 136, 0.62);
+    }
+
+    .overview-side-nav-card.side-nav-event > summary::before {
+      background: rgba(240, 109, 122, 0.66);
+    }
+
+    .overview-side-nav-card.side-nav-flow > summary::before {
+      background: rgba(82, 182, 225, 0.66);
+    }
+
+    .overview-side-nav-card.side-nav-hot > summary::before {
+      background: rgba(245, 173, 75, 0.72);
+    }
+
+    .overview-side-nav-card.side-nav-quality > summary::before {
+      background: rgba(82, 182, 225, 0.72);
+    }
+
+    .overview-side-nav-card.side-nav-debug > summary::before {
+      background: rgba(156, 125, 255, 0.68);
+    }
+
+    .overview-side-nav-card.side-nav-search > summary::before {
+      background: rgba(126, 146, 170, 0.54);
+    }
+
+    .table-wrap {
+      border-color: rgba(110, 139, 167, 0.28);
+      background: rgba(13, 25, 42, 0.92);
+    }
+
+    th,
+    td {
+      border-bottom-color: rgba(107, 136, 164, 0.24);
+    }
+
+    th {
+      background: rgba(17, 30, 50, 0.95);
+      color: #9cb4cd;
+    }
+
+    td {
+      color: #d4e4f7;
+    }
+
+    .mini-btn {
+      border-color: rgba(111, 140, 168, 0.4);
+      background: rgba(17, 30, 50, 0.9);
+      color: #bcd1e8;
+    }
+
+    .mini-btn:hover {
+      border-color: rgba(126, 171, 211, 0.62);
+      color: #f0f8ff;
+      background: rgba(22, 38, 61, 0.96);
+    }
+
+    .toast {
+      border-color: rgba(111, 140, 170, 0.32);
+      background: rgba(16, 28, 46, 0.95);
+      color: #cce0f7;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.42);
+    }
+
+    @media (max-width: 1180px) {
+      :root {
+        --sidebar-width: 86px;
+      }
+    }
+
+    @media (max-width: 1360px) {
+      .overview-first-screen {
+        grid-template-columns: 1fr;
+      }
+
+      .agent-collab-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .agent-stage-card::after {
+        display: none;
+      }
+    }
+
+    @media (max-width: 1080px) {
+      .top-header {
+        height: auto;
+      }
+
+      .main-panel {
+        padding: 16px;
+      }
+
+      #page-overview .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .overview-control-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .agent-collab-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      :root {
+        --sidebar-width: 0px;
+      }
+
+      .quick-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .agent-collab-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -3146,16 +4811,24 @@
 
     <div class="workspace">
       <header class="top-header">
-        <div class="header-main">
-          <p class="header-path" id="headerPath">AI 控制台 / 总览中心</p>
-          <h1 class="header-title" id="pageTitle">总览中心</h1>
-          <p class="header-desc" id="pageDesc">先判断系统态势和优先事项，再进入关键操作。</p>
+        <div class="header-main is-primary-path">
+          <p class="header-path" id="headerPath">
+            <span class="header-path-root">AI 控制台</span>
+            <span class="header-path-current">总览中心</span>
+          </p>
+          <h1 class="header-title" id="pageTitle" hidden></h1>
+          <p class="header-desc" id="pageDesc" hidden></p>
         </div>
 
         <div class="header-actions">
           <div class="chip" id="healthChip">
             <span class="dot"></span>
             <span id="healthText">系统正常</span>
+          </div>
+
+          <div class="chip" id="modeChip">
+            <span class="chip-label">当前模式</span>
+            <span id="headerModeText">PAPER</span>
           </div>
 
           <div class="chip">
@@ -3185,687 +4858,875 @@
 
       <main class="main-panel">
         <section class="page-view active" id="page-overview">
-          <article class="panel overview-hero-panel">
-            <div class="panel-body">
-              <div class="overview-hero-main">
-                <span class="overview-kicker">ARCHITECTURE OVERVIEW</span>
-                <h2 class="overview-hero-title">总览页先看链路，再看操作</h2>
-                <p class="overview-hero-desc" id="overviewHeroSummary">正在汇总交易接入、AI 决策、编排执行与治理状态...</p>
-                <div class="overview-hero-tags" id="overviewHeroTags"></div>
+          <article class="panel panel-tier-1 overview-command-panel">
+            <div class="panel-head">
+              <div>
+                <h3>交易指挥台</h3>
               </div>
-              <div class="overview-posture-card info" id="overviewPostureCard">
-                <div class="overview-posture-label">系统态势</div>
-                <div class="overview-posture-value" id="overviewPostureValue">评估中</div>
-                <div class="overview-posture-meta" id="overviewPostureMeta">正在检查关键链路是否完整。</div>
-                <div class="overview-posture-actions">
-                  <button class="btn btn-primary small" type="button" data-quick="goto-bigscreen">查看数据中心</button>
-                  <button class="btn btn-secondary small" type="button" data-quick="goto-workflow">进入工作流</button>
+              <span class="badge success">COCKPIT</span>
+            </div>
+            <div class="panel-body">
+              <div class="overview-command-layout">
+                <div class="overview-command-main-column">
+                  <div class="overview-command-stage-strip">
+                    <span class="overview-stage-chip active">1. AI 分析</span>
+                    <span class="overview-stage-chip">2. 人机确认</span>
+                    <span class="overview-stage-chip">3. 交易执行</span>
+                  </div>
+
+                  <div class="overview-command-main">
+                    <div class="overview-control-strip">
+                      <div class="field">
+                        <label for="brokerModeSelect">交易模式</label>
+                        <select id="brokerModeSelect">
+                          <option value="paper">paper</option>
+                          <option value="gtja">gtja</option>
+                          <option value="real">real</option>
+                          <option value="okx">okx</option>
+                          <option value="usstock">usstock</option>
+                        </select>
+                      </div>
+                      <label class="field">
+                        <span>执行策略</span>
+                        <select id="executionPolicySelect">
+                          <option value="auto">自动执行</option>
+                          <option value="approval">确认后执行</option>
+                        </select>
+                      </label>
+                      <div class="field">
+                        <label>&nbsp;</label>
+                        <div class="overview-inline-actions">
+                          <button class="btn btn-secondary" id="applyBrokerModeBtn">切换交易模式</button>
+                          <button class="btn btn-secondary" id="openRunHistoryBtn">运行回放</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <label for="commandInput">交易指令</label>
+                      <textarea id="commandInput" placeholder="例如：买入 600519 100&#10;运行策略 BTC-USDT 50"></textarea>
+                    </div>
+
+                    <div class="command-actions">
+                      <button class="btn btn-secondary" id="analyzeBtn">AI 分析</button>
+                      <button class="btn btn-primary btn-emphasis" id="executeBtn">AI 分析并执行</button>
+                      <button class="btn btn-secondary" id="dryRunBtn">Dry Run</button>
+                    </div>
+
+                    <div class="command-confirm-row">
+                      <button class="btn btn-secondary" id="confirmExecuteBtn" disabled>确认执行建议指令</button>
+                      <div class="approval-inline" id="liveApprovalInline">
+                        <input class="approval-input" id="approvalCoApproverInput" type="text" placeholder="复核人（必填）">
+                        <input class="approval-input" id="approvalPassphraseInput" type="password" placeholder="审批口令（必填）">
+                        <input class="approval-input" id="approvalNoteInput" type="text" placeholder="审批备注（可选）">
+                      </div>
+                      <span class="item-meta" id="pendingCommandHint">暂无待确认指令</span>
+                    </div>
+
+                    <div class="result-box" id="commandResult">还没有执行交易命令。</div>
+                  </div>
+
                 </div>
+
+                <aside class="overview-side-stack" id="overviewSideStack" aria-label="总览中心右侧卡片">
+                  <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-search">
+                    <summary>
+                      <div class="agent-collab-card-copy">
+                        <div class="agent-collab-card-kicker">MARKET TOOL</div>
+                        <div class="agent-collab-card-title-row">
+                          <h4>行情检索</h4>
+                          <span class="agent-collab-card-badge state-idle" id="bigscreenSearchBadge">检索</span>
+                        </div>
+                        <p class="agent-collab-card-peek" id="bigscreenSearchPeek">默认收起，展开后再按市场检索代码和标的。</p>
+                      </div>
+                    </summary>
+                    <div class="overview-side-card-body">
+                      <div class="search-row">
+                        <select id="quoteMarket">
+                          <option value="cn_stock">A股</option>
+                          <option value="cn_convertible">可转债</option>
+                          <option value="crypto">区块链</option>
+                          <option value="futures">期货</option>
+                          <option value="hk_stock">港股</option>
+                          <option value="us_stock">美股</option>
+                        </select>
+                        <input id="quoteQuery" type="text" placeholder="输入代码、股票名或 BTC-USDT">
+                        <button class="btn btn-secondary" id="searchBtn">搜索</button>
+                      </div>
+                      <div class="list-box" id="searchResults"></div>
+                    </div>
+                  </details>
+
+                  <details class="agent-collab-card overview-side-nav-card side-nav-agent">
+                    <summary>
+                      <div class="agent-collab-card-copy">
+                        <div class="agent-collab-card-kicker">AGENT PIPELINE</div>
+                        <div class="agent-collab-card-title-row">
+                          <h4>多 Agent 协作链</h4>
+                          <span class="agent-collab-card-badge state-idle" id="agentCollabCardBadge">待命</span>
+                        </div>
+                        <p class="agent-collab-card-peek" id="agentCollabPeek">默认收起，发起分析后再展开查看完整协作流程。</p>
+                      </div>
+                    </summary>
+                    <div class="agent-collab-card-body">
+                      <div class="agent-collab-summary" id="agentCollabSummary">当前协作链已接入 5 个角色，发起分析后会展示每一步状态、摘要与运行上下文。</div>
+                      <div class="agent-collab-grid" id="agentCollabGrid"></div>
+                    </div>
+                  </details>
+
+                  <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-debug">
+                    <summary>
+                      <div class="agent-collab-card-copy">
+                        <div class="agent-collab-card-kicker">DEBUG TRACE</div>
+                        <div class="agent-collab-card-title-row">
+                          <h4>Trace 与调试细节</h4>
+                          <span class="agent-collab-card-badge state-idle">DEBUG</span>
+                        </div>
+                        <p class="agent-collab-card-peek">默认收起，展开查看决策卡片、执行上下文和 Agent Trace。</p>
+                      </div>
+                    </summary>
+                    <div class="overview-side-card-body">
+                      <div class="overview-command-rail">
+                        <section class="decision-card">
+                          <h4 class="decision-title">Agent 决策卡片</h4>
+                          <p class="decision-subtitle">意图、风险、执行状态与建议指令</p>
+                          <div id="decisionCardPanel" class="decision-placeholder">等待执行 AI 分析后展示。</div>
+                        </section>
+                        <section class="decision-card">
+                          <h4 class="decision-title">执行上下文</h4>
+                          <p class="decision-subtitle">run_id、workflow_run_id 与执行模式</p>
+                          <div id="executionContextPanel" class="decision-placeholder">尚未生成执行上下文。</div>
+                        </section>
+                        <div class="trace-panel">
+                          <h4 class="decision-title">Agent Trace</h4>
+                          <p class="decision-subtitle">intent_router → market_analyst → risk_guardian → execution_agent → summary_agent</p>
+                          <div id="agentTracePanel" class="decision-placeholder">尚未产生 trace 记录。</div>
+                        </div>
+                      </div>
+                    </div>
+                  </details>
+
+                  <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-status">
+                    <summary>
+                      <div class="agent-collab-card-copy">
+                        <div class="agent-collab-card-kicker">SYSTEM STATUS</div>
+                        <div class="agent-collab-card-title-row">
+                          <h4>系统摘要</h4>
+                          <span class="agent-collab-card-badge state-idle" id="overviewStatsBadge">待命</span>
+                        </div>
+                        <p class="agent-collab-card-peek" id="overviewStatsPeek">默认收起，展开查看执行通道、资产、负载和决策引擎摘要。</p>
+                      </div>
+                    </summary>
+                    <div class="overview-side-card-body">
+                      <div class="stats-grid" id="overviewStats"></div>
+                    </div>
+                  </details>
+
+                  <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-focus">
+                    <summary>
+                      <div class="agent-collab-card-copy">
+                        <div class="agent-collab-card-kicker">TODAY FOCUS</div>
+                        <div class="agent-collab-card-title-row">
+                          <h4>今日优先事项</h4>
+                          <span class="agent-collab-card-badge state-idle" id="overviewFocusBadge">待命</span>
+                        </div>
+                        <p class="agent-collab-card-peek" id="overviewFocusPeek">默认收起，展开查看当前最值得优先处理的事项。</p>
+                      </div>
+                    </summary>
+                    <div class="overview-side-card-body">
+                      <div class="overview-priority-tip">优先补齐主链路缺口，确认可执行后再发起分析与下单。</div>
+                      <div class="overview-focus-list" id="overviewFocusList"></div>
+                    </div>
+                  </details>
+
+                  <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-aux">
+                    <summary>
+                      <div class="agent-collab-card-copy">
+                        <div class="agent-collab-card-kicker">LOW FREQ</div>
+                        <div class="agent-collab-card-title-row">
+                          <h4>辅助信息</h4>
+                          <span class="agent-collab-card-badge state-idle" id="recentOrdersBadge">空</span>
+                        </div>
+                        <p class="agent-collab-card-peek" id="overviewAuxPeek">默认收起，最近运行和更多操作都放在这里按需查看。</p>
+                      </div>
+                    </summary>
+                    <div class="overview-side-card-body">
+                      <div class="overview-side-section">
+                        <div class="overview-side-section-head">
+                          <h5>最近运行</h5>
+                          <span class="badge info">RECENT</span>
+                        </div>
+                        <div class="list-box" id="recentOrdersList"></div>
+                      </div>
+                      <div class="overview-side-section">
+                        <div class="overview-side-section-head">
+                          <h5>更多操作</h5>
+                          <span class="badge info">MORE</span>
+                        </div>
+                        <div class="quick-grid" id="quickActionList"></div>
+                      </div>
+                    </div>
+                  </details>
+                </aside>
               </div>
             </div>
           </article>
-
-          <div class="stats-grid" id="overviewStats"></div>
-
-          <div class="overview-section-head">
-            <div class="overview-section-copy">
-              <span class="overview-section-kicker">ARCHITECTURE SNAPSHOT</span>
-              <h3>先判断主链路是否成型，再决定今天第一步</h3>
-              <p>首页只展示成链结论和最高优先级动作，细节下沉到数据中心和专业模块。</p>
-            </div>
-          </div>
-
-          <div class="overview-grid overview-architecture-grid">
-            <article class="panel span-2">
-              <div class="panel-head">
-                <div>
-                  <h3>运行架构视图</h3>
-                  <p>把首页当成主链路地图，而不是功能堆栈。</p>
-                </div>
-                <span class="badge info">MAP</span>
-              </div>
-              <div class="panel-body">
-                <div class="overview-lane-list" id="overviewLaneList"></div>
-              </div>
-            </article>
-
-            <article class="panel">
-              <div class="panel-head">
-                <div>
-                  <h3>今日优先事项</h3>
-                  <p>只保留最该先做的动作，避免被次要信息分散注意力。</p>
-                </div>
-                <span class="badge warning">FOCUS</span>
-              </div>
-              <div class="panel-body">
-                <div class="overview-focus-list" id="overviewFocusList"></div>
-              </div>
-            </article>
-          </div>
-
-          <div class="overview-section-head">
-            <div class="overview-section-copy">
-              <span class="overview-section-kicker">EXECUTION ENTRY</span>
-              <h3>交易指挥台只保留主操作链路</h3>
-              <p>设置模式、输入指令、执行分析。决策细节按需展开，不再和主操作抢注意力。</p>
-            </div>
-          </div>
-
-          <div class="overview-grid overview-cockpit-grid">
-            <article class="panel span-2">
-              <div class="panel-head">
-                <div>
-                  <h3>交易指挥台</h3>
-                  <p>面向“分析 -> 确认 -> 执行”的主操作区。</p>
-                </div>
-                <span class="badge success">COCKPIT</span>
-              </div>
-              <div class="panel-body">
-                <div class="overview-command-main">
-                  <div class="overview-control-strip">
-                    <div class="field">
-                      <label for="brokerModeSelect">交易模式</label>
-                      <select id="brokerModeSelect">
-                        <option value="paper">paper</option>
-                        <option value="gtja">gtja</option>
-                        <option value="real">real</option>
-                        <option value="okx">okx</option>
-                        <option value="usstock">usstock</option>
-                      </select>
-                    </div>
-                    <label class="field">
-                      <span>执行策略</span>
-                      <select id="executionPolicySelect">
-                        <option value="auto">自动执行</option>
-                        <option value="approval">确认后执行</option>
-                      </select>
-                    </label>
-                    <div class="field">
-                      <label>&nbsp;</label>
-                      <div class="overview-inline-actions">
-                        <button class="btn btn-secondary" id="applyBrokerModeBtn">切换交易模式</button>
-                        <button class="btn btn-secondary" id="openRunHistoryBtn">运行回放</button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="field">
-                    <label for="commandInput">交易指令</label>
-                    <textarea id="commandInput" placeholder="例如：买入 600519 100&#10;运行策略 BTC-USDT 50"></textarea>
-                  </div>
-
-                  <section class="agent-collab-panel">
-                    <div class="agent-collab-head">
-                      <div>
-                        <h4>多 Agent 协作链</h4>
-                        <p>现在首页直接展示 5 个角色如何分工协作：先识别意图，再补事实、做风控、决定是否执行，最后整理成用户可读结论。</p>
-                      </div>
-                      <span class="badge info">MULTI AGENT</span>
-                    </div>
-                    <div class="agent-collab-summary" id="agentCollabSummary">当前协作链已接入 5 个角色，发起分析后会展示每一步状态、摘要与运行上下文。</div>
-                    <div class="agent-collab-grid" id="agentCollabGrid"></div>
-                  </section>
-
-                  <div class="command-actions">
-                    <button class="btn btn-primary" id="analyzeBtn">AI 分析</button>
-                    <button class="btn btn-primary" id="executeBtn">AI 分析并执行</button>
-                    <button class="btn btn-secondary" id="dryRunBtn">Dry Run</button>
-                  </div>
-
-                  <div class="command-confirm-row">
-                    <button class="btn btn-secondary" id="confirmExecuteBtn" disabled>确认执行建议指令</button>
-                    <div class="approval-inline" id="liveApprovalInline">
-                      <input class="approval-input" id="approvalCoApproverInput" type="text" placeholder="复核人（必填）">
-                      <input class="approval-input" id="approvalPassphraseInput" type="password" placeholder="审批口令（必填）">
-                      <input class="approval-input" id="approvalNoteInput" type="text" placeholder="审批备注（可选）">
-                    </div>
-                    <span class="item-meta" id="pendingCommandHint">暂无待确认指令</span>
-                  </div>
-
-                  <div class="result-box" id="commandResult">还没有执行交易命令。</div>
-                </div>
-
-                <details class="overview-detail-block">
-                  <summary>查看完整 Trace 与调试细节（决策卡片 / 执行上下文 / Agent Trace）</summary>
-                  <div class="overview-command-rail">
-                    <section class="decision-card">
-                      <h4 class="decision-title">Agent 决策卡片</h4>
-                      <p class="decision-subtitle">意图、风险、执行状态与建议指令</p>
-                      <div id="decisionCardPanel" class="decision-placeholder">等待执行 AI 分析后展示。</div>
-                    </section>
-                    <section class="decision-card">
-                      <h4 class="decision-title">执行上下文</h4>
-                      <p class="decision-subtitle">run_id、workflow_run_id 与执行模式</p>
-                      <div id="executionContextPanel" class="decision-placeholder">尚未生成执行上下文。</div>
-                    </section>
-                    <div class="trace-panel">
-                      <h4 class="decision-title">Agent Trace</h4>
-                      <p class="decision-subtitle">intent_router → market_analyst → risk_guardian → execution_agent → summary_agent</p>
-                      <div id="agentTracePanel" class="decision-placeholder">尚未产生 trace 记录。</div>
-                    </div>
-                  </div>
-                </details>
-              </div>
-            </article>
-
-            <div class="overview-side-stack">
-              <article class="panel">
-                <div class="panel-head">
-                  <div>
-                    <h3>最近运行</h3>
-                    <p>只保留最近执行反馈，帮助你快速判断是否需要介入。</p>
-                  </div>
-                  <span class="badge info" id="recentOrdersBadge">0</span>
-                </div>
-                <div class="panel-body">
-                  <div class="list-box" id="recentOrdersList"></div>
-                </div>
-              </article>
-
-              <article class="panel">
-                <div class="panel-head">
-                  <div>
-                    <h3>更多操作</h3>
-                    <p>低频动作统一收纳到这里，不打断首页主链路。</p>
-                  </div>
-                  <span class="badge info">MORE</span>
-                </div>
-                <div class="panel-body">
-                  <div class="quick-grid" id="quickActionList"></div>
-                </div>
-              </article>
-            </div>
-          </div>
         </section>
 
         <section class="page-view" id="page-bigscreen">
-          <div class="page-toolbar">
-            <div>
-              <h2 class="toolbar-title">数据中心</h2>
-              <p class="toolbar-desc">集中观察实时指标、异常事件和执行流变化。</p>
-            </div>
-            <div class="action-row">
-              <button class="btn btn-secondary small" id="bigscreenAutoBtn" data-action="toggle-bigscreen-auto">自动刷新: 开</button>
-              <button class="btn btn-secondary small" data-action="reload-bigscreen">刷新中心</button>
-            </div>
-          </div>
+          <div class="panel panel-tier-1 bigscreen-console-layout module-shell-card">
+            <div class="bigscreen-main-column">
+              <div class="bigscreen-kpi-strip" id="bigscreenKpiStrip"></div>
 
-          <article class="panel bigscreen-hero">
-            <div class="panel-body">
-              <div>
-                <span class="bigscreen-live-tag">LIVE DATA</span>
-                <h2 class="bigscreen-title">数据中心：实时运行观察</h2>
-                <p class="bigscreen-subtitle" id="bigscreenSummaryText">正在汇聚交易、风控、会话与编排数据...</p>
-              </div>
-              <div class="bigscreen-last-wrap">
-                <div class="bigscreen-last-label">最后更新</div>
-                <div class="bigscreen-last-time" id="bigscreenLastUpdated">--</div>
-              </div>
-            </div>
-          </article>
-
-          <div class="bigscreen-kpi-strip" id="bigscreenKpiStrip"></div>
-
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>主链路实时指标</h3>
-                <p>优先观察吞吐、延迟和失败态势，快速定位是否需要介入。</p>
-              </div>
-              <span class="badge info" id="bigscreenFlinkModeTag">--</span>
-            </div>
-            <div class="panel-body">
-              <div class="meta-grid" id="bigscreenFlinkStats"></div>
-            </div>
-          </article>
-
-          <div class="bigscreen-layout">
-            <article class="panel">
-              <div class="panel-head">
-                <div>
-                  <h3>实时执行流</h3>
-                  <p>最近订单状态变化，按时间查看链路节奏</p>
-                </div>
-              </div>
-              <div class="panel-body">
-                <div class="list-box bigscreen-flow-list" id="bigscreenFlowList"></div>
-              </div>
-            </article>
-
-            <article class="panel">
-              <div class="panel-head">
-                <div>
-                  <h3>异常与建议动作</h3>
-                  <p>只展示需要关注的事件，避免正常信息淹没异常信号。</p>
-                </div>
-              </div>
-              <div class="panel-body">
-                <div class="list-box bigscreen-event-list" id="bigscreenEventList"></div>
-              </div>
-            </article>
-          </div>
-
-          <div class="overview-grid bigscreen-secondary-grid">
-            <article class="panel">
-              <div class="panel-head">
-                <div>
-                  <h3>分层健康状态</h3>
-                  <p>接入、决策、编排、治理四层是否可持续运行</p>
-                </div>
-              </div>
-              <div class="panel-body">
-                <div class="status-list" id="bigscreenHealthList"></div>
-              </div>
-            </article>
-
-            <article class="panel">
-              <div class="panel-head">
-                <div>
-                  <h3>热点标的</h3>
-                  <p>聚焦近 15 分钟内最活跃标的，便于下钻具体执行路径。</p>
-                </div>
-              </div>
-              <div class="panel-body">
-                <div class="list-box bigscreen-event-list" id="bigscreenFlinkHotSymbols"></div>
-              </div>
-            </article>
-          </div>
-
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>Agent 质量评分</h3>
-                <p>成功率、风控拒绝率与延迟趋势（按运行回放汇总）</p>
-              </div>
-            </div>
-            <div class="panel-body">
-              <div class="quality-panel quality-inline">
-                <div class="quality-head">
+              <article class="panel">
+                <div class="panel-head">
                   <div>
-                    <h4 class="decision-title">质量窗口</h4>
-                    <p class="decision-subtitle">按时间窗跟踪模型执行稳定度与风险拒绝强度</p>
+                    <h3>主链路实时指标</h3>
+                    <p>优先观察吞吐、延迟和失败态势，快速定位是否需要介入。</p>
                   </div>
-                  <div class="quality-actions">
-                    <select id="qualityWindowSelect">
-                      <option value="6">近 6 小时</option>
-                      <option value="24" selected>近 24 小时</option>
-                      <option value="72">近 72 小时</option>
-                    </select>
-                    <button class="btn btn-secondary small" id="qualityRefreshBtn">刷新质量</button>
+                  <span class="badge info" id="bigscreenFlinkModeTag">--</span>
+                </div>
+                <div class="panel-body">
+                  <div class="meta-grid" id="bigscreenFlinkStats"></div>
+                </div>
+              </article>
+            </div>
+
+            <aside class="overview-side-stack bigscreen-side-stack">
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-health">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">SYSTEM HEALTH</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>分层健康状态</h4>
+                      <span class="agent-collab-card-badge state-idle" id="bigscreenHealthBadge">待命</span>
+                    </div>
+                    <p class="agent-collab-card-peek" id="bigscreenHealthPeek">默认收起，展开查看接入、决策、编排、治理和实时计算健康度。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body">
+                  <div class="status-list" id="bigscreenHealthList"></div>
+                </div>
+              </details>
+
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-event">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">ANOMALY ACTIONS</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>异常与建议动作</h4>
+                      <span class="agent-collab-card-badge state-idle">EVENT</span>
+                    </div>
+                    <p class="agent-collab-card-peek">默认收起，展开查看需要关注的事件和建议动作。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body">
+                  <div class="list-box bigscreen-event-list" id="bigscreenEventList"></div>
+                </div>
+              </details>
+
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-flow">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">EXECUTION FLOW</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>实时执行流</h4>
+                      <span class="agent-collab-card-badge state-idle">FLOW</span>
+                    </div>
+                    <p class="agent-collab-card-peek">默认收起，展开查看最近订单状态变化和链路节奏。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body">
+                  <div class="list-box bigscreen-flow-list" id="bigscreenFlowList"></div>
+                </div>
+              </details>
+
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-hot">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">HOT SYMBOLS</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>热点标的</h4>
+                      <span class="agent-collab-card-badge state-idle" id="bigscreenHotBadge">空</span>
+                    </div>
+                    <p class="agent-collab-card-peek" id="bigscreenHotPeek">默认收起，展开查看近 15 分钟内最活跃标的。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body">
+                  <div class="list-box bigscreen-event-list" id="bigscreenFlinkHotSymbols"></div>
+                </div>
+              </details>
+
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-quality">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">QUALITY</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>Agent 质量评分</h4>
+                      <span class="agent-collab-card-badge state-idle" id="bigscreenQualityBadge">待命</span>
+                    </div>
+                    <p class="agent-collab-card-peek" id="bigscreenQualityPeek">默认收起，展开查看成功率、风控拒绝率和延迟趋势。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body">
+                  <div class="quality-panel quality-inline">
+                    <div class="quality-head">
+                      <div>
+                        <h4 class="decision-title">质量窗口</h4>
+                        <p class="decision-subtitle">按时间窗跟踪模型执行稳定度与风险拒绝强度</p>
+                      </div>
+                      <div class="quality-actions">
+                        <select id="qualityWindowSelect">
+                          <option value="6">近 6 小时</option>
+                          <option value="24" selected>近 24 小时</option>
+                          <option value="72">近 72 小时</option>
+                        </select>
+                        <button class="btn btn-secondary small" id="qualityRefreshBtn">刷新质量</button>
+                      </div>
+                    </div>
+                    <div class="quality-kpi-grid" id="agentQualityKpiGrid"></div>
+                    <div class="quality-trend-grid" id="agentQualityTrendGrid"></div>
                   </div>
                 </div>
-                <div class="quality-kpi-grid" id="agentQualityKpiGrid"></div>
-                <div class="quality-trend-grid" id="agentQualityTrendGrid"></div>
-              </div>
-            </div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>行情检索</h3>
-                <p>作为观察辅助能力，放在数据中心统一管理，不占用首页主操作区。</p>
-              </div>
-              <span class="badge info">MARKET</span>
-            </div>
-            <div class="panel-body">
-              <div class="search-row">
-                <select id="quoteMarket">
-                  <option value="cn_stock">A股</option>
-                  <option value="cn_convertible">可转债</option>
-                  <option value="crypto">区块链</option>
-                  <option value="futures">期货</option>
-                  <option value="hk_stock">港股</option>
-                  <option value="us_stock">美股</option>
-                </select>
-                <input id="quoteQuery" type="text" placeholder="输入代码、股票名或 BTC-USDT">
-                <button class="btn btn-secondary" id="searchBtn">搜索</button>
-              </div>
-              <div class="list-box" id="searchResults"></div>
-            </div>
-          </article>
+              </details>
+            </aside>
+          </div>
         </section>
 
         <section class="page-view" id="page-broker">
-          <div class="page-toolbar">
-            <div>
-              <h2 class="toolbar-title">接入管理</h2>
-              <p class="toolbar-desc">统一管理券商与交易所账户接入、激活状态和运行模式。</p>
+          <div class="panel panel-tier-1 module-console-layout module-shell-card">
+            <div class="module-main-column">
+              <article class="panel">
+                <div class="panel-head">
+                  <div>
+                    <h3>接入账户列表</h3>
+                    <p>支持券商和交易所账户激活切换</p>
+                  </div>
+                </div>
+                <div class="panel-body" id="brokerAccountsTable"></div>
+              </article>
             </div>
-            <div class="action-row">
-              <button class="btn btn-primary small" data-action="open-add-broker">新增接入</button>
-              <button class="btn btn-secondary small" data-action="reload-broker">刷新列表</button>
-            </div>
+
+            <aside class="module-side-stack">
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-summary">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">ACCESS SUMMARY</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>接入概览</h4>
+                      <span class="agent-collab-card-badge state-idle">摘要</span>
+                    </div>
+                    <p class="agent-collab-card-peek">默认收起，展开查看模式、激活账户和交易所通道摘要。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body module-side-card-body">
+                  <div class="meta-grid" id="brokerStats"></div>
+                </div>
+              </details>
+
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-action">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">MODULE ACTIONS</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>模块操作</h4>
+                      <span class="agent-collab-card-badge state-idle">ACTION</span>
+                    </div>
+                    <p class="agent-collab-card-peek">新增接入和刷新列表都收纳到右侧，主区只保留账户清单。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body module-side-card-body">
+                  <div class="module-action-stack">
+                    <button class="btn btn-primary small" data-action="open-add-broker">新增接入</button>
+                    <button class="btn btn-secondary small" data-action="reload-broker">刷新列表</button>
+                  </div>
+                </div>
+              </details>
+            </aside>
           </div>
-
-          <div class="meta-grid" id="brokerStats"></div>
-
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>接入账户列表</h3>
-                <p>支持券商和交易所账户激活切换</p>
-              </div>
-            </div>
-            <div class="panel-body" id="brokerAccountsTable"></div>
-          </article>
         </section>
 
         <section class="page-view" id="page-models">
-          <div class="page-toolbar">
-            <div>
-              <h2 class="toolbar-title">模型管理</h2>
-              <p class="toolbar-desc">维护模型供应商配置、当前生效模型和连接测试。</p>
+          <div class="panel panel-tier-1 module-console-layout module-shell-card">
+            <div class="module-main-column">
+              <article class="panel">
+                <div class="panel-head">
+                  <div>
+                    <h3>当前模型配置</h3>
+                    <p>生效中的供应商、模型与密钥状态</p>
+                  </div>
+                </div>
+                <div class="panel-body" id="modelConfigSummary"></div>
+              </article>
+
+              <article class="panel">
+                <div class="panel-head">
+                  <div>
+                    <h3>AI 对话</h3>
+                    <p>与当前配置的大模型进行实时对话</p>
+                  </div>
+                </div>
+                <div class="panel-body chat-panel">
+                  <div class="chat-messages" id="chatMessages"></div>
+                  <div class="chat-input-row">
+                    <textarea id="chatInput" placeholder="输入消息..." rows="2"></textarea>
+                    <button class="btn btn-primary" id="chatSendBtn">发送</button>
+                  </div>
+                </div>
+              </article>
             </div>
-            <div class="action-row">
-              <button class="btn btn-primary small" data-action="switch-ai-model">切换模型</button>
-              <button class="btn btn-secondary small" data-action="open-ai-config">编辑配置</button>
-              <button class="btn btn-secondary small" data-action="test-ai-config">测试连接</button>
-              <button class="btn btn-danger-soft small" data-action="clear-ai-config">清空配置</button>
-            </div>
+
+            <aside class="module-side-stack">
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-action">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">MODEL ACTIONS</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>模块操作</h4>
+                      <span class="agent-collab-card-badge state-idle">ACTION</span>
+                    </div>
+                    <p class="agent-collab-card-peek">切换模型、编辑配置、测试连接和清空配置统一收纳到这里。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body module-side-card-body">
+                  <div class="module-action-stack">
+                    <button class="btn btn-primary small" data-action="switch-ai-model">切换模型</button>
+                    <button class="btn btn-secondary small" data-action="open-ai-config">编辑配置</button>
+                    <button class="btn btn-secondary small" data-action="test-ai-config">测试连接</button>
+                    <button class="btn btn-danger-soft small" data-action="clear-ai-config">清空配置</button>
+                  </div>
+                </div>
+              </details>
+
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-library">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">SAVED CONFIGS</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>已保存的配置</h4>
+                      <span class="agent-collab-card-badge state-idle">LIST</span>
+                    </div>
+                    <p class="agent-collab-card-peek">默认收起，展开查看已保存配置并进行快速切换。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body module-side-card-body" id="savedConfigList"></div>
+              </details>
+            </aside>
           </div>
-
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>当前模型配置</h3>
-                <p>生效中的供应商、模型与密钥状态</p>
-              </div>
-            </div>
-            <div class="panel-body" id="modelConfigSummary"></div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>已保存的配置</h3>
-                <p>选择一项配置进行快速切换</p>
-              </div>
-            </div>
-            <div class="panel-body" id="savedConfigList"></div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>AI 对话</h3>
-                <p>与当前配置的大模型进行实时对话</p>
-              </div>
-            </div>
-            <div class="panel-body chat-panel">
-              <div class="chat-messages" id="chatMessages"></div>
-              <div class="chat-input-row">
-                <textarea id="chatInput" placeholder="输入消息..." rows="2"></textarea>
-                <button class="btn btn-primary" id="chatSendBtn">发送</button>
-              </div>
-            </div>
-          </article>
-
         </section>
 
         <section class="page-view" id="page-knowledge">
-          <div class="page-toolbar">
-            <div>
-              <h2 class="toolbar-title">知识管理</h2>
-              <p class="toolbar-desc">知识库、文档切片与同步状态总览。</p>
+          <div class="panel panel-tier-1 module-console-layout module-shell-card">
+            <div class="module-main-column">
+              <article class="panel">
+                <div class="panel-head">
+                  <div>
+                    <h3>知识库列表</h3>
+                    <p>维护向量库、Embedding 与文档规模</p>
+                  </div>
+                </div>
+                <div class="panel-body" id="knowledgeBasesTable"></div>
+              </article>
             </div>
-            <div class="action-row">
-              <button class="btn btn-primary small" data-action="open-add-knowledge">新增知识库</button>
-              <button class="btn btn-secondary small" data-action="open-add-knowledge-document">新增文档</button>
-              <button class="btn btn-secondary small" data-action="reload-knowledge">刷新</button>
-            </div>
+
+            <aside class="module-side-stack">
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-summary">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">KNOWLEDGE SUMMARY</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>知识概览</h4>
+                      <span class="agent-collab-card-badge state-idle">摘要</span>
+                    </div>
+                    <p class="agent-collab-card-peek">默认收起，展开查看知识库规模、文档量和切片状态摘要。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body module-side-card-body">
+                  <div class="meta-grid" id="knowledgeStatsCards"></div>
+                </div>
+              </details>
+
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-library">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">DOCUMENT SYNC</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>文档同步记录</h4>
+                      <span class="agent-collab-card-badge state-idle">LIST</span>
+                    </div>
+                    <p class="agent-collab-card-peek">默认收起，展开查看最新文档解析与写入状态。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body module-side-card-body" id="knowledgeDocumentsTable"></div>
+              </details>
+
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-action">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">MODULE ACTIONS</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>模块操作</h4>
+                      <span class="agent-collab-card-badge state-idle">ACTION</span>
+                    </div>
+                    <p class="agent-collab-card-peek">新增知识库、新增文档和刷新统一收在右侧，不打断主列表浏览。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body module-side-card-body">
+                  <div class="module-action-stack">
+                    <button class="btn btn-primary small" data-action="open-add-knowledge">新增知识库</button>
+                    <button class="btn btn-secondary small" data-action="open-add-knowledge-document">新增文档</button>
+                    <button class="btn btn-secondary small" data-action="reload-knowledge">刷新</button>
+                  </div>
+                </div>
+              </details>
+            </aside>
           </div>
-
-          <div class="meta-grid" id="knowledgeStatsCards"></div>
-
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>知识库列表</h3>
-                <p>维护向量库、Embedding 与文档规模</p>
-              </div>
-            </div>
-            <div class="panel-body" id="knowledgeBasesTable"></div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>文档同步记录</h3>
-                <p>最新文档解析与写入状态</p>
-              </div>
-            </div>
-            <div class="panel-body" id="knowledgeDocumentsTable"></div>
-          </article>
         </section>
 
         <section class="page-view" id="page-conversation">
-          <div class="page-toolbar">
-            <div>
-              <h2 class="toolbar-title">对话管理</h2>
-              <p class="toolbar-desc">维护会话生命周期、工具调用与知识命中表现。</p>
+          <div class="panel panel-tier-1 module-console-layout module-shell-card">
+            <div class="module-main-column">
+              <article class="panel">
+                <div class="panel-head">
+                  <div>
+                    <h3>会话列表</h3>
+                    <p>会话状态、评分和交接次数</p>
+                  </div>
+                </div>
+                <div class="panel-body" id="conversationSessionsTable"></div>
+              </article>
             </div>
-            <div class="action-row">
-              <button class="btn btn-primary small" data-action="open-add-conversation">新增会话</button>
-              <button class="btn btn-secondary small" data-action="reload-conversation">刷新</button>
-            </div>
+
+            <aside class="module-side-stack">
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-insight">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">CONVERSATION INSIGHT</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>对话洞察</h4>
+                      <span class="agent-collab-card-badge state-idle">摘要</span>
+                    </div>
+                    <p class="agent-collab-card-peek">默认收起，展开查看平均交接、命中率和风险会话摘要。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body module-side-card-body">
+                  <div class="meta-grid" id="conversationInsightCards"></div>
+                </div>
+              </details>
+
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-action">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">MODULE ACTIONS</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>模块操作</h4>
+                      <span class="agent-collab-card-badge state-idle">ACTION</span>
+                    </div>
+                    <p class="agent-collab-card-peek">新增会话和刷新入口移动到右侧，主区只保留会话主列表。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body module-side-card-body">
+                  <div class="module-action-stack">
+                    <button class="btn btn-primary small" data-action="open-add-conversation">新增会话</button>
+                    <button class="btn btn-secondary small" data-action="reload-conversation">刷新</button>
+                  </div>
+                </div>
+              </details>
+            </aside>
           </div>
-
-          <div class="meta-grid" id="conversationInsightCards"></div>
-
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>会话列表</h3>
-                <p>会话状态、评分和交接次数</p>
-              </div>
-            </div>
-            <div class="panel-body" id="conversationSessionsTable"></div>
-          </article>
         </section>
 
         <section class="page-view" id="page-mcp">
-          <div class="page-toolbar">
-            <div>
-              <h2 class="toolbar-title">MCP 管理</h2>
-              <p class="toolbar-desc">管理 MCP 工具接入与市场分发状态。</p>
+          <div class="panel panel-tier-1 module-console-layout module-shell-card">
+            <div class="module-main-column">
+              <article class="panel">
+                <div class="panel-head">
+                  <div>
+                    <h3>MCP 工具</h3>
+                    <p>传输方式、端点、分类和测试状态</p>
+                  </div>
+                </div>
+                <div class="panel-body" id="mcpToolsTable"></div>
+              </article>
             </div>
-            <div class="action-row">
-              <button class="btn btn-primary small" data-action="open-add-mcp-tool">新增工具</button>
-              <button class="btn btn-secondary small" data-action="open-add-mcp-market">新增市场</button>
-              <button class="btn btn-secondary small" data-action="reload-mcp">刷新</button>
-            </div>
+
+            <aside class="module-side-stack">
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-library">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">MCP MARKETS</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>MCP 市场</h4>
+                      <span class="agent-collab-card-badge state-idle">LIST</span>
+                    </div>
+                    <p class="agent-collab-card-peek">默认收起，展开查看市场包数量、可见性和刷新结果。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body module-side-card-body" id="mcpMarketsTable"></div>
+              </details>
+
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-action">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">MODULE ACTIONS</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>模块操作</h4>
+                      <span class="agent-collab-card-badge state-idle">ACTION</span>
+                    </div>
+                    <p class="agent-collab-card-peek">新增工具、新增市场和刷新入口集中到右侧，主区专注工具主表。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body module-side-card-body">
+                  <div class="module-action-stack">
+                    <button class="btn btn-primary small" data-action="open-add-mcp-tool">新增工具</button>
+                    <button class="btn btn-secondary small" data-action="open-add-mcp-market">新增市场</button>
+                    <button class="btn btn-secondary small" data-action="reload-mcp">刷新</button>
+                  </div>
+                </div>
+              </details>
+            </aside>
           </div>
-
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>MCP 工具</h3>
-                <p>传输方式、端点、分类和测试状态</p>
-              </div>
-            </div>
-            <div class="panel-body" id="mcpToolsTable"></div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>MCP 市场</h3>
-                <p>市场包数量、可见性与刷新结果</p>
-              </div>
-            </div>
-            <div class="panel-body" id="mcpMarketsTable"></div>
-          </article>
         </section>
 
         <section class="page-view" id="page-risk">
-          <div class="page-toolbar">
-            <div>
-              <h2 class="toolbar-title">治理控制台</h2>
-              <p class="toolbar-desc">先判断治理覆盖，再调规则阈值与执行闸门。</p>
+          <div class="panel panel-tier-1 module-console-layout module-shell-card">
+            <div class="module-main-column">
+              <article class="panel">
+                <div class="panel-head">
+                  <div>
+                    <h3>治理规则明细</h3>
+                    <p>规则定义、阈值配置、启用状态与操作入口</p>
+                  </div>
+                </div>
+                <div class="panel-body" id="riskRulesTable"></div>
+              </article>
+
             </div>
-            <div class="action-row">
-              <button class="btn btn-primary small" data-action="open-add-risk-rule">新增规则</button>
-              <button class="btn btn-secondary small" data-action="reload-risk-rules">刷新列表</button>
-            </div>
+
+            <aside class="module-side-stack">
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-summary">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">GOVERNANCE SUMMARY</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>治理概览</h4>
+                      <span class="agent-collab-card-badge state-idle">摘要</span>
+                    </div>
+                    <p class="agent-collab-card-peek">默认收起，展开查看规则覆盖、优先级和通知闭环摘要。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body module-side-card-body">
+                  <div class="meta-grid" id="riskStats"></div>
+                </div>
+              </details>
+
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-insight">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">RISK FOCUS</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>治理优先事项</h4>
+                      <span class="agent-collab-card-badge state-idle">FOCUS</span>
+                    </div>
+                    <p class="agent-collab-card-peek">默认收起，展开查看当前最需要优先补齐的治理缺口。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body module-side-card-body">
+                  <div class="status-list" id="riskFocusList"></div>
+                </div>
+              </details>
+
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-insight">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">RISK LOG</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>治理观察日志</h4>
+                      <span class="agent-collab-card-badge state-idle">LOG</span>
+                    </div>
+                    <p class="agent-collab-card-peek">默认收起，展开查看当前风险信号和建议处理动作。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body module-side-card-body">
+                  <div class="list-box" id="riskLogList"></div>
+                </div>
+              </details>
+
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-action">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">MODULE ACTIONS</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>模块操作</h4>
+                      <span class="agent-collab-card-badge state-idle">ACTION</span>
+                    </div>
+                    <p class="agent-collab-card-peek">新增规则和刷新列表统一收在右侧，主区聚焦规则明细。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body module-side-card-body">
+                  <div class="module-action-stack">
+                    <button class="btn btn-primary small" data-action="open-add-risk-rule">新增规则</button>
+                    <button class="btn btn-secondary small" data-action="reload-risk-rules">刷新列表</button>
+                  </div>
+                </div>
+              </details>
+            </aside>
           </div>
-
-          <article class="panel hero-panel">
-            <div class="panel-body">
-              <div>
-                <h3 class="hero-title">治理控制台：先看覆盖结论，再调规则细节</h3>
-                <p class="hero-desc" id="riskSummaryText">正在评估规则覆盖、执行闸门与告警闭环...</p>
-              </div>
-              <div class="hero-tagline" id="riskPostureHint">
-                <strong>治理态势</strong>
-                正在计算中
-              </div>
-            </div>
-          </article>
-
-          <div class="meta-grid" id="riskStats"></div>
-
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>治理优先事项</h3>
-                <p>把“需要马上处理”的规则缺口放在最上层</p>
-              </div>
-            </div>
-            <div class="panel-body">
-              <div class="status-list" id="riskFocusList"></div>
-            </div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>治理规则明细</h3>
-                <p>规则定义、阈值配置、启用状态与操作入口</p>
-              </div>
-            </div>
-            <div class="panel-body" id="riskRulesTable"></div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>治理观察日志</h3>
-                <p>展示当前风险信号和建议处理动作</p>
-              </div>
-            </div>
-            <div class="panel-body" id="riskLogList"></div>
-          </article>
         </section>
 
         <section class="page-view" id="page-notification">
-          <div class="page-toolbar">
-            <div>
-              <h2 class="toolbar-title">通知渠道</h2>
-              <p class="toolbar-desc">配置飞书、企业微信等第三方消息通知渠道。</p>
+          <div class="panel panel-tier-1 module-console-layout module-shell-card">
+            <div class="module-main-column">
+              <article class="panel">
+                <div class="panel-head">
+                  <div>
+                    <h3>第三方通知渠道</h3>
+                    <p>Webhook 配置与启用状态</p>
+                  </div>
+                </div>
+                <div class="panel-body" id="notificationChannelsTable"></div>
+              </article>
             </div>
-            <div class="action-row">
-              <button class="btn btn-primary small" data-action="open-add-notification">新增渠道</button>
-              <button class="btn btn-secondary small" data-action="reload-notification">刷新</button>
-            </div>
-          </div>
 
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>第三方通知渠道</h3>
-                <p>Webhook 配置与启用状态</p>
-              </div>
-            </div>
-            <div class="panel-body" id="notificationChannelsTable"></div>
-          </article>
+            <aside class="module-side-stack">
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-action">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">MODULE ACTIONS</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>模块操作</h4>
+                      <span class="agent-collab-card-badge state-idle">ACTION</span>
+                    </div>
+                    <p class="agent-collab-card-peek">新增渠道和刷新入口统一收纳到右侧，主区专注渠道表。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body module-side-card-body">
+                  <div class="module-action-stack">
+                    <button class="btn btn-primary small" data-action="open-add-notification">新增渠道</button>
+                    <button class="btn btn-secondary small" data-action="reload-notification">刷新</button>
+                  </div>
+                </div>
+              </details>
+            </aside>
+          </div>
         </section>
 
         <section class="page-view" id="page-skill">
-          <div class="page-toolbar">
-            <div>
-              <h2 class="toolbar-title">Skill 管理</h2>
-              <p class="toolbar-desc">配置 AI 助手技能、提示词模板与可用工具。</p>
+          <div class="panel panel-tier-1 module-console-layout module-shell-card">
+            <div class="module-main-column">
+              <article class="panel">
+                <div class="panel-head">
+                  <div>
+                    <h3>Skills</h3>
+                    <p>技能名称、描述、状态与绑定的工具</p>
+                  </div>
+                </div>
+                <div class="panel-body" id="skillsTable"></div>
+              </article>
             </div>
-            <div class="action-row">
-              <button class="btn btn-primary small" data-action="open-add-skill">新增 Skill</button>
-              <button class="btn btn-secondary small" data-action="reload-skill">刷新</button>
-            </div>
-          </div>
 
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>Skills</h3>
-                <p>技能名称、描述、状态与绑定的工具</p>
-              </div>
-            </div>
-            <div class="panel-body" id="skillsTable"></div>
-          </article>
+            <aside class="module-side-stack">
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-action">
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">MODULE ACTIONS</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>模块操作</h4>
+                      <span class="agent-collab-card-badge state-idle">ACTION</span>
+                    </div>
+                    <p class="agent-collab-card-peek">新增 Skill 和刷新入口统一收纳到右侧，主区保留技能清单。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body module-side-card-body">
+                  <div class="module-action-stack">
+                    <button class="btn btn-primary small" data-action="open-add-skill">新增 Skill</button>
+                    <button class="btn btn-secondary small" data-action="reload-skill">刷新</button>
+                  </div>
+                </div>
+              </details>
+            </aside>
+          </div>
         </section>
 
         <section class="page-view" id="page-workflow">
-          <div class="page-toolbar workflow-toolbar">
-            <div class="toolbar-intro">
-              <h2 class="toolbar-title">工作流设计</h2>
-              <p class="toolbar-desc">像飞书那样先把流程清单和发布状态讲清楚，再按需进入拓扑编辑，不让运营口径和画布同时挤在首页。</p>
-              <div class="toolbar-tags" id="workflowToolbarTags"></div>
-            </div>
-            <div class="action-row">
-              <button class="btn btn-primary small" data-action="open-add-workflow">新增工作流</button>
-              <button class="btn btn-secondary small" data-action="reload-workflow">刷新</button>
+          <div class="panel panel-tier-1 module-shell-card workflow-studio-shell">
+            <div class="workflow-studio-layout">
+              <div class="workflow-list-column">
+                <article class="panel panel-tier-2 workflow-list-panel">
+                  <div class="panel-head">
+                    <div>
+                      <h3>流程清单</h3>
+                      <p>先在这里看发布状态、版本和运行情况，再进入下方拓扑编辑。</p>
+                    </div>
+                  </div>
+                  <div class="panel-body">
+                    <div class="workflow-list-summary" id="workflowListSummary">正在整理流程资产和发布状态...</div>
+                    <div id="workflowsTable"></div>
+                  </div>
+                </article>
+              </div>
+
+              <div class="workflow-editor-column">
+                <article class="panel panel-tier-2 workflow-editor-workbench" id="workflowEditorPanel">
+                  <div class="panel-head">
+                    <div>
+                      <h3>拓扑编辑</h3>
+                      <p id="workflowEditorPeek">从上方流程清单选中一条流程后，在这里调整节点、连线和配置。</p>
+                    </div>
+                    <span class="agent-collab-card-badge state-idle" id="workflowEditorBadge">待命</span>
+                  </div>
+                  <div class="panel-body workflow-editor-workbench-body">
+                    <div class="workflow-editor-toolbar">
+                      <label class="workflow-select-wrap">
+                        <span>当前流程</span>
+                        <select id="workflowGraphSelector"></select>
+                      </label>
+                      <button class="btn btn-secondary small" data-action="reload-workflow-graph">回显</button>
+                      <button class="btn btn-secondary small" data-action="undo-workflow-graph">撤销</button>
+                      <button class="btn btn-secondary small" data-action="auto-layout-workflow-graph">自动排布</button>
+                      <button class="btn btn-primary small" data-action="save-workflow-graph">保存拓扑</button>
+                    </div>
+
+                    <div class="workflow-composer workflow-workbench-grid">
+                      <aside class="workflow-palette" id="workflowPalette"></aside>
+                      <section class="workflow-canvas-wrap">
+                        <div class="workflow-canvas" id="workflowCanvas">
+                          <svg class="workflow-edges" id="workflowEdgeSvg"></svg>
+                          <div class="workflow-nodes" id="workflowNodeLayer"></div>
+                          <div class="workflow-canvas-hint" id="workflowCanvasHint">请选择流程后开始建模，先保证拓扑成链再发布。</div>
+                        </div>
+                      </section>
+                      <aside class="workflow-inspector" id="workflowInspector"></aside>
+                    </div>
+
+                    <details class="workflow-support-fold" id="workflowSupportPanel">
+                      <summary>
+                        <div class="workflow-support-summary">
+                          <span class="workflow-support-kicker">WORKFLOW SUPPORT</span>
+                          <span class="workflow-support-title">辅助信息</span>
+                          <span class="workflow-support-meta">流程操作和节点明细都折叠在这里，避免和编辑区抢视觉焦点。</span>
+                        </div>
+                      </summary>
+                      <div class="workflow-support-grid">
+                        <section class="workflow-support-block">
+                          <h5>流程操作</h5>
+                          <div class="module-action-stack">
+                            <button class="btn btn-primary small" data-action="open-add-workflow">新增工作流</button>
+                            <button class="btn btn-secondary small" data-action="reload-workflow">刷新</button>
+                          </div>
+                        </section>
+
+                        <section class="workflow-support-block">
+                          <h5>节点明细</h5>
+                          <div id="workflowNodesTable"></div>
+                        </section>
+                      </div>
+                    </details>
+                  </div>
+                </article>
+              </div>
             </div>
           </div>
-
-          <article class="panel workflow-list-panel">
-            <div class="panel-head">
-              <div>
-                <h3>流程清单</h3>
-                <p>先确认哪条流程已发布、哪条还在草稿中，再决定是否进入编辑。</p>
-              </div>
-            </div>
-            <div class="panel-body">
-              <div class="workflow-list-summary" id="workflowListSummary">正在整理流程资产和发布状态...</div>
-              <div id="workflowsTable"></div>
-            </div>
-          </article>
-
-          <article class="panel workflow-composer-panel" id="workflowEditorPanel">
-            <div class="panel-head">
-              <div>
-                <h3>拓扑编辑</h3>
-                <p>从上方清单选中一条流程后，再在这里调整节点、连线和配置。</p>
-              </div>
-              <div class="action-row workflow-head-actions">
-                <label class="workflow-select-wrap">
-                  <span>当前流程</span>
-                  <select id="workflowGraphSelector"></select>
-                </label>
-                <button class="btn btn-secondary small" data-action="reload-workflow-graph">回显</button>
-                <button class="btn btn-secondary small" data-action="undo-workflow-graph">撤销</button>
-                <button class="btn btn-secondary small" data-action="auto-layout-workflow-graph">自动排布</button>
-                <button class="btn btn-primary small" data-action="save-workflow-graph">保存拓扑</button>
-              </div>
-            </div>
-            <div class="panel-body">
-              <div class="workflow-composer">
-                <aside class="workflow-palette" id="workflowPalette"></aside>
-                <section class="workflow-canvas-wrap">
-                  <div class="workflow-canvas" id="workflowCanvas">
-                    <svg class="workflow-edges" id="workflowEdgeSvg"></svg>
-                    <div class="workflow-nodes" id="workflowNodeLayer"></div>
-                    <div class="workflow-canvas-hint" id="workflowCanvasHint">请选择流程后开始建模，先保证拓扑成链再发布。</div>
-                  </div>
-                </section>
-                <aside class="workflow-inspector" id="workflowInspector"></aside>
-              </div>
-            </div>
-          </article>
-
-          <details class="overview-detail-block workflow-detail-block">
-            <summary>查看节点明细</summary>
-            <div class="panel-body" id="workflowNodesTable"></div>
-          </details>
         </section>
       </main>
     </div>
@@ -3957,11 +5818,13 @@
     }
 
     const API_BASE = resolveApiBase();
+    const SIDE_CARD_ORDER_KEY_PREFIX = "aitradex_side_card_order_v1";
 
     const PAGE_META = {
       overview: {
         title: "总览中心",
-        desc: "先判断系统态势和优先事项，再进入关键操作。"
+        heading: "",
+        desc: ""
       },
       bigscreen: {
         title: "数据中心",
@@ -4002,59 +5865,6 @@
       risk: {
         title: "治理控制台",
         desc: "先判断治理覆盖，再进行规则调优与执行闸门维护。"
-      }
-    };
-
-    const PAGE_TOOLBAR_BRIEF = {
-      bigscreen: {
-        title: "实时观察优先",
-        desc: "先看吞吐、延迟和异常流，再决定是否下钻执行细节。",
-        tags: ["实时指标", "异常追踪", "链路下钻"]
-      },
-      broker: {
-        title: "接入焦点",
-        desc: "确保账户激活和通道可用，交易模式切换前先核对连接状态。",
-        tags: ["账户状态", "交易通道", "模式切换"]
-      },
-      models: {
-        title: "模型焦点",
-        desc: "围绕供应商、模型和密钥做可用性管理，先测通再进入执行链。",
-        tags: ["供应商配置", "连接测试", "模型切换"]
-      },
-      knowledge: {
-        title: "知识焦点",
-        desc: "追踪知识库规模与文档同步状态，保证检索链路命中率稳定。",
-        tags: ["知识库", "文档同步", "向量索引"]
-      },
-      conversation: {
-        title: "会话焦点",
-        desc: "关注会话质量、工具调用和风险交接，及时发现异常会话。",
-        tags: ["会话质量", "工具调用", "风险交接"]
-      },
-      mcp: {
-        title: "MCP 焦点",
-        desc: "优先检查工具端点和市场可见性，避免调用链路缺失。",
-        tags: ["工具接入", "市场分发", "端点健康"]
-      },
-      risk: {
-        title: "治理覆盖优先",
-        desc: "先确认规则覆盖和执行闸门，再调阈值、复核拦截信号。",
-        tags: ["治理结论", "规则覆盖", "处置动作"]
-      },
-      notification: {
-        title: "通知焦点",
-        desc: "确认渠道可用与告警送达，成交回执和异常告警要可追踪。",
-        tags: ["渠道启用", "告警送达", "回执可追踪"]
-      },
-      skill: {
-        title: "技能焦点",
-        desc: "维护技能模板和工具绑定关系，确保助手能力按预期生效。",
-        tags: ["技能模板", "工具绑定", "能力覆盖"]
-      },
-      workflow: {
-        title: "清单优先",
-        desc: "先从流程清单判断发布状态，再进入拓扑编辑，避免画布和状态信息互相打扰。",
-        tags: ["流程清单", "拓扑编辑", "发布状态"]
       }
     };
 
@@ -4172,13 +5982,23 @@
 
     const UiComponents = {
       Header(meta) {
-        $("headerPath").textContent = `AI 控制台 / ${meta.title}`;
-        $("pageTitle").textContent = meta.title;
-        $("pageDesc").textContent = meta.desc;
+        const pathNode = $("headerPath");
+        const headerMain = pathNode ? pathNode.parentElement : null;
+        const titleNode = $("pageTitle");
+        pathNode.innerHTML = `<span class="header-path-root">AI 控制台</span><span class="header-path-current">${escapeHtml(meta.title)}</span>`;
+        titleNode.textContent = "";
+        titleNode.hidden = true;
+        const descNode = $("pageDesc");
+        descNode.textContent = "";
+        descNode.hidden = true;
+        if (headerMain) {
+          headerMain.classList.add("is-primary-path");
+        }
       },
-      StatCard({ label, value, meta, icon }) {
+      StatCard({ label, value, meta, icon, tone = "info", tag = "" }) {
+        const safeTone = toneClass(tone);
         return `
-          <article class="stat-card">
+          <article class="stat-card ${safeTone}">
             <div class="stat-top">
               <span class="stat-label">${escapeHtml(label)}</span>
               <span class="stat-icon">${escapeHtml(icon)}</span>
@@ -4187,6 +6007,7 @@
               <div class="stat-value">${escapeHtml(value)}</div>
               <div class="stat-meta">${escapeHtml(meta)}</div>
             </div>
+            ${tag ? `<div class="stat-tag"><span class="badge ${safeTone}">${escapeHtml(tag)}</span></div>` : ""}
           </article>
         `;
       },
@@ -4368,6 +6189,18 @@
       $("healthText").textContent = text;
     }
 
+    function updateModeChip() {
+      const mode = String(pick(state.brokerMode, "broker") || "paper").toUpperCase();
+      const chip = $("modeChip");
+      const text = $("headerModeText");
+      if (!chip || !text) {
+        return;
+      }
+      const liveMode = isLiveBrokerMode();
+      chip.className = `chip ${liveMode ? "warning" : "info"}`;
+      text.textContent = mode;
+    }
+
     async function apiRequest(path, options = {}) {
       const token = String(getToken() || "").trim();
       if (!token) {
@@ -4484,41 +6317,6 @@
       }, state.bigscreen.refreshIntervalMs);
     }
 
-    function syncPageToolbarLayout(page) {
-      const pageView = document.getElementById(`page-${page}`);
-      if (!pageView) {
-        return;
-      }
-      const toolbar = pageView.querySelector(".page-toolbar");
-      if (!toolbar) {
-        return;
-      }
-      const titleNode = toolbar.querySelector(".toolbar-title");
-      const descNode = toolbar.querySelector(".toolbar-desc");
-      const introBlock = titleNode ? titleNode.parentElement : null;
-      if (!titleNode || !descNode || !introBlock) {
-        return;
-      }
-      introBlock.hidden = false;
-      introBlock.classList.add("toolbar-intro");
-
-      const brief = PAGE_TOOLBAR_BRIEF[page];
-      if (!brief) {
-        return;
-      }
-
-      titleNode.textContent = brief.title;
-      descNode.textContent = brief.desc;
-
-      let tagsWrap = introBlock.querySelector(".toolbar-tags");
-      if (!tagsWrap) {
-        tagsWrap = document.createElement("div");
-        tagsWrap.className = "toolbar-tags";
-        introBlock.appendChild(tagsWrap);
-      }
-      tagsWrap.innerHTML = (brief.tags || []).map((tag) => `<span class="toolbar-tag">${escapeHtml(tag)}</span>`).join("");
-    }
-
     function switchPage(page) {
       if (!PAGE_META[page]) {
         return;
@@ -4531,7 +6329,6 @@
         view.classList.toggle("active", view.id === `page-${page}`);
       });
       UiComponents.Header(PAGE_META[page]);
-      syncPageToolbarLayout(page);
       loadPageData(page, true);
       syncBigscreenAutoRefresh();
     }
@@ -4918,10 +6715,6 @@
       }).length;
     }
 
-    function renderOverviewTag(text) {
-      return `<span class="overview-hero-tag">${escapeHtml(text)}</span>`;
-    }
-
     function renderOverviewLane({ step, title, desc, tone, tag, metrics }) {
       const safeTone = toneClass(tone);
       return `
@@ -5073,8 +6866,6 @@
       const latestEquity = pick(summary, "latest_equity", "latestEquity");
       const latestCash = pick(summary, "latest_cash", "latestCash");
       const latestMarketValue = pick(summary, "latest_market_value", "latestMarketValue");
-      const latestOrderTime = formatDateTime(pick(summary, "latest_order_time", "latestOrderTime"));
-
       const brokerAccounts = Array.isArray(state.brokerAccounts) ? state.brokerAccounts : [];
       const workflows = Array.isArray(state.workflows) ? state.workflows : [];
       const mcpTools = Array.isArray(state.mcpTools) ? state.mcpTools : [];
@@ -5112,124 +6903,108 @@
       if (enabledRiskCount === 0) blockers.push("风控规则");
       if (enabledNotificationCount === 0) blockers.push("通知渠道");
 
-      let postureTone = "danger";
-      let postureValue = "待建链";
-      let postureMeta = "当前主链路还没有形成稳定闭环，建议先补齐底座。";
-      if (blockers.length === 0) {
-        postureTone = ordersQueued > 0 ? "warning" : "success";
-        postureValue = ordersQueued > 0 ? "运行关注" : "稳态就绪";
-        postureMeta = ordersQueued > 0
-          ? `当前有 ${formatNumber(ordersQueued)} 笔订单待处理，建议先关注最近运行并进入数据中心。`
-          : "四层架构已经成链，可直接从交易指挥台发起分析和执行。";
-      } else if (hasBroker || hasAi || workflowCount > 0 || enabledRiskCount > 0) {
-        postureTone = "warning";
-        postureValue = "链路待补齐";
-        postureMeta = `优先补齐 ${blockers.join("、")}，首页就能从“看状态”切到“做决策”。`;
-      }
-
-      $("overviewHeroSummary").textContent = blockers.length
-        ? `总览中心已按主链路重新编排：先看接入、决策、编排、治理是否完整。当前仍缺少 ${blockers.join("、")}，建议先补底座，再进入高频操作。`
-        : "交易接入、AI 决策、流程编排与治理告警已经形成闭环。现在首页先展示系统态势和优先级，再把指挥台与辅助工具收拢到下方。";
-      $("overviewHeroTags").innerHTML = [
-        renderOverviewTag(`模式 ${mode}`),
-        renderOverviewTag(`激活账户 ${formatNumber(activeAccounts)}`),
-        renderOverviewTag(`工作流 ${formatNumber(workflowCount)}`),
-        renderOverviewTag(`待处理 ${formatNumber(ordersQueued)}`),
-        renderOverviewTag(`最近订单 ${latestOrderTime}`)
-      ].join("");
-      $("overviewPostureCard").className = `overview-posture-card ${toneClass(postureTone)}`;
-      $("overviewPostureValue").textContent = postureValue;
-      $("overviewPostureMeta").textContent = postureMeta;
+      updateModeChip();
 
       $("overviewStats").innerHTML = [
         UiComponents.StatCard({
           label: "执行通道",
           value: mode,
           meta: `激活 ${formatNumber(activeAccounts)} / 接入 ${formatNumber(brokerAccounts.length)}`,
-          icon: "通"
+          icon: "通",
+          tone: hasBroker && activeAccounts > 0 ? "success" : hasBroker ? "warning" : "danger",
+          tag: hasBroker && activeAccounts > 0 ? "可执行" : hasBroker ? "待激活" : "阻塞"
         }),
         UiComponents.StatCard({
           label: "资产快照",
           value: formatCurrency(latestEquity),
           meta: `现金 ${formatCurrency(latestCash)} · 市值 ${formatCurrency(latestMarketValue)}`,
-          icon: "资"
+          icon: "资",
+          tone: latestEquity !== undefined && latestEquity !== null ? "info" : "warning",
+          tag: latestEquity !== undefined && latestEquity !== null ? "实时" : "缺数据"
         }),
         UiComponents.StatCard({
           label: "运行负载",
           value: formatNumber(ordersQueued),
           meta: `已成交 ${formatNumber(ordersFilled)} · 持仓 ${formatNumber(positionsTotal)}`,
-          icon: "载"
+          icon: "载",
+          tone: ordersQueued > 0 ? "warning" : "success",
+          tag: ordersQueued > 0 ? "排队中" : "平稳"
         }),
         UiComponents.StatCard({
           label: "决策引擎",
           value: provider,
           meta: `模型 ${model} · 工作流 ${formatNumber(workflowCount)}`,
-          icon: "智"
+          icon: "智",
+          tone: hasAi ? "success" : "warning",
+          tag: hasAi ? "就绪" : "待配置"
         })
       ].join("");
 
-      $("overviewLaneList").innerHTML = [
-        renderOverviewLane({
-          step: "LAYER 01",
-          title: "接入层",
-          desc: hasBroker
-            ? "交易账户和市场入口已经出现在首页主链路里，先看激活情况，再决定是否进入交易管理页。"
-            : "没有接入层，后续分析和执行都只能停留在模拟态势。",
-          tone: hasBroker && activeAccounts > 0 ? "success" : hasBroker ? "warning" : "danger",
-          tag: hasBroker && activeAccounts > 0 ? "就绪" : hasBroker ? "待激活" : "缺失",
-          metrics: [
-            { label: "接入账户", value: formatNumber(brokerAccounts.length) },
-            { label: "激活账户", value: formatNumber(activeAccounts) },
-            { label: "交易所通道", value: formatNumber(exchangeCount) },
-            { label: "当前模式", value: mode }
-          ]
-        }),
-        renderOverviewLane({
-          step: "LAYER 02",
-          title: "决策层",
-          desc: hasAi
-            ? "模型、知识和会话数据共同构成决策底座，首页用密度更低的方式只保留关键摘要。"
-            : "模型未就绪时，首页只应提示缺口，不应该把用户推进复杂操作。",
-          tone: hasAi ? (knowledgeCount > 0 ? "success" : "info") : "warning",
-          tag: hasAi ? "就绪" : "待配置",
-          metrics: [
-            { label: "供应商", value: provider },
-            { label: "模型", value: model },
-            { label: "知识库", value: formatNumber(knowledgeCount) },
-            { label: "会话数", value: formatNumber(conversationCount) }
-          ]
-        }),
-        renderOverviewLane({
-          step: "LAYER 03",
-          title: "编排层",
-          desc: workflowCount > 0
-            ? "工作流、MCP 工具和 Agent 质量指标被放在一起，方便判断执行链是否可扩展、可复盘。"
-            : "没有编排层时，操作容易变成零散命令，难以标准化沉淀。",
-          tone: workflowCount > 0 ? (mcpCount > 0 ? "success" : "info") : "warning",
-          tag: workflowCount > 0 ? "在线" : "待建",
-          metrics: [
-            { label: "工作流", value: formatNumber(workflowCount) },
-            { label: "MCP 工具", value: formatNumber(mcpCount) },
-            { label: "近窗成功率", value: qualityRunCount > 0 ? formatPercent(successRate, 1) : "--" },
-            { label: "平均延迟", value: qualityRunCount > 0 ? `${formatNumber(avgLatencyMs)} ms` : "--" }
-          ]
-        }),
-        renderOverviewLane({
-          step: "LAYER 04",
-          title: "治理层",
-          desc: enabledRiskCount > 0 || enabledNotificationCount > 0
-            ? "风控规则与通知通道决定这条链路能不能安全运行，首页只暴露治理是否覆盖到位。"
-            : "治理层为空时，不建议直接推进到自动执行。",
-          tone: enabledRiskCount > 0 && enabledNotificationCount > 0 ? "success" : enabledRiskCount > 0 || enabledNotificationCount > 0 ? "warning" : "danger",
-          tag: enabledRiskCount > 0 && enabledNotificationCount > 0 ? "闭环" : enabledRiskCount > 0 || enabledNotificationCount > 0 ? "待补齐" : "缺失",
-          metrics: [
-            { label: "启用规则", value: formatNumber(enabledRiskCount) },
-            { label: "通知通道", value: formatNumber(enabledNotificationCount) },
-            { label: "拒绝率", value: qualityRunCount > 0 ? formatPercent(riskRejectRate, 1) : "--" },
-            { label: "待执行订单", value: formatNumber(ordersQueued) }
-          ]
-        })
-      ].join("");
+      const overviewLaneList = $("overviewLaneList");
+      if (overviewLaneList) {
+        overviewLaneList.innerHTML = [
+          renderOverviewLane({
+            step: "LAYER 01",
+            title: "接入层",
+            desc: hasBroker
+              ? "交易账户和市场入口已经出现在首页主链路里，先看激活情况，再决定是否进入交易管理页。"
+              : "没有接入层，后续分析和执行都只能停留在模拟态势。",
+            tone: hasBroker && activeAccounts > 0 ? "success" : hasBroker ? "warning" : "danger",
+            tag: hasBroker && activeAccounts > 0 ? "就绪" : hasBroker ? "待激活" : "缺失",
+            metrics: [
+              { label: "接入账户", value: formatNumber(brokerAccounts.length) },
+              { label: "激活账户", value: formatNumber(activeAccounts) },
+              { label: "交易所通道", value: formatNumber(exchangeCount) },
+              { label: "当前模式", value: mode }
+            ]
+          }),
+          renderOverviewLane({
+            step: "LAYER 02",
+            title: "决策层",
+            desc: hasAi
+              ? "模型、知识和会话数据共同构成决策底座，首页用密度更低的方式只保留关键摘要。"
+              : "模型未就绪时，首页只应提示缺口，不应该把用户推进复杂操作。",
+            tone: hasAi ? (knowledgeCount > 0 ? "success" : "info") : "warning",
+            tag: hasAi ? "就绪" : "待配置",
+            metrics: [
+              { label: "供应商", value: provider },
+              { label: "模型", value: model },
+              { label: "知识库", value: formatNumber(knowledgeCount) },
+              { label: "会话数", value: formatNumber(conversationCount) }
+            ]
+          }),
+          renderOverviewLane({
+            step: "LAYER 03",
+            title: "编排层",
+            desc: workflowCount > 0
+              ? "工作流、MCP 工具和 Agent 质量指标被放在一起，方便判断执行链是否可扩展、可复盘。"
+              : "没有编排层时，操作容易变成零散命令，难以标准化沉淀。",
+            tone: workflowCount > 0 ? (mcpCount > 0 ? "success" : "info") : "warning",
+            tag: workflowCount > 0 ? "在线" : "待建",
+            metrics: [
+              { label: "工作流", value: formatNumber(workflowCount) },
+              { label: "MCP 工具", value: formatNumber(mcpCount) },
+              { label: "近窗成功率", value: qualityRunCount > 0 ? formatPercent(successRate, 1) : "--" },
+              { label: "平均延迟", value: qualityRunCount > 0 ? `${formatNumber(avgLatencyMs)} ms` : "--" }
+            ]
+          }),
+          renderOverviewLane({
+            step: "LAYER 04",
+            title: "治理层",
+            desc: enabledRiskCount > 0 || enabledNotificationCount > 0
+              ? "风控规则与通知通道决定这条链路能不能安全运行，首页只暴露治理是否覆盖到位。"
+              : "治理层为空时，不建议直接推进到自动执行。",
+            tone: enabledRiskCount > 0 && enabledNotificationCount > 0 ? "success" : enabledRiskCount > 0 || enabledNotificationCount > 0 ? "warning" : "danger",
+            tag: enabledRiskCount > 0 && enabledNotificationCount > 0 ? "闭环" : enabledRiskCount > 0 || enabledNotificationCount > 0 ? "待补齐" : "缺失",
+            metrics: [
+              { label: "启用规则", value: formatNumber(enabledRiskCount) },
+              { label: "通知通道", value: formatNumber(enabledNotificationCount) },
+              { label: "拒绝率", value: qualityRunCount > 0 ? formatPercent(riskRejectRate, 1) : "--" },
+              { label: "待执行订单", value: formatNumber(ordersQueued) }
+            ]
+          })
+        ].join("");
+      }
 
       const focusItems = buildOverviewFocusItems({
         hasBroker,
@@ -5253,6 +7028,20 @@
 
       const healthTone = blockers.length === 0 ? "success" : blockers.length <= 2 ? "warning" : "danger";
       const healthText = healthTone === "success" ? "架构就绪" : healthTone === "warning" ? "链路补齐中" : "主链路未成型";
+      const statsCardState = healthTone === "success" ? "completed" : healthTone === "danger" ? "blocked" : "active";
+      const statsCardLabel = healthTone === "success" ? "就绪" : healthTone === "danger" ? "待补齐" : "补齐中";
+      const statsPeekText = blockers.length
+        ? `当前需补齐 ${blockers.slice(0, 2).join("、")}${blockers.length > 2 ? ` 等 ${formatNumber(blockers.length)} 项` : ""}。`
+        : "执行通道、资产快照、运行负载和决策引擎均已就绪。";
+      const topFocus = focusItems[0] || null;
+      const focusTone = String(topFocus?.tone || "success");
+      const focusCardState = focusTone === "danger" ? "blocked" : focusTone === "success" ? "completed" : "active";
+      const focusCardLabel = focusTone === "danger" ? "阻塞" : focusTone === "success" ? "正常" : "关注";
+      const focusPeekText = topFocus
+        ? `优先处理「${topFocus.title}」${focusItems.length > 1 ? `，还有 ${formatNumber(focusItems.length - 1)} 项待跟进。` : "。"}`
+        : "当前没有待补齐项，可直接进入交易动作。";
+      updateFoldCardPreview("overviewStatsBadge", "overviewStatsPeek", statsCardState, statsCardLabel, statsPeekText);
+      updateFoldCardPreview("overviewFocusBadge", "overviewFocusPeek", focusCardState, focusCardLabel, focusPeekText);
       updateHealthChip(healthTone, healthText);
 
       $("brokerModeSelect").value = String(pick(state.brokerMode, "broker") || "paper").toLowerCase();
@@ -5443,6 +7232,7 @@
       const conversations = Array.isArray(state.conversations) ? state.conversations : [];
 
       const activeAccounts = brokerAccounts.filter((item) => Boolean(pick(item, "is_active", "active"))).length;
+      const mode = String(pick(state.brokerMode, "broker") || "paper").toUpperCase();
       const hasAi = Boolean(pick(state.aiConfig, "provider")) && Boolean(pick(state.aiConfig, "hasApiKey", "has_api_key"));
       const workflowCount = workflows.length;
       const mcpCount = mcpTools.length;
@@ -5450,6 +7240,10 @@
       const channelEnabledCount = countEnabledItems(notificationChannels);
       const conversationCount = conversations.length;
       const riskSessionCount = Number(pick(state.conversationInsights, "risk_sessions", "riskSessions") || 0);
+      const qualityRunCount = Number(state.agentQuality.runCount || 0);
+      const qualitySuccessRate = Number(state.agentQuality.successRate || 0);
+      const qualityAvgLatencyMs = Number(state.agentQuality.avgLatencyMs || 0);
+      const qualityWindowHours = Number(state.agentQuality.windowHours || 24);
 
       const flinkMetrics = state.flinkMetrics || {};
       const flinkEnabled = Boolean(pick(flinkMetrics, "flink_enabled", "flinkEnabled"));
@@ -5509,13 +7303,20 @@
           : "实时计算 · 未开启";
       }
 
-      $("bigscreenSummaryText").textContent =
-        `【${conclusionLabel}】订单总量 ${formatNumber(ordersTotal)}，成交率 ${fillRate}% ，当前排队 ${formatNumber(queuedOrdersNow)} 单；实时计算 1 分钟处理 ${formatNumber(processedEvents1m)} 条，水位延迟 ${formatNumber(watermarkDelayMs)} ms，${computeHint}。`;
+      const bigscreenSummaryText = $("bigscreenSummaryText");
+      if (bigscreenSummaryText) {
+        bigscreenSummaryText.textContent =
+          `【${conclusionLabel}】当前模式 ${mode}，订单总量 ${formatNumber(ordersTotal)}，成交率 ${fillRate}% ，排队 ${formatNumber(queuedOrdersNow)} 单；实时计算 1 分钟处理 ${formatNumber(processedEvents1m)} 条，水位延迟 ${formatNumber(watermarkDelayMs)} ms，${computeHint}。`;
+      }
+      updateModeChip();
 
       const refreshedText = state.bigscreen.lastRefreshedAt
         ? formatDateTime(state.bigscreen.lastRefreshedAt)
         : "--";
-      $("bigscreenLastUpdated").textContent = refreshedText;
+      const bigscreenLastUpdated = $("bigscreenLastUpdated");
+      if (bigscreenLastUpdated) {
+        bigscreenLastUpdated.textContent = refreshedText;
+      }
 
       $("bigscreenKpiStrip").innerHTML = [
         renderBigscreenKpi({
@@ -5611,16 +7412,50 @@
         </div>
       `).join("");
 
+      const healthState = blockers.length === 0 ? "completed" : blockers.length >= 3 ? "blocked" : "active";
+      const healthLabel = blockers.length === 0 ? "就绪" : blockers.length >= 3 ? "阻塞" : "关注";
+      const healthPeek = blockers.length
+        ? `当前优先关注 ${blockers.slice(0, 2).join("、")}${blockers.length > 2 ? ` 等 ${formatNumber(blockers.length)} 项` : ""}。`
+        : "接入、决策、编排、治理与实时计算均处于可持续运行状态。";
+      const hotState = hotSymbols.length > 0 ? "active" : "idle";
+      const hotLabel = hotSymbols.length > 0 ? formatNumber(hotSymbols.length) : "空";
+      const hotPeek = hotSymbols.length > 0
+        ? `当前热点集中在「${pick(hotSymbols[0], "symbol") || "--"}」，近 15 分钟共追踪 ${formatNumber(hotSymbols.length)} 个活跃标的。`
+        : "近 15 分钟暂无明显热点标的。";
+      const qualityState = qualityRunCount === 0 ? "idle" : qualitySuccessRate >= 85 ? "completed" : qualitySuccessRate >= 65 ? "active" : "blocked";
+      const qualityLabel = qualityRunCount === 0 ? "空" : qualitySuccessRate >= 85 ? "稳定" : qualitySuccessRate >= 65 ? "关注" : "风险";
+      const qualityPeek = qualityRunCount === 0
+        ? "当前还没有可用质量回放数据。"
+        : `近 ${formatNumber(qualityWindowHours)} 小时成功率 ${formatPercent(qualitySuccessRate, 1)}，平均延迟 ${formatNumber(qualityAvgLatencyMs)} ms。`;
+      const marketLabel = (() => {
+        const select = $("quoteMarket");
+        if (!select) return "当前市场";
+        const selected = select.options && select.selectedIndex >= 0 ? select.options[select.selectedIndex] : null;
+        return selected ? selected.text : "当前市场";
+      })();
+      updateFoldCardPreview("bigscreenHealthBadge", "bigscreenHealthPeek", healthState, healthLabel, healthPeek);
+      updateFoldCardPreview("bigscreenHotBadge", "bigscreenHotPeek", hotState, hotLabel, hotPeek);
+      updateFoldCardPreview("bigscreenQualityBadge", "bigscreenQualityPeek", qualityState, qualityLabel, qualityPeek);
+      updateFoldCardPreview("bigscreenSearchBadge", "bigscreenSearchPeek", "idle", "检索", `当前可按 ${marketLabel} 检索代码与标的，展开后使用。`);
+
       updateBigscreenAutoButton();
     }
 
     function renderRecentOrders(orders) {
-      $("recentOrdersBadge").textContent = formatNumber(orders.length);
-      if (!orders.length) {
+      const recentOrders = Array.isArray(orders) ? orders : [];
+      const badgeLabel = recentOrders.length ? formatNumber(recentOrders.length) : "空";
+      const peekText = recentOrders.length
+        ? `最近运行 ${formatNumber(recentOrders.length)} 条，更多低频操作已收纳在这里。`
+        : "最近运行为空，更多低频操作已收纳在这里。";
+      updateFoldCardPreview("recentOrdersBadge", "overviewAuxPeek", recentOrders.length ? "active" : "idle", badgeLabel, peekText);
+      if (!$("recentOrdersList")) {
+        return;
+      }
+      if (!recentOrders.length) {
         $("recentOrdersList").innerHTML = "<div class=\"empty\">当前没有可展示的订单记录。</div>";
         return;
       }
-      $("recentOrdersList").innerHTML = orders.slice(0, 8).map((order) => {
+      $("recentOrdersList").innerHTML = recentOrders.slice(0, 8).map((order) => {
         const symbol = pick(order, "symbol") || "--";
         const side = String(pick(order, "side") || "--").toUpperCase();
         const quantity = pick(order, "quantity") ?? "--";
@@ -5986,25 +7821,6 @@
         return ["draft", "beta", "pending"].includes(status);
       }).length;
       const totalRuns = workflows.reduce((sum, row) => sum + Number(pick(row, "run_count", "runCount") || 0), 0);
-      const qualityRunCount = Number(state.agentQuality.runCount || 0);
-      const successRate = Number(state.agentQuality.successRate || 0);
-      const avgLatencyMs = Number(state.agentQuality.avgLatencyMs || 0);
-      const qualityWindowHours = Number(state.agentQuality.windowHours || 24);
-      const nodeTypeCount = new Set(
-        workflowNodes
-          .map((row) => String(pick(row, "node_type", "nodeType") || "").toLowerCase())
-          .filter(Boolean)
-      ).size;
-
-      const workflowToolbarTags = $("workflowToolbarTags");
-      if (workflowToolbarTags) {
-        workflowToolbarTags.innerHTML = [
-          `流程 ${formatNumber(workflows.length)} 条`,
-          publishedCount > 0 ? `已发布 ${formatNumber(publishedCount)}` : "未发布",
-          draftCount > 0 ? `草稿 ${formatNumber(draftCount)}` : "无草稿",
-          workflowNodes.length > 0 ? `节点 ${formatNumber(workflowNodes.length)}` : "待建节点"
-        ].map((text) => `<span class="toolbar-tag">${escapeHtml(text)}</span>`).join("");
-      }
 
       const workflowListSummary = $("workflowListSummary");
       if (workflowListSummary) {
@@ -6012,7 +7828,7 @@
           ? "还没有流程资产。建议先新增一条主路径流程，再进入拓扑编辑。"
           : publishedCount === 0
             ? `当前共有 ${formatNumber(workflows.length)} 条流程，但都还没有发布。先把主路径流程发布，再进入拓扑编辑会更清晰。`
-            : `当前共有 ${formatNumber(workflows.length)} 条流程，已发布 ${formatNumber(publishedCount)} 条，草稿 ${formatNumber(draftCount)} 条，节点总数 ${formatNumber(workflowNodes.length)}。列表负责看发布状态，拓扑编辑放在下一层处理。`;
+            : `当前共有 ${formatNumber(workflows.length)} 条流程，已发布 ${formatNumber(publishedCount)} 条，草稿 ${formatNumber(draftCount)} 条，节点总数 ${formatNumber(workflowNodes.length)}。先在这里确认发布状态，再进入下方拓扑编辑。`;
       }
 
       renderTable("workflowsTable", [
@@ -6053,9 +7869,47 @@
           label: "配置说明",
           render: (row) => escapeHtml(summarizeWorkflowNodeConfig(pick(row, "config_note", "configNote") || "--"))
         }
-      ], workflowNodes, "暂无节点明细，建议先在主工作区创建并连线节点。");
+      ], workflowNodes, "暂无节点明细，建议先在下方拓扑编辑中创建并连线节点。");
 
       renderWorkflowComposer();
+      updateWorkflowEditorCardPreview();
+    }
+
+    function updateWorkflowEditorCardPreview() {
+      const workflows = Array.isArray(state.workflows) ? state.workflows : [];
+      const workflowId = Number(state.workflowEditor.workflowId);
+      const currentWorkflow = workflows.find((row) => Number(pick(row, "id")) === workflowId);
+      const nodes = Array.isArray(state.workflowEditor.nodes) ? state.workflowEditor.nodes : [];
+      const edges = Array.isArray(state.workflowEditor.edges) ? state.workflowEditor.edges : [];
+
+      if (workflows.length === 0) {
+        updateFoldCardPreview("workflowEditorBadge", "workflowEditorPeek", "idle", "待建", "还没有流程资产，先新增一条流程后再展开拓扑编辑。");
+        return;
+      }
+
+      if (!workflowId || !currentWorkflow) {
+        updateFoldCardPreview("workflowEditorBadge", "workflowEditorPeek", "idle", "待选", "先从上方流程清单选中一条流程，再在这里编辑节点和连线。");
+        return;
+      }
+
+      const workflowName = pick(currentWorkflow, "name") || `流程 #${workflowId}`;
+      if (state.workflowGraphLoading) {
+        updateFoldCardPreview("workflowEditorBadge", "workflowEditorPeek", "active", "加载中", `正在载入「${workflowName}」的拓扑图。`);
+        return;
+      }
+
+      if (nodes.length === 0) {
+        updateFoldCardPreview("workflowEditorBadge", "workflowEditorPeek", "idle", "空图", `当前编辑「${workflowName}」，还没有节点，展开后开始编排。`);
+        return;
+      }
+
+      updateFoldCardPreview(
+        "workflowEditorBadge",
+        "workflowEditorPeek",
+        edges.length > 0 ? "completed" : "active",
+        `${formatNumber(nodes.length)} 节点`,
+        `当前编辑「${workflowName}」，已载入 ${formatNumber(nodes.length)} 个节点、${formatNumber(edges.length)} 条连线。`
+      );
     }
 
     function focusWorkflowEditor(workflowId) {
@@ -6227,6 +8081,8 @@
       if (!canvas || !nodeLayer || !edgeSvg || !hint) {
         return;
       }
+
+      updateWorkflowEditorCardPreview();
 
       const workflowId = Number(state.workflowEditor.workflowId);
       if (!workflowId) {
@@ -6772,6 +8628,76 @@
       return runId ? `${status} · ${runId}` : status;
     }
 
+    function clipStageText(value, maxLength = 56) {
+      const text = String(value || "").replace(/\s+/g, " ").trim();
+      if (!text) {
+        return "--";
+      }
+      if (text.length <= maxLength) {
+        return text;
+      }
+      return `${text.slice(0, maxLength)}...`;
+    }
+
+    function resolveAgentPipelineCurrentIndex(stageRows) {
+      const allCompleted = stageRows.length > 0 && stageRows.every((row) => row.step && row.baseState === "completed");
+      if (allCompleted) {
+        return -1;
+      }
+      const blockedIndex = stageRows.findIndex((row) => row.baseState === "blocked");
+      if (blockedIndex >= 0) {
+        return blockedIndex;
+      }
+      const activeIndex = stageRows.findIndex((row) => {
+        if (!row.step) {
+          return false;
+        }
+        if (row.tone === "warning" || row.tone === "info") {
+          return true;
+        }
+        return ["running", "in_progress", "processing", "executing", "analysis_only", "pending", "warning", "observe"].includes(row.statusLower);
+      });
+      if (activeIndex >= 0) {
+        return activeIndex;
+      }
+      const firstMissingIndex = stageRows.findIndex((row, index) => {
+        if (row.step) {
+          return false;
+        }
+        return stageRows.slice(0, index).some((prev) => prev.step);
+      });
+      if (firstMissingIndex >= 0) {
+        return firstMissingIndex;
+      }
+      if (stageRows.some((row) => row.baseState === "completed")) {
+        return stageRows.length - 1;
+      }
+      return 0;
+    }
+
+    function agentStageStateLabel(state) {
+      if (state === "completed") return "已完成";
+      if (state === "current") return "执行中";
+      if (state === "blocked") return "阻塞";
+      return "待执行";
+    }
+
+    function updateFoldCardPreview(badgeId, peekId, stateName, label, text) {
+      const badge = $(badgeId);
+      const peekBox = $(peekId);
+      if (badge) {
+        badge.textContent = label;
+        badge.className = `agent-collab-card-badge state-${stateName}`;
+      }
+      if (peekBox) {
+        peekBox.textContent = text;
+      }
+    }
+
+    function updateAgentCollabCardPreview(stateName, label, text) {
+      updateFoldCardPreview("agentCollabCardBadge", "agentCollabPeek", stateName, label, text);
+    }
+
     function renderAgentCollaborationPanel(data) {
       const summaryBox = $("agentCollabSummary");
       const grid = $("agentCollabGrid");
@@ -6789,32 +8715,68 @@
       const executionStatus = String(pick(decisionCard, "execution_status", "executionStatus") || "--").toUpperCase();
       const mode = String(pick(decisionCard, "mode") || "--");
 
-      if (!data || typeof data !== "object") {
-        summaryBox.textContent = "当前协作链已接入 5 个角色，发起分析后这里会展示每一步状态、当前模式和 run_id，让用户直接看到多 Agent 如何接力完成一条请求。";
-      } else {
-        summaryBox.textContent = `本次请求按 5 个角色串行协作完成。当前模式 ${mode}，决策 ${decision}，执行状态 ${executionStatus}${runId ? `，运行标识 ${runId}` : ""}。`;
-      }
-
-      grid.innerHTML = AGENT_STAGE_LIBRARY.map((stage) => {
+      const stageRows = AGENT_STAGE_LIBRARY.map((stage) => {
         const step = traceMap.get(stage.role);
         const status = step ? String(pick(step, "status") || "info") : "pending";
+        const statusLower = String(status || "").toLowerCase();
         const tone = normalizeDecisionTone(status);
-        const summary = step ? String(pick(step, "summary") || stage.desc) : stage.desc;
-        const meta = resolveAgentStageMeta(stage.role, step, executionContext);
-        return `
-          <article class="agent-stage-card ${toneClass(tone)}">
-            <div class="agent-stage-top">
-              <div>
-                <div class="agent-stage-kicker">${escapeHtml(stage.kicker)}</div>
-                <div class="agent-stage-title">${escapeHtml(stage.title)}</div>
-              </div>
-              <span class="badge ${toneClass(tone)}">${escapeHtml(String(status).toUpperCase())}</span>
+        const baseState = step
+          ? tone === "danger"
+            ? "blocked"
+            : tone === "success"
+              ? "completed"
+              : "pending"
+          : "pending";
+        return {
+          stage,
+          step,
+          status,
+          statusLower,
+          tone,
+          baseState,
+          meta: resolveAgentStageMeta(stage.role, step, executionContext),
+          summary: clipStageText(step ? String(pick(step, "summary") || stage.desc) : stage.desc, 52)
+        };
+      });
+
+      const currentIndex = resolveAgentPipelineCurrentIndex(stageRows);
+      stageRows.forEach((row, index) => {
+        row.pipelineState = row.baseState;
+        if (row.baseState !== "blocked" && index === currentIndex) {
+          row.pipelineState = "current";
+        }
+      });
+
+      const completedCount = stageRows.filter((row) => row.pipelineState === "completed").length;
+      const blockedStage = stageRows.find((row) => row.pipelineState === "blocked");
+      const currentStage = stageRows.find((row) => row.pipelineState === "current");
+      if (!data || typeof data !== "object") {
+        summaryBox.textContent = "当前协作链已接入 5 个角色，发起分析后会按流程展示已完成、执行中、待执行和阻塞状态。";
+        updateAgentCollabCardPreview("idle", "待命", "默认收起，发起分析后再展开查看完整协作流程。");
+      } else if (blockedStage) {
+        summaryBox.textContent = `当前模式 ${mode}，流程在「${blockedStage.stage.title}」阶段受阻，决策 ${decision}，执行状态 ${executionStatus}${runId ? `，run_id ${runId}` : ""}。`;
+        updateAgentCollabCardPreview("blocked", "阻塞", `阻塞于「${blockedStage.stage.title}」，建议先处理风险后再继续执行。`);
+      } else if (completedCount === stageRows.length) {
+        summaryBox.textContent = `当前模式 ${mode}，5/5 阶段已完成，决策 ${decision}，执行状态 ${executionStatus}${runId ? `，run_id ${runId}` : ""}。`;
+        updateAgentCollabCardPreview("completed", "完成", "协作链已全部完成，可按需展开回看每个 Agent 的输出。");
+      } else {
+        summaryBox.textContent = `当前模式 ${mode}，已完成 ${completedCount}/5 阶段${currentStage ? `，正在执行「${currentStage.stage.title}」` : ""}，决策 ${decision}，执行状态 ${executionStatus}${runId ? `，run_id ${runId}` : ""}。`;
+        updateAgentCollabCardPreview("active", currentStage ? "执行中" : "处理中", currentStage ? `当前执行到「${currentStage.stage.title}」，已完成 ${completedCount}/5 阶段。` : `已完成 ${completedCount}/5 阶段，可展开查看完整协作链。`);
+      }
+
+      grid.innerHTML = stageRows.map((row) => `
+        <article class="agent-stage-card ${toneClass(row.tone)} stage-${row.pipelineState}">
+          <div class="agent-stage-top">
+            <div>
+              <div class="agent-stage-kicker">${escapeHtml(row.stage.kicker)}</div>
+              <div class="agent-stage-title">${escapeHtml(row.stage.title)}</div>
             </div>
-            <div class="agent-stage-desc">${escapeHtml(summary)}</div>
-            <div class="agent-stage-meta">${escapeHtml(meta)}</div>
-          </article>
-        `;
-      }).join("");
+            <span class="agent-stage-state ${row.pipelineState}">${escapeHtml(agentStageStateLabel(row.pipelineState))}</span>
+          </div>
+          <div class="agent-stage-desc">${escapeHtml(row.summary)}</div>
+          <div class="agent-stage-meta">${escapeHtml(row.meta)}</div>
+        </article>
+      `).join("");
     }
 
     function updatePendingCommand(command, executed = false) {
@@ -8448,6 +10410,180 @@
       if (action === "goto-notification") return switchPage("notification");
     }
 
+    function getSideStackKey(stack) {
+      const page = stack.closest(".page-view");
+      const pageKey = page ? page.id.replace(/^page-/, "") : "global";
+      return `${SIDE_CARD_ORDER_KEY_PREFIX}:${pageKey}`;
+    }
+
+    function getSideStackCards(stack) {
+      if (!stack) {
+        return [];
+      }
+      return Array.from(stack.children).filter((node) => node.classList.contains("overview-side-nav-card"));
+    }
+
+    function getSideCardKey(card) {
+      if (!card) {
+        return "";
+      }
+      if (card.dataset.sideCardKey) {
+        return card.dataset.sideCardKey;
+      }
+      const navClass = Array.from(card.classList).find((className) => className.startsWith("side-nav-")) || "side-nav-card";
+      const title = card.querySelector(".agent-collab-card-title-row h4")?.textContent?.trim() || "";
+      const key = `${navClass.replace("side-nav-", "")}:${title || getSideStackCards(card.parentElement).indexOf(card)}`;
+      card.dataset.sideCardKey = key;
+      return key;
+    }
+
+    function readSideStackOrder(stack) {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(getSideStackKey(stack)) || "[]");
+        return Array.isArray(parsed) ? parsed.map((item) => String(item)).filter(Boolean) : [];
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function saveSideStackOrder(stack) {
+      const order = getSideStackCards(stack).map(getSideCardKey).filter(Boolean);
+      try {
+        localStorage.setItem(getSideStackKey(stack), JSON.stringify(order));
+      } catch (_) {
+        // Sorting is only a local preference; persistence failure should not affect trading operations.
+      }
+    }
+
+    function applySideStackOrder(stack) {
+      const order = readSideStackOrder(stack);
+      if (order.length === 0) {
+        return;
+      }
+      const cards = getSideStackCards(stack);
+      const byKey = new Map(cards.map((card) => [getSideCardKey(card), card]));
+      order.forEach((key) => {
+        const card = byKey.get(key);
+        if (card) {
+          stack.appendChild(card);
+        }
+      });
+      cards.forEach((card) => {
+        if (!order.includes(getSideCardKey(card))) {
+          stack.appendChild(card);
+        }
+      });
+    }
+
+    function ensureSideStackSortHandles(stack) {
+      getSideStackCards(stack).forEach((card) => {
+        const summary = card.querySelector("summary");
+        if (!summary || summary.querySelector(".overview-side-sort-handle")) {
+          return;
+        }
+        const handle = document.createElement("span");
+        handle.className = "overview-side-sort-handle";
+        handle.draggable = true;
+        handle.setAttribute("role", "button");
+        handle.setAttribute("aria-label", "拖动调整卡片排序");
+        handle.setAttribute("title", "拖动调整排序");
+        handle.textContent = "⋮⋮";
+        summary.appendChild(handle);
+      });
+    }
+
+    function findSideCardAfterDrag(stack, pointerY) {
+      const candidates = Array.from(stack.querySelectorAll(".overview-side-nav-card:not(.is-dragging)"));
+      return candidates.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = pointerY - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+          return { offset, element: child };
+        }
+        return closest;
+      }, { offset: Number.NEGATIVE_INFINITY, element: null }).element;
+    }
+
+    function initSideStackSorting(stack) {
+      if (!stack || stack.dataset.sideSortingReady === "true") {
+        return;
+      }
+      stack.dataset.sideSortingReady = "true";
+      stack.classList.add("side-sortable-stack");
+      applySideStackOrder(stack);
+      ensureSideStackSortHandles(stack);
+
+      let draggingCard = null;
+      let didMove = false;
+
+      stack.addEventListener("click", (event) => {
+        if (!event.target.closest(".overview-side-sort-handle")) {
+          return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+      }, true);
+
+      stack.addEventListener("dragstart", (event) => {
+        const handle = event.target.closest(".overview-side-sort-handle");
+        if (!handle || !event.dataTransfer) {
+          return;
+        }
+        draggingCard = handle.closest(".overview-side-nav-card");
+        if (!draggingCard) {
+          return;
+        }
+        didMove = false;
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.setData("text/plain", getSideCardKey(draggingCard));
+        stack.classList.add("is-sorting");
+        requestAnimationFrame(() => draggingCard.classList.add("is-dragging"));
+      });
+
+      stack.addEventListener("dragover", (event) => {
+        if (!draggingCard) {
+          return;
+        }
+        event.preventDefault();
+        const nextCard = findSideCardAfterDrag(stack, event.clientY);
+        const currentNext = draggingCard.nextElementSibling;
+        if (nextCard && nextCard !== draggingCard && nextCard !== currentNext) {
+          stack.insertBefore(draggingCard, nextCard);
+          didMove = true;
+        } else if (!nextCard && currentNext) {
+          stack.appendChild(draggingCard);
+          didMove = true;
+        }
+      });
+
+      stack.addEventListener("drop", (event) => {
+        if (!draggingCard) {
+          return;
+        }
+        event.preventDefault();
+        saveSideStackOrder(stack);
+        if (didMove) {
+          showToast("右侧卡片顺序已保存", "success");
+        }
+      });
+
+      stack.addEventListener("dragend", () => {
+        if (didMove) {
+          saveSideStackOrder(stack);
+        }
+        if (draggingCard) {
+          draggingCard.classList.remove("is-dragging");
+        }
+        stack.classList.remove("is-sorting");
+        draggingCard = null;
+        didMove = false;
+      });
+    }
+
+    function initAllSideStackSorting() {
+      document.querySelectorAll(".overview-side-stack, .module-side-stack").forEach(initSideStackSorting);
+    }
+
     function bindEvents() {
       document.querySelectorAll(".nav-item").forEach((item) => {
         item.addEventListener("click", () => switchPage(item.dataset.page));
@@ -8713,6 +10849,7 @@
 
         if (action === "open-add-workflow") return openWorkflowModal();
         if (action === "reload-workflow") return loadWorkflowData(false);
+        if (action === "focus-workflow-editor") return focusWorkflowEditor(id);
         if (action === "edit-workflow") return openWorkflowModal(findById(state.workflows, id));
         if (action === "delete-workflow") return deleteWithConfirm("确认删除该工作流？", `/admin/workflows/${id}`, loadWorkflowData).catch((error) => showToast(error.message, "danger"));
         if (action === "workflow-add-node") return addWorkflowNode(actionTarget.dataset.nodeType);
@@ -8765,25 +10902,41 @@
       });
     }
 
+    function resolveLoginHref() {
+      if (window.location.protocol === "file:") {
+        return "login.html";
+      }
+      const pathname = String(window.location.pathname || "");
+      if (pathname.endsWith(".html") || pathname.includes("/frontend/src/pages/")) {
+        return "login.html";
+      }
+      return "/login";
+    }
+
+    function redirectToLogin() {
+      window.location.href = resolveLoginHref();
+    }
+
     function logout() {
       clearBigscreenRefreshTimer();
       localStorage.removeItem("access_token");
       localStorage.removeItem("user_info");
-      window.location.href = "/login";
+      redirectToLogin();
     }
 
     async function init() {
       if (!getToken()) {
-        window.location.href = "/login";
+        redirectToLogin();
         return;
       }
       initUserSection();
       loadExecutionPolicyMode();
       bindEvents();
+      initAllSideStackSorting();
       startClock();
       UiComponents.Header(PAGE_META.overview);
-      Object.keys(PAGE_TOOLBAR_BRIEF).forEach((page) => syncPageToolbarLayout(page));
       updateHealthChip("info", "数据加载中");
+      $("headerModeText").textContent = "PAPER";
       $("searchResults").innerHTML = "<div class=\"empty\">先选择市场，再输入代码检索行情。</div>";
       $("recentOrdersList").innerHTML = "<div class=\"empty\">订单数据加载中...</div>";
       setCommandResult("还没有执行交易命令。");
@@ -8853,18 +11006,6 @@
       const qualityRunCount = Number(state.agentQuality.runCount || 0);
       const riskRejectRate = Number(state.agentQuality.riskRejectRate || 0);
       const windowHours = Number(state.agentQuality.windowHours || 24);
-
-      const postureText = enabledCount === 0
-        ? "治理受限"
-        : notificationEnabledCount === 0
-          ? "告警缺口"
-          : "治理就绪";
-      const summaryText = enabledCount === 0
-        ? "当前未启用任何风控规则，执行链存在裸奔风险。建议先补基础规则再开放自动执行。"
-        : `当前启用 ${formatNumber(enabledCount)} 条规则，覆盖 ${formatNumber(typeCount)} 类治理维度。建议结合拦截率持续调阈值。`;
-
-      $("riskSummaryText").textContent = summaryText;
-      $("riskPostureHint").innerHTML = `<strong>治理态势</strong>${escapeHtml(postureText)} · 启用 ${formatNumber(enabledCount)} / 总数 ${formatNumber(totalCount)}`;
 
       $("riskStats").innerHTML = [
         `<div class="meta-card"><div class="meta-label">治理覆盖</div><div class="meta-value">${formatNumber(enabledCount)} / ${formatNumber(totalCount)}</div><div class="item-meta">启用 / 总规则</div></div>`,
