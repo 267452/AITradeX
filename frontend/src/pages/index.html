@@ -2085,6 +2085,12 @@
       color: #18496a;
     }
 
+    .mini-btn.active {
+      border-color: #6faed1;
+      background: #eef8ff;
+      color: #15577c;
+    }
+
     .mini-btn.danger {
       border-color: #ebcad1;
       color: #b55362;
@@ -2094,6 +2100,61 @@
     .mini-btn.danger:hover {
       border-color: #df99a5;
       color: #9f4150;
+    }
+
+    .risk-rule-toolbar {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .risk-rule-table-wrap.is-drag-mode table {
+      min-width: 900px;
+    }
+
+    .risk-rule-drag-cell {
+      width: 72px;
+      text-align: center;
+    }
+
+    .risk-rule-drag-handle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 52px;
+      height: 26px;
+      border-radius: 8px;
+      border: 1px solid #c5d8e8;
+      background: #ffffff;
+      color: #2a4f6e;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .risk-rule-drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .risk-rule-row.is-dragging {
+      opacity: 0.48;
+    }
+
+    .risk-rule-row.drag-enabled {
+      transition: background 0.18s ease, opacity 0.18s ease;
+    }
+
+    .risk-rule-row.drag-enabled:hover {
+      background: #f7fbff;
+    }
+
+    .risk-rule-sort-hint {
+      margin: 0 0 10px;
+      color: #6d879f;
+      font-size: 12px;
+      line-height: 1.45;
     }
 
     .value-strong {
@@ -4651,10 +4712,30 @@
       color: #bcd1e8;
     }
 
+    .mini-btn.active {
+      border-color: rgba(82, 182, 225, 0.56);
+      background: rgba(82, 182, 225, 0.16);
+      color: #c9efff;
+    }
+
     .mini-btn:hover {
       border-color: rgba(126, 171, 211, 0.62);
       color: #f0f8ff;
       background: rgba(22, 38, 61, 0.96);
+    }
+
+    .risk-rule-drag-handle {
+      border-color: rgba(111, 140, 168, 0.4);
+      background: rgba(17, 30, 50, 0.9);
+      color: #bcd1e8;
+    }
+
+    .risk-rule-row.drag-enabled:hover {
+      background: rgba(21, 37, 58, 0.76);
+    }
+
+    .risk-rule-sort-hint {
+      color: #8aa2bd;
     }
 
     .toast {
@@ -5497,6 +5578,10 @@
                     <h3>治理规则明细</h3>
                     <p>规则定义、阈值配置、启用状态与操作入口</p>
                   </div>
+                  <div class="risk-rule-toolbar">
+                    <button class="mini-btn" data-action="sort-risk-rules">排序</button>
+                    <button class="mini-btn" id="riskRuleDragToggleBtn" data-action="toggle-risk-rule-drag">拖拽</button>
+                  </div>
                 </div>
                 <div class="panel-body" id="riskRulesTable"></div>
               </article>
@@ -5889,6 +5974,8 @@
       workflows: [],
       workflowNodes: [],
       riskRules: [],
+      riskRuleDragMode: false,
+      riskRuleOrderSaving: false,
       latestAgentDecision: null,
       pendingCommandSuggestion: "",
       lastExecutionContext: null,
@@ -10841,6 +10928,8 @@
 
         if (action === "open-add-risk-rule") return openRiskRuleModal();
         if (action === "reload-risk-rules") return loadRiskRuleData(false);
+        if (action === "sort-risk-rules") return sortRiskRulesByPriority();
+        if (action === "toggle-risk-rule-drag") return toggleRiskRuleDragMode();
         if (action === "edit-risk-rule") return openRiskRuleModal(findById(state.riskRules, id));
         if (action === "toggle-risk-rule") return toggleRiskRule(id, actionTarget.dataset.enabled === "true").catch((error) => showToast(error.message, "danger"));
         if (action === "delete-risk-rule") return deleteRiskRule(id).catch((error) => showToast(error.message, "danger"));
@@ -10977,22 +11066,223 @@
     }
 
     function renderRiskRulesTable() {
-      const columns = [
-        { label: "ID", render: (row) => row.id || "--" },
-        { label: "规则名称", render: (row) => row.name || "--" },
-        { label: "规则类型", render: (row) => row.ruleType || "--" },
-        { label: "配置", render: (row) => JSON.stringify(row.ruleConfig || {}) },
-        { label: "启用", render: (row) => row.enabled ? "是" : "否" },
-        { label: "优先级", render: (row) => row.priority || 0 },
-        { label: "操作", render: (row) => `
-          <div class="action-row">
-            <button class="mini-btn" data-action="edit-risk-rule" data-id="${row.id}">编辑</button>
-            <button class="mini-btn" data-action="toggle-risk-rule" data-id="${row.id}" data-enabled="${!row.enabled}">${row.enabled ? "禁用" : "启用"}</button>
-            <button class="mini-btn danger" data-action="delete-risk-rule" data-id="${row.id}">删除</button>
-          </div>
-        ` }
-      ];
-      renderTable("riskRulesTable", columns, state.riskRules || [], "暂无风控规则");
+      const container = $("riskRulesTable");
+      if (!container) {
+        return;
+      }
+      const rules = Array.isArray(state.riskRules) ? state.riskRules : [];
+      const dragMode = Boolean(state.riskRuleDragMode);
+      const dragButton = $("riskRuleDragToggleBtn");
+      if (dragButton) {
+        dragButton.textContent = dragMode ? "完成拖拽" : "拖拽";
+        dragButton.classList.toggle("active", dragMode);
+      }
+
+      if (rules.length === 0) {
+        container.innerHTML = "<div class=\"empty\">暂无风控规则</div>";
+        return;
+      }
+
+      const dragHead = dragMode ? "<th class=\"risk-rule-drag-cell\">拖拽</th>" : "";
+      const dragHint = dragMode
+        ? "<p class=\"risk-rule-sort-hint\">拖动左侧手柄调整规则顺序，松开后会自动保存优先级。</p>"
+        : "";
+      const rows = rules.map((row) => {
+        const id = pick(row, "id");
+        const ruleType = pick(row, "ruleType", "rule_type") || "--";
+        const config = JSON.stringify(pick(row, "ruleConfig", "rule_config") || {});
+        const enabled = Boolean(pick(row, "enabled"));
+        const priority = Number(pick(row, "priority") || 0);
+        const dragCell = dragMode
+          ? `<td class="risk-rule-drag-cell"><button class="risk-rule-drag-handle" type="button" draggable="true" aria-label="拖动规则排序">拖拽</button></td>`
+          : "";
+        return `
+          <tr class="risk-rule-row ${dragMode ? "drag-enabled" : ""}" data-risk-rule-id="${escapeHtml(id)}">
+            ${dragCell}
+            <td>${escapeHtml(id || "--")}</td>
+            <td>${escapeHtml(pick(row, "name") || "--")}</td>
+            <td>${escapeHtml(ruleType)}</td>
+            <td>${escapeHtml(config)}</td>
+            <td><span class="badge ${enabled ? "success" : "warning"}">${enabled ? "是" : "否"}</span></td>
+            <td>${escapeHtml(priority)}</td>
+            <td>
+              <div class="action-row">
+                <button class="mini-btn" data-action="edit-risk-rule" data-id="${escapeHtml(id)}">编辑</button>
+                <button class="mini-btn" data-action="toggle-risk-rule" data-id="${escapeHtml(id)}" data-enabled="${escapeHtml(!enabled)}">${enabled ? "禁用" : "启用"}</button>
+                <button class="mini-btn danger" data-action="delete-risk-rule" data-id="${escapeHtml(id)}">删除</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      container.innerHTML = `
+        ${dragHint}
+        <div class="table-wrap risk-rule-table-wrap ${dragMode ? "is-drag-mode" : ""}">
+          <table>
+            <thead>
+              <tr>
+                ${dragHead}
+                <th>ID</th>
+                <th>规则名称</th>
+                <th>规则类型</th>
+                <th>配置</th>
+                <th>启用</th>
+                <th>优先级</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody data-risk-rule-drag="${dragMode ? "true" : "false"}">
+              ${rows}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      bindRiskRuleDragSorting();
+    }
+
+    function sortRiskRulesByPriority() {
+      state.riskRules = [...(state.riskRules || [])].sort(compareRiskRulePriority);
+      state.riskRuleDragMode = false;
+      renderRiskRulesTable();
+      showToast("已按优先级排序", "success");
+    }
+
+    function toggleRiskRuleDragMode() {
+      state.riskRuleDragMode = !state.riskRuleDragMode;
+      renderRiskRulesTable();
+      showToast(state.riskRuleDragMode ? "拖拽排序已开启" : "拖拽排序已关闭", "success");
+    }
+
+    function compareRiskRulePriority(left, right) {
+      const leftPriority = Number(pick(left, "priority") || 0);
+      const rightPriority = Number(pick(right, "priority") || 0);
+      if (rightPriority !== leftPriority) {
+        return rightPriority - leftPriority;
+      }
+      return Number(pick(right, "id") || 0) - Number(pick(left, "id") || 0);
+    }
+
+    function bindRiskRuleDragSorting() {
+      const tbody = document.querySelector("#riskRulesTable tbody[data-risk-rule-drag=\"true\"]");
+      if (!tbody || tbody.dataset.dragReady === "true") {
+        return;
+      }
+      tbody.dataset.dragReady = "true";
+      let draggingRow = null;
+      let didMove = false;
+
+      tbody.addEventListener("dragstart", (event) => {
+        const handle = event.target.closest(".risk-rule-drag-handle");
+        if (!handle || !event.dataTransfer) {
+          event.preventDefault();
+          return;
+        }
+        draggingRow = handle.closest(".risk-rule-row");
+        if (!draggingRow) {
+          event.preventDefault();
+          return;
+        }
+        didMove = false;
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.setData("text/plain", draggingRow.dataset.riskRuleId || "");
+        requestAnimationFrame(() => draggingRow.classList.add("is-dragging"));
+      });
+
+      tbody.addEventListener("dragover", (event) => {
+        if (!draggingRow) {
+          return;
+        }
+        event.preventDefault();
+        const nextRow = findRiskRuleRowAfterDrag(tbody, event.clientY);
+        const currentNext = draggingRow.nextElementSibling;
+        if (nextRow && nextRow !== draggingRow && nextRow !== currentNext) {
+          tbody.insertBefore(draggingRow, nextRow);
+          didMove = true;
+        } else if (!nextRow && currentNext) {
+          tbody.appendChild(draggingRow);
+          didMove = true;
+        }
+      });
+
+      tbody.addEventListener("drop", (event) => {
+        if (!draggingRow) {
+          return;
+        }
+        event.preventDefault();
+        if (didMove) {
+          saveRiskRuleOrderFromDom(tbody).catch((error) => {
+            loadRiskRuleData(true);
+            showToast(error.message || "排序保存失败", "danger");
+          });
+        }
+      });
+
+      tbody.addEventListener("dragend", () => {
+        if (draggingRow) {
+          draggingRow.classList.remove("is-dragging");
+        }
+        draggingRow = null;
+        didMove = false;
+      });
+    }
+
+    function findRiskRuleRowAfterDrag(tbody, pointerY) {
+      const rows = Array.from(tbody.querySelectorAll(".risk-rule-row:not(.is-dragging)"));
+      return rows.reduce((closest, row) => {
+        const box = row.getBoundingClientRect();
+        const offset = pointerY - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+          return { offset, element: row };
+        }
+        return closest;
+      }, { offset: Number.NEGATIVE_INFINITY, element: null }).element;
+    }
+
+    async function saveRiskRuleOrderFromDom(tbody) {
+      if (state.riskRuleOrderSaving) {
+        return;
+      }
+      const orderedIds = Array.from(tbody.querySelectorAll(".risk-rule-row"))
+        .map((row) => row.dataset.riskRuleId)
+        .filter(Boolean);
+      const byId = new Map((state.riskRules || []).map((rule) => [String(pick(rule, "id")), rule]));
+      const orderedRules = orderedIds.map((id) => byId.get(String(id))).filter(Boolean);
+      if (orderedRules.length !== (state.riskRules || []).length) {
+        return;
+      }
+      const prioritySlots = orderedRules
+        .map((rule) => Number(pick(rule, "priority") || 0))
+        .sort((left, right) => right - left);
+      state.riskRuleOrderSaving = true;
+      try {
+        await Promise.all(orderedRules.map((rule, index) => {
+          const nextPriority = prioritySlots[index] ?? 0;
+          if (Number(pick(rule, "priority") || 0) === nextPriority) {
+            return Promise.resolve();
+          }
+          return updateRiskRulePriority(rule, nextPriority);
+        }));
+        state.riskRules = orderedRules.map((rule, index) => ({ ...rule, priority: prioritySlots[index] ?? 0 }));
+        renderRiskRulesTable();
+        renderRiskStats();
+        showToast("规则排序已保存", "success");
+      } finally {
+        state.riskRuleOrderSaving = false;
+      }
+    }
+
+    async function updateRiskRulePriority(rule, priority) {
+      const id = pick(rule, "id");
+      const payload = {
+        name: pick(rule, "name") || "",
+        ruleType: pick(rule, "ruleType", "rule_type") || "max_quantity",
+        ruleConfig: pick(rule, "ruleConfig", "rule_config") || {},
+        enabled: Boolean(pick(rule, "enabled")),
+        priority
+      };
+      await apiRequest(`/admin/risk/rules/${encodeURIComponent(id)}`, { method: "PUT", body: payload });
     }
 
     function renderRiskStats() {
@@ -11149,7 +11439,8 @@
 
     async function toggleRiskRule(id, enabled) {
       try {
-        await apiRequest(`/admin/risk/rules/${id}/toggle`, { method: "PUT", body: { enabled } });
+        const query = new URLSearchParams({ enabled: String(Boolean(enabled)) });
+        await apiRequest(`/admin/risk/rules/${encodeURIComponent(id)}/toggle?${query.toString()}`, { method: "PUT" });
         await loadRiskRuleData(true);
         showToast(enabled ? "规则已启用" : "规则已禁用", "success");
       } catch (error) {
