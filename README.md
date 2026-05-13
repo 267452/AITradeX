@@ -1302,7 +1302,7 @@ MIT License - 详见 LICENSE 文件
 
 ### C. 联系方式
 
-- 邮箱：wangyan1336697369@gmail.com
+- 邮箱：19858151726@163.com
 - Issue Tracker：[GitHub Issues](<repository-url>/issues)
 - 讨论组：[GitHub Discussions](<repository-url>/discussions)
 
