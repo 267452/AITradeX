@@ -1302,8 +1302,9 @@ MIT License - 详见 LICENSE 文件
 
 ### C. 联系方式
 
--  Issue Tracker: [GitHub Issues](<repository-url>/issues)
--  讨论组: [GitHub Discussions](<repository-url>/discussions)
+- 邮箱：wangyan1336697369@gmail.com
+- Issue Tracker：[GitHub Issues](<repository-url>/issues)
+- 讨论组：[GitHub Discussions](<repository-url>/discussions)
 
 ### D. 贡献指南
 
