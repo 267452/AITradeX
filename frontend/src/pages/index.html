@@ -4832,13 +4832,13 @@
 
         <div class="nav-group">
           <div class="nav-title">业务流程</div>
-          <div class="nav-item" data-page="workflow">
-            <div class="nav-icon">流</div>
-            <div class="nav-text">工作流设计</div>
-          </div>
           <div class="nav-item" data-page="broker">
             <div class="nav-icon">交</div>
             <div class="nav-text">交易管理</div>
+          </div>
+          <div class="nav-item" data-page="workflow">
+            <div class="nav-icon">流</div>
+            <div class="nav-text">工作流设计</div>
           </div>
         </div>
 
@@ -4960,11 +4960,10 @@
                       <div class="field">
                         <label for="brokerModeSelect">交易模式</label>
                         <select id="brokerModeSelect">
-                          <option value="paper">paper</option>
-                          <option value="gtja">gtja</option>
-                          <option value="real">real</option>
-                          <option value="okx">okx</option>
-                          <option value="usstock">usstock</option>
+                          <option value="paper">模拟交易</option>
+                          <option value="gtja">A股</option>
+                          <option value="okx">区块链</option>
+                          <option value="usstock">美股交易</option>
                         </select>
                       </div>
                       <label class="field">
@@ -5275,55 +5274,18 @@
         </section>
 
         <section class="page-view" id="page-broker">
-          <div class="panel panel-tier-1 module-console-layout module-shell-card">
-            <div class="module-main-column">
-              <article class="panel">
-                <div class="panel-head">
-                  <div>
-                    <h3>接入账户列表</h3>
-                    <p>支持券商和交易所账户激活切换</p>
-                  </div>
-                </div>
-                <div class="panel-body" id="brokerAccountsTable"></div>
-              </article>
+          <div class="panel panel-tier-1 module-shell-card">
+            <div class="panel-head">
+              <div>
+                <h3>接入账户列表</h3>
+                <p>支持券商和交易所账户激活切换</p>
+              </div>
+              <div class="panel-head-actions">
+                <button class="btn btn-primary small" data-action="open-add-broker">新增接入</button>
+                <button class="btn btn-secondary small" data-action="reload-broker">刷新列表</button>
+              </div>
             </div>
-
-            <aside class="module-side-stack">
-              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-summary">
-                <summary>
-                  <div class="agent-collab-card-copy">
-                    <div class="agent-collab-card-kicker">ACCESS SUMMARY</div>
-                    <div class="agent-collab-card-title-row">
-                      <h4>接入概览</h4>
-                      <span class="agent-collab-card-badge state-idle">摘要</span>
-                    </div>
-                    <p class="agent-collab-card-peek">默认收起，展开查看模式、激活账户和交易所通道摘要。</p>
-                  </div>
-                </summary>
-                <div class="overview-side-card-body module-side-card-body">
-                  <div class="meta-grid" id="brokerStats"></div>
-                </div>
-              </details>
-
-              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-action">
-                <summary>
-                  <div class="agent-collab-card-copy">
-                    <div class="agent-collab-card-kicker">MODULE ACTIONS</div>
-                    <div class="agent-collab-card-title-row">
-                      <h4>模块操作</h4>
-                      <span class="agent-collab-card-badge state-idle">ACTION</span>
-                    </div>
-                    <p class="agent-collab-card-peek">新增接入和刷新列表都收纳到右侧，主区只保留账户清单。</p>
-                  </div>
-                </summary>
-                <div class="overview-side-card-body module-side-card-body">
-                  <div class="module-action-stack">
-                    <button class="btn btn-primary small" data-action="open-add-broker">新增接入</button>
-                    <button class="btn btn-secondary small" data-action="reload-broker">刷新列表</button>
-                  </div>
-                </div>
-              </details>
-            </aside>
+            <div class="panel-body" id="brokerAccountsTable"></div>
           </div>
         </section>
 
@@ -7560,26 +7522,43 @@
     }
 
     function renderBrokerPage() {
-      const mode = String(pick(state.brokerMode, "broker") || "--").toUpperCase();
-      const activeCount = state.brokerAccounts.filter((item) => Boolean(pick(item, "is_active", "active"))).length;
-      const exchangeCount = state.brokerAccounts.filter((item) => {
-        const broker = String(pick(item, "broker") || "").toLowerCase();
-        return broker === "okx" || broker === "usstock";
-      }).length;
-
-      $("brokerStats").innerHTML = [
-        `<div class="meta-card"><div class="meta-label">当前模式</div><div class="meta-value">${escapeHtml(mode)}</div></div>`,
-        `<div class="meta-card"><div class="meta-label">接入总数</div><div class="meta-value">${formatNumber(state.brokerAccounts.length)}</div></div>`,
-        `<div class="meta-card"><div class="meta-label">激活账户</div><div class="meta-value">${formatNumber(activeCount)}</div></div>`,
-        `<div class="meta-card"><div class="meta-label">交易所接入</div><div class="meta-value">${formatNumber(exchangeCount)}</div></div>`
-      ].join("");
+      // 将broker类型转换为中文显示
+      const getBrokerLabel = (broker) => {
+        const brokerMap = {
+          "paper": "模拟交易",
+          "gtja": "A股",
+          "okx": "区块链",
+          "usstock": "美股交易"
+        };
+        return brokerMap[String(broker).toLowerCase()] || String(broker).toUpperCase();
+      };
 
       renderTable("brokerAccountsTable", [
         {
-          label: "账户",
-          render: (row) => `<span class="value-strong">${escapeHtml(pick(row, "account_name", "accountName") || "--")}</span><br><span class="item-meta">${escapeHtml(String(pick(row, "broker") || "--").toUpperCase())}</span>`
+          label: "账户信息",
+          render: (row) => {
+            const brokerType = getBrokerLabel(pick(row, "broker"));
+            const accountName = escapeHtml(pick(row, "account_name", "accountName") || "--");
+            const id = pick(row, "id");
+            return `
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 44px; height: 44px; border-radius: 10px; background: linear-gradient(135deg, rgba(35, 184, 166, 0.1), rgba(35, 184, 166, 0.05)); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                  🏦
+                </div>
+                <div style="flex: 1;">
+                  <div class="value-strong" style="font-size: 15px;">${accountName}</div>
+                  <div class="item-meta" style="font-size: 12px; margin-top: 2px;">${brokerType}</div>
+                </div>
+                <button class="mini-btn" data-action="view-assets" data-id="${escapeHtml(id)}" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; font-size: 12px; padding: 6px 12px;">资产详情</button>
+              </div>
+            `;
+          }
         },
-        { label: "Base URL", render: (row) => escapeHtml(pick(row, "base_url", "baseUrl") || "--") },
+        { label: "Base URL", render: (row) => {
+            const url = pick(row, "base_url", "baseUrl") || "--";
+            return `<span style="font-family: monospace; font-size: 12px; color: var(--text-muted);">${escapeHtml(url)}</span>`;
+          }
+        },
         { label: "API Key", render: (row) => escapeHtml(pick(row, "api_key_masked", "apiKeyMasked") || "--") },
         {
           label: "状态",
@@ -7597,19 +7576,24 @@
           render: (row) => {
             const active = Boolean(pick(row, "is_active", "active"));
             const id = pick(row, "id");
+            let buttons = '';
             if (active) {
-              return `<span class="badge success">已激活</span>`;
+              buttons += `<span class="badge success" style="margin-right: 8px;">已激活</span>`;
+            } else {
+              buttons += `<button class="mini-btn" data-action="activate-account" data-id="${escapeHtml(id)}" style="background: linear-gradient(135deg, #20bca6, #178bb4); color: white; border: none; margin-right: 8px;">激活</button>`;
             }
-            return `<button class="mini-btn" data-action="activate-account" data-id="${escapeHtml(id)}">激活</button>`;
+            buttons += `<button class="mini-btn" data-action="edit-account" data-id="${escapeHtml(id)}" style="background: var(--bg-soft); color: var(--text-primary); border: 1px solid var(--border-subtle); margin-right: 8px;">编辑</button>`;
+            buttons += `<button class="mini-btn" data-action="delete-account" data-id="${escapeHtml(id)}" style="background: var(--bg-danger); color: white; border: none;">删除</button>`;
+            return buttons;
           }
         }
       ], state.brokerAccounts, "暂无接入账户，请先新增券商/交易所连接。");
     }
 
     function renderModelPage() {
-      const provider = pick(state.aiConfig, "provider") || "--";
-      const model = pick(state.aiConfig, "model") || "--";
-      const baseUrl = pick(state.aiConfig, "baseUrl", "base_url") || "--";
+      const provider = pick(state.aiConfig, "provider");
+      const model = pick(state.aiConfig, "model");
+      const baseUrl = pick(state.aiConfig, "baseUrl", "base_url");
       const hasApiKey = Boolean(pick(state.aiConfig, "hasApiKey", "has_api_key"));
 
       const configSummary = $("modelConfigSummary");
@@ -7618,19 +7602,19 @@
           <div class="meta-grid">
             <div class="meta-card">
               <div class="meta-label">供应商</div>
-              <div class="meta-value">${escapeHtml(String(provider).toUpperCase())}</div>
+              <div class="meta-value">${provider ? escapeHtml(String(provider).toUpperCase()) : ""}</div>
             </div>
             <div class="meta-card">
               <div class="meta-label">模型</div>
-              <div class="meta-value">${escapeHtml(model)}</div>
+              <div class="meta-value">${model ? escapeHtml(model) : ""}</div>
             </div>
             <div class="meta-card">
               <div class="meta-label">API Key</div>
-              <div class="meta-value">${hasApiKey ? "已配置" : "未配置"}</div>
+              <div class="meta-value">${hasApiKey ? "已配置" : ""}</div>
             </div>
             <div class="meta-card">
               <div class="meta-label">Base URL</div>
-              <div class="meta-value" style="font-size: 13px;">${escapeHtml(baseUrl)}</div>
+              <div class="meta-value" style="font-size: 13px;">${baseUrl ? escapeHtml(baseUrl) : ""}</div>
             </div>
           </div>
         `;
@@ -9736,13 +9720,23 @@
     async function applyBrokerMode() {
       const broker = $("brokerModeSelect").value;
       const btn = $("applyBrokerModeBtn");
+      
+      // 将 broker 值映射为中文显示
+      const brokerLabels = {
+        "paper": "模拟交易",
+        "gtja": "A股",
+        "okx": "区块链",
+        "usstock": "美股交易"
+      };
+      
       setButtonLoading(btn, true, "切换中...", "切换交易模式");
       try {
         await apiRequest("/broker/switch", {
           method: "POST",
           body: { broker }
         });
-        showToast(`已切换到 ${broker} 模式`, "success");
+        const brokerLabel = brokerLabels[broker] || broker;
+        showToast(`已切换到 ${brokerLabel} 模式`, "success");
         await loadBrokerData(true);
         await loadOverviewData(true);
         enforceLiveApprovalPolicy(false);
@@ -9897,35 +9891,217 @@
       }
     }
 
-    function openBrokerModal() {
+    async function openAssetsModal(account) {
+      const getBrokerLabel = (broker) => {
+        const brokerMap = {
+          "paper": "模拟交易",
+          "gtja": "A股",
+          "okx": "区块链",
+          "usstock": "美股交易"
+        };
+        return brokerMap[String(broker).toLowerCase()] || String(broker).toUpperCase();
+      };
+      
+      const accountId = account.id;
+      const accountName = account.account_name || account.accountName || "未知账户";
+      const broker = account.broker;
+      
+      const modal = document.createElement("div");
+      modal.className = "modal-overlay";
+      modal.innerHTML = `
+        <div class="modal" style="max-width: 800px; width: 90%;">
+          <div class="modal-header">
+            <h3>资产详情 - ${escapeHtml(accountName)}</h3>
+            <button class="modal-close" data-action="close-modal">&times;</button>
+          </div>
+          <div class="modal-body" style="padding: 20px;">
+            <div id="assets-loading" style="text-align: center; padding: 40px;">
+              <div style="color: var(--text-muted);">正在加载资产信息...</div>
+            </div>
+            <div id="assets-content" style="display: none;">
+              <div id="assets-summary" style="margin-bottom: 20px;"></div>
+              <div id="assets-balance" style="margin-bottom: 20px;"></div>
+              <div id="assets-positions"></div>
+            </div>
+            <div id="assets-error" style="display: none; text-align: center; padding: 40px; color: var(--text-muted);">
+              暂时无法获取资产信息
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      modal.querySelector("[data-action='close-modal']").addEventListener("click", () => {
+        modal.remove();
+      });
+      
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          modal.remove();
+        }
+      });
+      
+      try {
+        const [balanceResult, positionsResult] = await Promise.allSettled([
+          apiRequest(`/broker/accounts/${accountId}/balance`),
+          apiRequest(`/broker/accounts/${accountId}/positions`)
+        ]);
+        
+        const loading = modal.querySelector("#assets-loading");
+        const content = modal.querySelector("#assets-content");
+        const error = modal.querySelector("#assets-error");
+        const summary = modal.querySelector("#assets-summary");
+        const balanceDiv = modal.querySelector("#assets-balance");
+        const positionsDiv = modal.querySelector("#assets-positions");
+        
+        if (balanceResult.status === "rejected" && positionsResult.status === "rejected") {
+          loading.style.display = "none";
+          error.style.display = "block";
+          return;
+        }
+        
+        loading.style.display = "none";
+        content.style.display = "block";
+        
+        let totalValue = 0;
+        let totalCash = 0;
+        
+        if (balanceResult.status === "fulfilled" && balanceResult.value) {
+          const balance = balanceResult.value.data || balanceResult.value;
+          totalCash = parseFloat(balance.totalCash || balance.cash || 0);
+          totalValue += totalCash;
+          
+          const equity = parseFloat(balance.equity || 0);
+          totalValue = Math.max(totalValue, equity);
+          
+          summary.innerHTML = `
+            <div class="meta-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+              <div class="meta-card" style="padding: 16px; background: var(--bg-soft); border-radius: 8px;">
+                <div class="meta-label" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">账户类型</div>
+                <div class="meta-value" style="font-size: 18px; font-weight: 600;">${escapeHtml(getBrokerLabel(broker))}</div>
+              </div>
+              <div class="meta-card" style="padding: 16px; background: var(--bg-soft); border-radius: 8px;">
+                <div class="meta-label" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">总资产</div>
+                <div class="meta-value" style="font-size: 18px; font-weight: 600; color: #20bca6;">¥ ${formatNumber(totalValue, 2)}</div>
+              </div>
+              <div class="meta-card" style="padding: 16px; background: var(--bg-soft); border-radius: 8px;">
+                <div class="meta-label" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">可用资金</div>
+                <div class="meta-value" style="font-size: 18px; font-weight: 600;">¥ ${formatNumber(totalCash, 2)}</div>
+              </div>
+              <div class="meta-card" style="padding: 16px; background: var(--bg-soft); border-radius: 8px;">
+                <div class="meta-label" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">持仓市值</div>
+                <div class="meta-value" style="font-size: 18px; font-weight: 600;">¥ ${formatNumber(totalValue - totalCash, 2)}</div>
+              </div>
+            </div>
+          `;
+          
+          balanceDiv.innerHTML = `
+            <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--text-primary);">资金详情</h4>
+            <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
+              ${Object.entries(balance).filter(([key]) => !['totalCash', 'cash', 'equity'].includes(key)).map(([key, value]) => `
+                <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-subtle);">
+                  <span>${escapeHtml(key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()))}</span>
+                  <span style="font-weight: 500;">${escapeHtml(String(value))}</span>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+        
+        if (positionsResult.status === "fulfilled" && positionsResult.value) {
+          const positions = positionsResult.value.data?.positions || positionsResult.value.positions || [];
+          
+          if (positions.length === 0) {
+            positionsDiv.innerHTML = `
+              <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--text-primary);">持仓明细</h4>
+              <div style="text-align: center; padding: 20px; color: var(--text-muted);">暂无持仓</div>
+            `;
+          } else {
+            positionsDiv.innerHTML = `
+              <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--text-primary);">持仓明细 (${positions.length})</h4>
+              <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                <thead>
+                  <tr style="border-bottom: 2px solid var(--border-subtle);">
+                    <th style="text-align: left; padding: 10px 8px; color: var(--text-muted);">标的</th>
+                    <th style="text-align: right; padding: 10px 8px; color: var(--text-muted);">数量</th>
+                    <th style="text-align: right; padding: 10px 8px; color: var(--text-muted);">成本</th>
+                    <th style="text-align: right; padding: 10px 8px; color: var(--text-muted);">现价</th>
+                    <th style="text-align: right; padding: 10px 8px; color: var(--text-muted);">市值</th>
+                    <th style="text-align: right; padding: 10px 8px; color: var(--text-muted);">盈亏</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${positions.map(pos => {
+                    const symbol = pos.symbol || pos.instrument_id || "--";
+                    const quantity = parseFloat(pos.quantity || pos.qty || 0);
+                    const avgCost = parseFloat(pos.avgCost || pos.avg_cost || 0);
+                    const lastPrice = parseFloat(pos.lastPrice || pos.last_price || 0);
+                    const marketValue = parseFloat(pos.marketValue || pos.market_value || 0);
+                    const unrealizedPnl = parseFloat(pos.unrealizedPnl || pos.unrealized_pnl || 0);
+                    const pnlClass = unrealizedPnl > 0 ? "color: #20bca6;" : unrealizedPnl < 0 ? "color: #ff6b6b;" : "";
+                    
+                    return `
+                      <tr style="border-bottom: 1px solid var(--border-subtle);">
+                        <td style="padding: 10px 8px; font-weight: 500;">${escapeHtml(symbol)}</td>
+                        <td style="padding: 10px 8px; text-align: right;">${formatNumber(quantity, 2)}</td>
+                        <td style="padding: 10px 8px; text-align: right;">¥ ${formatNumber(avgCost, 2)}</td>
+                        <td style="padding: 10px 8px; text-align: right;">¥ ${formatNumber(lastPrice, 2)}</td>
+                        <td style="padding: 10px 8px; text-align: right;">¥ ${formatNumber(marketValue, 2)}</td>
+                        <td style="padding: 10px 8px; text-align: right; ${pnlClass} font-weight: 500;">
+                          ${unrealizedPnl >= 0 ? '+' : ''}¥ ${formatNumber(unrealizedPnl, 2)}
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            `;
+          }
+        }
+      } catch (error) {
+        const loading = modal.querySelector("#assets-loading");
+        const content = modal.querySelector("#assets-content");
+        const errorDiv = modal.querySelector("#assets-error");
+        loading.style.display = "none";
+        content.style.display = "none";
+        errorDiv.style.display = "block";
+        errorDiv.innerHTML = `<div style="color: var(--text-muted);">暂时无法获取资产信息</div><div style="font-size: 12px; margin-top: 8px; color: var(--text-light);">${escapeHtml(error.message)}</div>`;
+      }
+    }
+
+    function openBrokerModal(account = null) {
+      const isEdit = Boolean(account);
       openFormModal({
-        title: "新增接入账户",
-        desc: "支持券商和交易所接入，新增后可一键激活。",
-        submitText: "保存接入",
-        successText: "接入账户已新增",
+        title: isEdit ? "编辑接入账户" : "新增接入账户",
+        desc: isEdit ? "修改券商/交易所接入配置。" : "支持券商和交易所接入，新增后可一键激活。",
+        submitText: isEdit ? "保存修改" : "保存接入",
+        successText: isEdit ? "接入账户已更新" : "接入账户已新增",
         fields: [
           {
             name: "broker",
             label: "接入类型",
             type: "select",
             required: true,
-            value: "paper",
+            value: isEdit ? (account.broker || "paper") : "paper",
             options: [
-              { label: "paper", value: "paper" },
-              { label: "gtja", value: "gtja" },
-              { label: "real", value: "real" },
-              { label: "okx", value: "okx" },
-              { label: "usstock", value: "usstock" }
+              { label: "模拟交易", value: "paper" },
+              { label: "A股", value: "gtja" },
+              { label: "区块链", value: "okx" },
+              { label: "美股交易", value: "usstock" }
             ]
           },
-          { name: "account_name", label: "账户名称", type: "text", required: true, placeholder: "例如：主交易账户" },
-          { name: "base_url", label: "Base URL", type: "text", required: true, placeholder: "例如 https://api.xxx.com" },
-          { name: "api_key", label: "API Key", type: "password", required: true, placeholder: "输入 API Key" },
-          { name: "api_secret", label: "API Secret", type: "password", required: true, placeholder: "输入 API Secret" },
-          { name: "access_token", label: "Access Token", type: "password", required: true, placeholder: "输入 Access Token" }
+          { name: "account_name", label: "账户名称", type: "text", required: true, placeholder: "例如：主交易账户", value: isEdit ? (account.account_name || account.accountName || "") : "" },
+          { name: "base_url", label: "Base URL", type: "text", required: true, placeholder: "例如 https://api.xxx.com", value: isEdit ? (account.base_url || account.baseUrl || "") : "" },
+          { name: "api_key", label: "API Key", type: "password", optional: isEdit, placeholder: isEdit ? "如需更新请输入新的 API Key" : "输入 API Key" },
+          { name: "api_secret", label: "API Secret", type: "password", optional: isEdit, placeholder: isEdit ? "如需更新请输入新的 API Secret" : "输入 API Secret" }
         ],
         onSubmit: async (payload) => {
-          await apiRequest("/broker/accounts", { method: "POST", body: payload });
+          if (isEdit) {
+            await apiRequest(`/broker/accounts/${account.id}`, { method: "PUT", body: payload });
+          } else {
+            await apiRequest("/broker/accounts", { method: "POST", body: payload });
+          }
           await loadBrokerData(true);
           await loadOverviewData(true);
         }
@@ -10474,6 +10650,13 @@
       showToast("账户已激活", "success");
     }
 
+    async function deleteAccount(id) {
+      await apiRequest(`/broker/accounts/${id}`, { method: "DELETE" });
+      await loadBrokerData(true);
+      await loadOverviewData(true);
+      showToast("账户已删除", "success");
+    }
+
     async function clearAiConfig() {
       const ok = window.confirm("确认清空当前 AI 配置吗？");
       if (!ok) return;
@@ -10882,6 +11065,28 @@
         if (action === "open-add-broker") return openBrokerModal();
         if (action === "reload-broker") return loadBrokerData(false);
         if (action === "activate-account") return activateAccount(id).catch((error) => showToast(error.message, "danger"));
+        if (action === "edit-account") {
+          const account = (state.brokerAccounts || []).find((a) => String(a.id) === String(id));
+          if (account) {
+            return openBrokerModal(account);
+          } else {
+            return showToast("未找到账户信息", "warning");
+          }
+        }
+        if (action === "delete-account") {
+          if (confirm("确定要删除这个接入账户吗？此操作不可恢复。")) {
+            return deleteAccount(id).catch((error) => showToast(error.message, "danger"));
+          }
+          return;
+        }
+        if (action === "view-assets") {
+          const account = (state.brokerAccounts || []).find((a) => String(a.id) === String(id));
+          if (account) {
+            return openAssetsModal(account);
+          } else {
+            return showToast("未找到账户信息", "warning");
+          }
+        }
 
         if (action === "reload-bigscreen") return loadBigscreenData(false);
         if (action === "toggle-bigscreen-auto") {

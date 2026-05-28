@@ -77,6 +77,32 @@ public class BrokerAccountRepository {
         return rows.isEmpty() ? null : rows.get(0);
     }
 
+    public BrokerAccountEntity getBrokerAccount(long accountId) {
+        List<BrokerAccountEntity> rows = jdbcTemplate.query("""
+                SELECT id, broker, account_name, base_url, enabled, is_active, created_at,
+                       api_key_encrypted, api_secret_encrypted, access_token_encrypted, updated_at
+                FROM broker_account
+                WHERE id = ?
+                """, (rs, rowNum) -> mapRow(rs), accountId);
+        return rows.isEmpty() ? null : rows.get(0);
+    }
+
+    public BrokerAccountEntity updateBrokerAccount(long accountId, String broker, String accountName, String baseUrl,
+                                                   String apiKeyEncrypted, String apiSecretEncrypted, String accessTokenEncrypted) {
+        jdbcTemplate.update("""
+                UPDATE broker_account
+                SET broker = ?, account_name = ?, base_url = ?, 
+                    api_key_encrypted = ?, api_secret_encrypted = ?, access_token_encrypted = ?, updated_at = NOW()
+                WHERE id = ?
+                """, broker, accountName, baseUrl, apiKeyEncrypted, apiSecretEncrypted, accessTokenEncrypted, accountId);
+        return getBrokerAccount(accountId);
+    }
+
+    public boolean deleteBrokerAccount(long accountId) {
+        int rowsAffected = jdbcTemplate.update("DELETE FROM broker_account WHERE id = ?", accountId);
+        return rowsAffected > 0;
+    }
+
     private BrokerAccountEntity mapRow(java.sql.ResultSet rs) throws java.sql.SQLException {
         return new BrokerAccountEntity(
                 rs.getLong("id"),

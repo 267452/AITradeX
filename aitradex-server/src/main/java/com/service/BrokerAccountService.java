@@ -2,19 +2,23 @@ package com.service;
 
 import com.domain.entity.BrokerAccountEntity;
 import com.domain.request.BrokerAccountCreateRequest;
+import com.domain.request.BrokerAccountUpdateRequest;
 import com.domain.response.BrokerAccountResponse;
 import com.repository.BrokerAccountRepository;
 import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BrokerAccountService {
     private final BrokerAccountRepository brokerAccountRepository;
     private final FernetService fernetService;
+    private final OkxService okxService;
 
-    public BrokerAccountService(BrokerAccountRepository brokerAccountRepository, FernetService fernetService) {
+    public BrokerAccountService(BrokerAccountRepository brokerAccountRepository, FernetService fernetService, OkxService okxService) {
         this.brokerAccountRepository = brokerAccountRepository;
         this.fernetService = fernetService;
+        this.okxService = okxService;
     }
 
     public BrokerAccountResponse addAccount(BrokerAccountCreateRequest req) {
@@ -26,6 +30,32 @@ public class BrokerAccountService {
                 fernetService.encrypt(req.apiSecret()),
                 fernetService.encrypt(req.accessToken()));
         return toBrokerAccountOut(row);
+    }
+
+    public BrokerAccountResponse getAccount(long accountId) {
+        BrokerAccountEntity row = brokerAccountRepository.getBrokerAccount(accountId);
+        return row == null ? null : toBrokerAccountOut(row);
+    }
+
+    public BrokerAccountResponse updateAccount(long accountId, BrokerAccountUpdateRequest req) {
+        BrokerAccountEntity existingRow = brokerAccountRepository.getBrokerAccount(accountId);
+        if (existingRow == null) {
+            return null;
+        }
+        
+        BrokerAccountEntity row = brokerAccountRepository.updateBrokerAccount(
+                accountId,
+                req.broker() != null ? req.broker() : existingRow.broker(),
+                req.accountName() != null ? req.accountName() : existingRow.accountName(),
+                req.baseUrl() != null ? req.baseUrl() : existingRow.baseUrl(),
+                req.apiKey() != null ? fernetService.encrypt(req.apiKey()) : existingRow.apiKeyEncrypted(),
+                req.apiSecret() != null ? fernetService.encrypt(req.apiSecret()) : existingRow.apiSecretEncrypted(),
+                req.accessToken() != null ? fernetService.encrypt(req.accessToken()) : existingRow.accessTokenEncrypted());
+        return toBrokerAccountOut(row);
+    }
+
+    public boolean deleteAccount(long accountId) {
+        return brokerAccountRepository.deleteBrokerAccount(accountId);
     }
 
     public List<BrokerAccountResponse> listAccounts(int limit) {
@@ -44,6 +74,65 @@ public class BrokerAccountService {
 
     public BrokerAccountEntity requireActiveAccountRaw() {
         return brokerAccountRepository.getActiveBrokerAccount();
+    }
+
+    public Map<String, Object> getAccountBalance(long accountId) {
+        BrokerAccountEntity account = brokerAccountRepository.getBrokerAccount(accountId);
+        if (account == null) {
+            throw new IllegalArgumentException("Account not found");
+        }
+        
+        if ("okx".equals(account.broker())) {
+            try {
+                return okxService.getAccountBalance(account);
+            } catch (Exception e) {
+                return Map.of(
+                    "totalCash", 0.0,
+                    "equity", 0.0,
+                    "cash", 0.0,
+                    "currency", "USDT",
+                    "error", e.getMessage()
+                );
+            }
+        } else if ("paper".equals(account.broker()) || "gtja".equals(account.broker())) {
+            return Map.of(
+                "totalCash", 0.0,
+                "equity", 0.0,
+                "cash", 0.0,
+                "currency", "CNY"
+            );
+        } else if ("usstock".equals(account.broker())) {
+            return Map.of(
+                "totalCash", 0.0,
+                "equity", 0.0,
+                "cash", 0.0,
+                "currency", "USD"
+            );
+        } else {
+            return Map.of(
+                "totalCash", 0.0,
+                "equity", 0.0,
+                "cash", 0.0,
+                "currency", "CNY"
+            );
+        }
+    }
+
+    public Map<String, Object> getAccountPositions(long accountId) {
+        BrokerAccountEntity account = brokerAccountRepository.getBrokerAccount(accountId);
+        if (account == null) {
+            throw new IllegalArgumentException("Account not found");
+        }
+        
+        if ("okx".equals(account.broker())) {
+            try {
+                return okxService.getAccountPositions(account);
+            } catch (Exception e) {
+                return Map.of("positions", List.of(), "error", e.getMessage());
+            }
+        } else {
+            return Map.of("positions", List.of());
+        }
     }
 
     private BrokerAccountResponse toBrokerAccountOut(BrokerAccountEntity row) {

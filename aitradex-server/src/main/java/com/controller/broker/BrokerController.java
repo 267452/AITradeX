@@ -4,6 +4,7 @@ import com.common.api.ApiResponse;
 import com.common.exception.BusinessException;
 import com.config.AppProperties;
 import com.domain.request.BrokerAccountCreateRequest;
+import com.domain.request.BrokerAccountUpdateRequest;
 import com.domain.request.BrokerSwitchRequest;
 import com.domain.response.BrokerAccountResponse;
 import com.domain.response.BrokerModeResponse;
@@ -14,9 +15,11 @@ import com.service.OkxService;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -67,6 +70,33 @@ public class BrokerController {
         return ApiResponse.success(brokerAccountService.listAccounts(limit));
     }
 
+    @GetMapping("/accounts/{accountId}")
+    public ApiResponse<BrokerAccountResponse> getBrokerAccount(@PathVariable long accountId) {
+        BrokerAccountResponse row = brokerAccountService.getAccount(accountId);
+        if (row == null) {
+            throw new BusinessException(404, "broker_account_not_found");
+        }
+        return ApiResponse.success(row);
+    }
+
+    @PutMapping("/accounts/{accountId}")
+    public ApiResponse<BrokerAccountResponse> updateBrokerAccount(@PathVariable long accountId, @RequestBody BrokerAccountUpdateRequest req) {
+        BrokerAccountResponse row = brokerAccountService.updateAccount(accountId, req);
+        if (row == null) {
+            throw new BusinessException(404, "broker_account_not_found");
+        }
+        return ApiResponse.success(row);
+    }
+
+    @DeleteMapping("/accounts/{accountId}")
+    public ApiResponse<Map<String, Object>> deleteBrokerAccount(@PathVariable long accountId) {
+        boolean deleted = brokerAccountService.deleteAccount(accountId);
+        if (!deleted) {
+            throw new BusinessException(404, "broker_account_not_found");
+        }
+        return ApiResponse.success(Map.of("deleted", true, "id", accountId));
+    }
+
     @PostMapping("/accounts/{accountId}/activate")
     public ApiResponse<BrokerAccountResponse> activateBrokerAccount(@PathVariable long accountId) {
         BrokerAccountResponse row = brokerAccountService.activate(accountId);
@@ -85,15 +115,18 @@ public class BrokerController {
         return ApiResponse.success(row);
     }
 
-    @GetMapping("/okx/real-data")
-    public ApiResponse<Map<String, Object>> okxRealData(@RequestParam(defaultValue = "10") int limit,
-                                                        @RequestParam(defaultValue = "1") int page,
-                                                        @RequestParam(defaultValue = "10") int pageSize) {
-        return ApiResponse.success(okxService.getRealData(limit, page, pageSize));
+    @GetMapping("/accounts/{accountId}/balance")
+    public ApiResponse<Map<String, Object>> getAccountBalance(@PathVariable long accountId) {
+        return ApiResponse.success(Map.of(
+                "totalCash", 0.0,
+                "equity", 0.0,
+                "cash", 0.0,
+                "currency", "USDT"
+        ));
     }
 
-    @GetMapping("/okx/portfolio")
-    public ApiResponse<Map<String, Object>> okxPortfolio(@RequestParam(defaultValue = "20") int limit) {
-        return ApiResponse.success(okxService.getPortfolioSnapshot(limit));
+    @GetMapping("/accounts/{accountId}/positions")
+    public ApiResponse<Map<String, Object>> getAccountPositions(@PathVariable long accountId) {
+        return ApiResponse.success(Map.of("positions", List.of()));
     }
 }
