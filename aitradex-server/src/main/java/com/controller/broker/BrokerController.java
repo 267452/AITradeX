@@ -117,16 +117,11 @@ public class BrokerController {
 
     @GetMapping("/accounts/{accountId}/balance")
     public ApiResponse<Map<String, Object>> getAccountBalance(@PathVariable long accountId) {
-        return ApiResponse.success(Map.of(
-                "totalCash", 0.0,
-                "equity", 0.0,
-                "cash", 0.0,
-                "currency", "USDT"
-        ));
+        return ApiResponse.success(brokerAccountService.getAccountBalance(accountId));
     }
 
     @GetMapping("/accounts/{accountId}/positions")
     public ApiResponse<Map<String, Object>> getAccountPositions(@PathVariable long accountId) {
-        return ApiResponse.success(Map.of("positions", List.of()));
+        return ApiResponse.success(brokerAccountService.getAccountPositions(accountId));
     }
 }

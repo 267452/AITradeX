@@ -82,40 +82,16 @@ public class BrokerAccountService {
             throw new IllegalArgumentException("Account not found");
         }
         
-        if ("okx".equals(account.broker())) {
-            try {
-                return okxService.getAccountBalance(account);
-            } catch (Exception e) {
-                return Map.of(
-                    "totalCash", 0.0,
-                    "equity", 0.0,
-                    "cash", 0.0,
-                    "currency", "USDT",
-                    "error", e.getMessage()
-                );
-            }
-        } else if ("paper".equals(account.broker()) || "gtja".equals(account.broker())) {
-            return Map.of(
-                "totalCash", 0.0,
-                "equity", 0.0,
-                "cash", 0.0,
-                "currency", "CNY"
-            );
-        } else if ("usstock".equals(account.broker())) {
-            return Map.of(
-                "totalCash", 0.0,
-                "equity", 0.0,
-                "cash", 0.0,
-                "currency", "USD"
-            );
-        } else {
-            return Map.of(
-                "totalCash", 0.0,
-                "equity", 0.0,
-                "cash", 0.0,
-                "currency", "CNY"
-            );
+        if ("okx".equalsIgnoreCase(account.broker())) {
+            return okxService.getAccountBalance(account);
         }
+        
+        String currency = "usstock".equalsIgnoreCase(account.broker()) ? "USD" : "CNY";
+        return Map.of(
+                "totalCash", 0.0,
+                "equity", 0.0,
+                "cash", 0.0,
+                "currency", currency);
     }
 
     public Map<String, Object> getAccountPositions(long accountId) {
@@ -124,15 +100,11 @@ public class BrokerAccountService {
             throw new IllegalArgumentException("Account not found");
         }
         
-        if ("okx".equals(account.broker())) {
-            try {
-                return okxService.getAccountPositions(account);
-            } catch (Exception e) {
-                return Map.of("positions", List.of(), "error", e.getMessage());
-            }
-        } else {
-            return Map.of("positions", List.of());
+        if ("okx".equalsIgnoreCase(account.broker())) {
+            return okxService.getAccountPositions(account);
         }
+        
+        return Map.of("positions", List.of());
     }
 
     private BrokerAccountResponse toBrokerAccountOut(BrokerAccountEntity row) {

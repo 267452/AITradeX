@@ -10,15 +10,20 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class OkxService {
+    private static final Logger logger = LoggerFactory.getLogger(OkxService.class);
+    
     private final FernetService fernetService;
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
@@ -35,26 +40,69 @@ public class OkxService {
     public Map<String, Object> getAccountBalance(BrokerAccountEntity account) {
         try {
             if (!"okx".equalsIgnoreCase(account.broker())) {
-                return Map.of(
-                        "totalCash", 0.0,
-                        "equity", 0.0,
-                        "cash", 0.0,
-                        "currency", "USDT",
-                        "error", "Not an OKX account"
-                );
+                logger.warn("Account broker is not OKX: {}", account.broker());
+                Map<String, Object> result = new HashMap<>();
+                result.put("totalCash", 0.0);
+                result.put("equity", 0.0);
+                result.put("cash", 0.0);
+                result.put("currency", "USDT");
+                result.put("error", "Not an OKX account");
+                return result;
             }
             
             String baseUrl = account.baseUrl() == null || account.baseUrl().isBlank() ? "https://www.okx.com" : account.baseUrl();
-            String apiKey = fernetService.decrypt(account.apiKeyEncrypted());
-            String apiSecret = fernetService.decrypt(account.apiSecretEncrypted());
-            String passphrase = fernetService.decrypt(account.accessTokenEncrypted());
+            
+            String apiKeyEncrypted = account.apiKeyEncrypted();
+            String apiSecretEncrypted = account.apiSecretEncrypted();
+            String accessTokenEncrypted = account.accessTokenEncrypted();
+            
+            logger.info("加密凭证检查 - apiKeyEncrypted: {}, apiSecretEncrypted: {}, accessTokenEncrypted: {}", 
+                       apiKeyEncrypted != null ? "exists(" + apiKeyEncrypted.length() + ")" : "null",
+                       apiSecretEncrypted != null ? "exists(" + apiSecretEncrypted.length() + ")" : "null",
+                       accessTokenEncrypted != null ? "exists(" + accessTokenEncrypted.length() + ")" : "null");
+            
+            if (apiKeyEncrypted == null || apiSecretEncrypted == null || accessTokenEncrypted == null) {
+                logger.error("加密凭证包含null值!");
+                Map<String, Object> result = new HashMap<>();
+                result.put("totalCash", 0.0);
+                result.put("equity", 0.0);
+                result.put("cash", 0.0);
+                result.put("currency", "USDT");
+                result.put("error", "凭证解密失败: 加密字段为null");
+                return result;
+            }
+            
+            String apiKey = fernetService.decrypt(apiKeyEncrypted);
+            String apiSecret = fernetService.decrypt(apiSecretEncrypted);
+            String passphrase = fernetService.decrypt(accessTokenEncrypted);
+            
+            logger.info("解密后凭证检查 - apiKey: {}, apiSecret: {}, passphrase: {}",
+                       apiKey != null ? "exists(" + apiKey.length() + ")" : "null",
+                       apiSecret != null ? "exists(" + apiSecret.length() + ")" : "null",
+                       passphrase != null ? "exists(" + passphrase.length() + ")" : "null");
+            
+            if (apiKey == null || apiSecret == null || passphrase == null) {
+                logger.error("凭证解密后包含null值!");
+                Map<String, Object> result = new HashMap<>();
+                result.put("totalCash", 0.0);
+                result.put("equity", 0.0);
+                result.put("cash", 0.0);
+                result.put("currency", "USDT");
+                result.put("error", "凭证解密失败: 解密结果为null");
+                return result;
+            }
+            
+            logger.info("Calling OKX API for account balance, baseUrl: {}, apiKey length: {}", baseUrl, apiKey.length());
             
             OkxCredentials credentials = new OkxCredentials(baseUrl, apiKey, apiSecret, passphrase);
             
             Map<String, Object> bal = requestSigned(credentials, "/api/v5/account/balance", Map.of());
+            logger.info("OKX balance API response: code={}, msg={}", bal.get("code"), bal.get("msg"));
+            
             ensureOk(bal, "okx_balance_error");
             Map<String, Object> balRow = firstRow(bal);
             List<Map<String, Object>> details = rowsFromAny(balRow.get("details"));
+            logger.info("Balance details count: {}", details.size());
             
             double totalCash = 0;
             double equity = 0;
@@ -73,39 +121,71 @@ public class OkxService {
                 }
             }
             
-            return Map.of(
-                    "totalCash", totalCash,
-                    "equity", equity,
-                    "cash", cash,
-                    "currency", currency,
-                    "details", details);
+            Map<String, Object> result = new HashMap<>();
+            result.put("totalCash", totalCash);
+            result.put("equity", equity);
+            result.put("cash", cash);
+            result.put("currency", currency);
+            result.put("details", details);
+            logger.info("Returning balance: totalCash={}, equity={}, cash={}", totalCash, equity, cash);
+            return result;
         } catch (Exception e) {
-            return Map.of(
-                    "totalCash", 0.0,
-                    "equity", 0.0,
-                    "cash", 0.0,
-                    "currency", "USDT",
-                    "error", e.getMessage()
-            );
+            logger.error("Error getting OKX account balance", e);
+            Map<String, Object> result = new HashMap<>();
+            result.put("totalCash", 0.0);
+            result.put("equity", 0.0);
+            result.put("cash", 0.0);
+            result.put("currency", "USDT");
+            result.put("error", e.getMessage() != null ? e.getMessage() : "Unknown error");
+            return result;
         }
     }
     
     public Map<String, Object> getAccountPositions(BrokerAccountEntity account) {
         try {
             if (!"okx".equalsIgnoreCase(account.broker())) {
-                return Map.of("positions", List.of(), "error", "Not an OKX account");
+                Map<String, Object> result = new HashMap<>();
+                result.put("positions", List.of());
+                result.put("error", "Not an OKX account");
+                return result;
             }
             
             String baseUrl = account.baseUrl() == null || account.baseUrl().isBlank() ? "https://www.okx.com" : account.baseUrl();
-            String apiKey = fernetService.decrypt(account.apiKeyEncrypted());
-            String apiSecret = fernetService.decrypt(account.apiSecretEncrypted());
-            String passphrase = fernetService.decrypt(account.accessTokenEncrypted());
+            
+            String apiKeyEncrypted = account.apiKeyEncrypted();
+            String apiSecretEncrypted = account.apiSecretEncrypted();
+            String accessTokenEncrypted = account.accessTokenEncrypted();
+            
+            if (apiKeyEncrypted == null || apiSecretEncrypted == null || accessTokenEncrypted == null) {
+                logger.error("加密凭证包含null值!");
+                Map<String, Object> result = new HashMap<>();
+                result.put("positions", List.of());
+                result.put("error", "凭证解密失败: 加密字段为null");
+                return result;
+            }
+            
+            String apiKey = fernetService.decrypt(apiKeyEncrypted);
+            String apiSecret = fernetService.decrypt(apiSecretEncrypted);
+            String passphrase = fernetService.decrypt(accessTokenEncrypted);
+            
+            if (apiKey == null || apiSecret == null || passphrase == null) {
+                logger.error("凭证解密后包含null值!");
+                Map<String, Object> result = new HashMap<>();
+                result.put("positions", List.of());
+                result.put("error", "凭证解密失败: 解密结果为null");
+                return result;
+            }
+            
+            logger.info("Calling OKX API for positions, baseUrl: {}", baseUrl);
             
             OkxCredentials credentials = new OkxCredentials(baseUrl, apiKey, apiSecret, passphrase);
             
             Map<String, Object> positionsResponse = requestSigned(credentials, "/api/v5/account/positions", Map.of("instType", "SPOT"));
+            logger.info("OKX positions API response: code={}, msg={}", positionsResponse.get("code"), positionsResponse.get("msg"));
+            
             ensureOk(positionsResponse, "okx_positions_error");
             List<Map<String, Object>> positionsList = rows(positionsResponse);
+            logger.info("Positions count: {}", positionsList.size());
             
             List<Map<String, Object>> resultPositions = new ArrayList<>();
             for (Map<String, Object> row : positionsList) {
@@ -119,19 +199,26 @@ public class OkxService {
                 double last = parseDouble(row.get("last"));
                 double markPx = parseDouble(row.getOrDefault("markPx", last));
                 
-                resultPositions.add(Map.of(
-                        "symbol", instId,
-                        "quantity", quantity,
-                        "avgCost", avgPx,
-                        "lastPrice", last,
-                        "marketValue", quantity * markPx,
-                        "unrealizedPnl", upl,
-                        "unrealizedPnlRatio", uplRatio));
+                Map<String, Object> position = new HashMap<>();
+                position.put("symbol", instId);
+                position.put("quantity", quantity);
+                position.put("avgCost", avgPx);
+                position.put("lastPrice", last);
+                position.put("marketValue", quantity * markPx);
+                position.put("unrealizedPnl", upl);
+                position.put("unrealizedPnlRatio", uplRatio);
+                resultPositions.add(position);
             }
             
-            return Map.of("positions", resultPositions);
+            Map<String, Object> result = new HashMap<>();
+            result.put("positions", resultPositions);
+            return result;
         } catch (Exception e) {
-            return Map.of("positions", List.of(), "error", e.getMessage());
+            logger.error("Error getting OKX positions", e);
+            Map<String, Object> result = new HashMap<>();
+            result.put("positions", List.of());
+            result.put("error", e.getMessage() != null ? e.getMessage() : "Unknown error");
+            return result;
         }
     }
 
@@ -152,15 +239,19 @@ public class OkxService {
         } catch (Exception e) {
             throw new IllegalStateException("okx_sign_failed", e);
         }
+        
+        // 使用HashMap替代Map.of，避免null值问题
+        Map<String, String> headers = new HashMap<>();
+        headers.put("OK-ACCESS-KEY", credentials.apiKey());
+        headers.put("OK-ACCESS-SIGN", signature);
+        headers.put("OK-ACCESS-TIMESTAMP", timestamp);
+        headers.put("OK-ACCESS-PASSPHRASE", credentials.passphrase());
+        headers.put("Content-Type", "application/json");
+        headers.put("Accept", "application/json");
+        headers.put("User-Agent", "AITradeX-Java/1.0");
+        
         return HttpUtils.getJson(httpClient, objectMapper, credentials.baseUrl().replaceAll("/$", "") + queryUrl,
-                Map.of(
-                        "OK-ACCESS-KEY", credentials.apiKey(),
-                        "OK-ACCESS-SIGN", signature,
-                        "OK-ACCESS-TIMESTAMP", timestamp,
-                        "OK-ACCESS-PASSPHRASE", credentials.passphrase(),
-                        "Content-Type", "application/json",
-                        "Accept", "application/json",
-                        "User-Agent", "AITradeX-Java/1.0"), properties.getGtjaQuoteTimeoutSec() + 7);
+                headers, properties.getGtjaQuoteTimeoutSec() + 7);
     }
 
     private void ensureOk(Map<String, Object> payload, String prefix) {

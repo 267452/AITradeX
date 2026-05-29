@@ -2573,6 +2573,88 @@
       display: flex;
     }
 
+    /* Assets Modal Styles */
+    .assets-modal {
+      width: min(900px, 100%);
+      max-height: 90vh;
+      overflow: hidden;
+      border-radius: 20px;
+      background: #ffffff;
+      box-shadow: 0 32px 64px rgba(10, 25, 45, 0.35);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .assets-modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #e8eff7;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, #f8fbfe 0%, #ffffff 100%);
+    }
+
+    .assets-modal-title {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .assets-modal-close {
+      width: 36px;
+      height: 36px;
+      border: 1px solid #e8eff7;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #5f7793;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .assets-modal-close:hover {
+      background: #f8fbfe;
+      color: #10243c;
+      border-color: #d8e6f0;
+    }
+
+    .assets-modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .assets-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+    }
+
+    .assets-error {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+    }
+
+    .assets-summary-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .assets-table-row:hover {
+      background: #f8fbfe;
+    }
+
+    @keyframes assets-spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
     .modal-card {
       width: min(740px, 100%);
       max-height: 90vh;
@@ -9909,28 +9991,49 @@
       const modal = document.createElement("div");
       modal.className = "modal-overlay";
       modal.innerHTML = `
-        <div class="modal" style="max-width: 800px; width: 90%;">
-          <div class="modal-header">
-            <h3>资产详情 - ${escapeHtml(accountName)}</h3>
-            <button class="modal-close" data-action="close-modal">&times;</button>
+        <div class="assets-modal" style="max-width: 900px; width: 95%;">
+          <div class="assets-modal-header">
+            <div class="assets-modal-title">
+              <svg class="assets-modal-icon" style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #22c8ae, #1889b7); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                💰
+              </svg>
+              <div>
+                <h2 style="margin: 0; font-size: 18px; color: #10243c; font-weight: 700;">资产详情</h2>
+                <p style="margin: 2px 0 0; font-size: 13px; color: #5f7793;">${escapeHtml(accountName)} · ${escapeHtml(getBrokerLabel(broker))}</p>
+              </div>
+            </div>
+            <button class="assets-modal-close" data-action="close-modal" aria-label="关闭">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
           </div>
-          <div class="modal-body" style="padding: 20px;">
-            <div id="assets-loading" style="text-align: center; padding: 40px;">
-              <div style="color: var(--text-muted);">正在加载资产信息...</div>
+          <div class="assets-modal-body">
+            <div id="assets-loading" class="assets-loading">
+              <div class="assets-spinner" style="width: 48px; height: 48px; border: 3px solid #e8f0f8; border-top: 3px solid #23b8a6; border-radius: 50%; animation: assets-spin 0.8s linear infinite;"></div>
+              <div style="margin-top: 16px; font-size: 14px; color: #5f7793;">正在加载资产信息...</div>
             </div>
             <div id="assets-content" style="display: none;">
-              <div id="assets-summary" style="margin-bottom: 20px;"></div>
-              <div id="assets-balance" style="margin-bottom: 20px;"></div>
+              <div id="assets-summary"></div>
+              <div class="assets-divider" style="height: 1px; background: #e8eff7; margin: 24px 0;"></div>
+              <div id="assets-balance"></div>
+              <div class="assets-divider" style="height: 1px; background: #e8eff7; margin: 24px 0;"></div>
               <div id="assets-positions"></div>
             </div>
-            <div id="assets-error" style="display: none; text-align: center; padding: 40px; color: var(--text-muted);">
-              暂时无法获取资产信息
+            <div id="assets-error" class="assets-error" style="display: none;">
+              <div class="assets-error-icon" style="width: 64px; height: 64px; border-radius: 50%; background: #fff0f0; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 16px;">
+                ⚠️
+              </div>
+              <div style="font-size: 15px; color: #2d4867; font-weight: 600;">暂时无法获取资产信息</div>
+              <div id="assets-error-msg" style="margin-top: 8px; font-size: 13px; color: #5f7793;"></div>
             </div>
           </div>
         </div>
       `;
       
       document.body.appendChild(modal);
+      modal.classList.add("show");
       
       modal.querySelector("[data-action='close-modal']").addEventListener("click", () => {
         modal.remove();
@@ -9957,7 +10060,7 @@
         
         if (balanceResult.status === "rejected" && positionsResult.status === "rejected") {
           loading.style.display = "none";
-          error.style.display = "block";
+          error.style.display = "flex";
           return;
         }
         
@@ -9974,37 +10077,49 @@
           
           const equity = parseFloat(balance.equity || 0);
           totalValue = Math.max(totalValue, equity);
+          const positionValue = totalValue - totalCash;
           
           summary.innerHTML = `
-            <div class="meta-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
-              <div class="meta-card" style="padding: 16px; background: var(--bg-soft); border-radius: 8px;">
-                <div class="meta-label" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">账户类型</div>
-                <div class="meta-value" style="font-size: 18px; font-weight: 600;">${escapeHtml(getBrokerLabel(broker))}</div>
+            <div class="assets-summary-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+              <div class="assets-summary-card" style="background: linear-gradient(135deg, rgba(35, 184, 166, 0.08), rgba(24, 137, 183, 0.08)); border: 1px solid rgba(35, 184, 166, 0.18); border-radius: 16px; padding: 20px; transition: transform 0.2s ease; cursor: pointer;">
+                <div class="assets-summary-label" style="font-size: 12px; color: #5f7793; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">总资产</div>
+                <div class="assets-summary-value" style="font-size: 28px; font-weight: 700; color: #23b8a6; margin-top: 8px;">¥ ${formatNumber(totalValue, 2)}</div>
+                <div class="assets-summary-trend" style="margin-top: 8px; font-size: 12px; color: #5f7793;">实时更新</div>
               </div>
-              <div class="meta-card" style="padding: 16px; background: var(--bg-soft); border-radius: 8px;">
-                <div class="meta-label" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">总资产</div>
-                <div class="meta-value" style="font-size: 18px; font-weight: 600; color: #20bca6;">¥ ${formatNumber(totalValue, 2)}</div>
+              <div class="assets-summary-card" style="background: #f8fbfe; border: 1px solid #e8eff7; border-radius: 16px; padding: 20px; transition: transform 0.2s ease;">
+                <div class="assets-summary-label" style="font-size: 12px; color: #5f7793; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">可用资金</div>
+                <div class="assets-summary-value" style="font-size: 24px; font-weight: 700; color: #10243c; margin-top: 8px;">¥ ${formatNumber(totalCash, 2)}</div>
+                <div class="assets-summary-trend" style="margin-top: 8px; font-size: 12px; color: #5f7793;">可用于交易</div>
               </div>
-              <div class="meta-card" style="padding: 16px; background: var(--bg-soft); border-radius: 8px;">
-                <div class="meta-label" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">可用资金</div>
-                <div class="meta-value" style="font-size: 18px; font-weight: 600;">¥ ${formatNumber(totalCash, 2)}</div>
+              <div class="assets-summary-card" style="background: #f8fbfe; border: 1px solid #e8eff7; border-radius: 16px; padding: 20px; transition: transform 0.2s ease;">
+                <div class="assets-summary-label" style="font-size: 12px; color: #5f7793; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">持仓市值</div>
+                <div class="assets-summary-value" style="font-size: 24px; font-weight: 700; color: #10243c; margin-top: 8px;">¥ ${formatNumber(positionValue, 2)}</div>
+                <div class="assets-summary-trend" style="margin-top: 8px; font-size: 12px; color: #5f7793;">所有持仓</div>
               </div>
-              <div class="meta-card" style="padding: 16px; background: var(--bg-soft); border-radius: 8px;">
-                <div class="meta-label" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">持仓市值</div>
-                <div class="meta-value" style="font-size: 18px; font-weight: 600;">¥ ${formatNumber(totalValue - totalCash, 2)}</div>
+              <div class="assets-summary-card" style="background: #f8fbfe; border: 1px solid #e8eff7; border-radius: 16px; padding: 20px; transition: transform 0.2s ease;">
+                <div class="assets-summary-label" style="font-size: 12px; color: #5f7793; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">账户类型</div>
+                <div class="assets-summary-value" style="font-size: 24px; font-weight: 700; color: #10243c; margin-top: 8px;">${escapeHtml(getBrokerLabel(broker))}</div>
+                <div class="assets-summary-trend" style="margin-top: 8px; font-size: 12px; color: #5f7793;">交易账户</div>
               </div>
             </div>
           `;
           
           balanceDiv.innerHTML = `
-            <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--text-primary);">资金详情</h4>
-            <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
-              ${Object.entries(balance).filter(([key]) => !['totalCash', 'cash', 'equity'].includes(key)).map(([key, value]) => `
-                <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-subtle);">
-                  <span>${escapeHtml(key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()))}</span>
-                  <span style="font-weight: 500;">${escapeHtml(String(value))}</span>
-                </div>
-              `).join('')}
+            <div class="assets-section">
+              <div class="assets-section-header" style="display: flex; align-items: center; margin-bottom: 16px;">
+                <h3 style="margin: 0; font-size: 15px; color: #10243c; font-weight: 600;">资金详情</h3>
+              </div>
+              <div class="assets-balance-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+                ${Object.entries(balance).filter(([key]) => !['totalCash', 'cash', 'equity'].includes(key)).map(([key, value]) => {
+                  const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                  return `
+                    <div class="assets-balance-item" style="background: #f8fbfe; border: 1px solid #e8eff7; border-radius: 12px; padding: 14px 16px;">
+                      <div class="assets-balance-label" style="font-size: 12px; color: #5f7793; margin-bottom: 6px;">${escapeHtml(label)}</div>
+                      <div class="assets-balance-value" style="font-size: 16px; font-weight: 600; color: #10243c;">${escapeHtml(String(value))}</div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
             </div>
           `;
         }
@@ -10014,48 +10129,76 @@
           
           if (positions.length === 0) {
             positionsDiv.innerHTML = `
-              <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--text-primary);">持仓明细</h4>
-              <div style="text-align: center; padding: 20px; color: var(--text-muted);">暂无持仓</div>
+              <div class="assets-section">
+                <div class="assets-section-header" style="display: flex; align-items: center; margin-bottom: 16px;">
+                  <h3 style="margin: 0; font-size: 15px; color: #10243c; font-weight: 600;">持仓明细</h3>
+                  <span class="assets-badge" style="background: #e8eff7; color: #5f7793; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">0</span>
+                </div>
+                <div class="assets-empty" style="text-align: center; padding: 40px 20px; color: #5f7793; background: #f8fbfe; border-radius: 16px;">
+                  <div style="font-size: 48px; margin-bottom: 12px;">📊</div>
+                  <div style="font-size: 15px; font-weight: 600; color: #2d4867; margin-bottom: 4px;">暂无持仓</div>
+                  <div style="font-size: 13px;">当前账户暂无任何持仓</div>
+                </div>
+              </div>
             `;
           } else {
             positionsDiv.innerHTML = `
-              <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--text-primary);">持仓明细 (${positions.length})</h4>
-              <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-                <thead>
-                  <tr style="border-bottom: 2px solid var(--border-subtle);">
-                    <th style="text-align: left; padding: 10px 8px; color: var(--text-muted);">标的</th>
-                    <th style="text-align: right; padding: 10px 8px; color: var(--text-muted);">数量</th>
-                    <th style="text-align: right; padding: 10px 8px; color: var(--text-muted);">成本</th>
-                    <th style="text-align: right; padding: 10px 8px; color: var(--text-muted);">现价</th>
-                    <th style="text-align: right; padding: 10px 8px; color: var(--text-muted);">市值</th>
-                    <th style="text-align: right; padding: 10px 8px; color: var(--text-muted);">盈亏</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${positions.map(pos => {
-                    const symbol = pos.symbol || pos.instrument_id || "--";
-                    const quantity = parseFloat(pos.quantity || pos.qty || 0);
-                    const avgCost = parseFloat(pos.avgCost || pos.avg_cost || 0);
-                    const lastPrice = parseFloat(pos.lastPrice || pos.last_price || 0);
-                    const marketValue = parseFloat(pos.marketValue || pos.market_value || 0);
-                    const unrealizedPnl = parseFloat(pos.unrealizedPnl || pos.unrealized_pnl || 0);
-                    const pnlClass = unrealizedPnl > 0 ? "color: #20bca6;" : unrealizedPnl < 0 ? "color: #ff6b6b;" : "";
-                    
-                    return `
-                      <tr style="border-bottom: 1px solid var(--border-subtle);">
-                        <td style="padding: 10px 8px; font-weight: 500;">${escapeHtml(symbol)}</td>
-                        <td style="padding: 10px 8px; text-align: right;">${formatNumber(quantity, 2)}</td>
-                        <td style="padding: 10px 8px; text-align: right;">¥ ${formatNumber(avgCost, 2)}</td>
-                        <td style="padding: 10px 8px; text-align: right;">¥ ${formatNumber(lastPrice, 2)}</td>
-                        <td style="padding: 10px 8px; text-align: right;">¥ ${formatNumber(marketValue, 2)}</td>
-                        <td style="padding: 10px 8px; text-align: right; ${pnlClass} font-weight: 500;">
-                          ${unrealizedPnl >= 0 ? '+' : ''}¥ ${formatNumber(unrealizedPnl, 2)}
-                        </td>
+              <div class="assets-section">
+                <div class="assets-section-header" style="display: flex; align-items: center; margin-bottom: 16px;">
+                  <h3 style="margin: 0; font-size: 15px; color: #10243c; font-weight: 600;">持仓明细</h3>
+                  <span class="assets-badge" style="background: linear-gradient(135deg, rgba(35, 184, 166, 0.18), rgba(24, 137, 183, 0.18)); color: #1197a7; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">${positions.length}</span>
+                </div>
+                <div class="assets-table-container" style="background: #f8fbfe; border: 1px solid #e8eff7; border-radius: 16px; overflow: hidden;">
+                  <table class="assets-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                      <tr style="background: #fff;">
+                        <th style="text-align: left; padding: 14px 16px; color: #5f7793; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e8eff7;">标的</th>
+                        <th style="text-align: right; padding: 14px 16px; color: #5f7793; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e8eff7;">数量</th>
+                        <th style="text-align: right; padding: 14px 16px; color: #5f7793; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e8eff7;">成本</th>
+                        <th style="text-align: right; padding: 14px 16px; color: #5f7793; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e8eff7;">现价</th>
+                        <th style="text-align: right; padding: 14px 16px; color: #5f7793; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e8eff7;">市值</th>
+                        <th style="text-align: right; padding: 14px 16px; color: #5f7793; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e8eff7;">盈亏</th>
                       </tr>
-                    `;
-                  }).join('')}
-                </tbody>
-              </table>
+                    </thead>
+                    <tbody>
+                      ${positions.map(pos => {
+                        const symbol = pos.symbol || pos.instrument_id || "--";
+                        const quantity = parseFloat(pos.quantity || pos.qty || 0);
+                        const avgCost = parseFloat(pos.avgCost || pos.avg_cost || 0);
+                        const lastPrice = parseFloat(pos.lastPrice || pos.last_price || 0);
+                        const marketValue = parseFloat(pos.marketValue || pos.market_value || 0);
+                        const unrealizedPnl = parseFloat(pos.unrealizedPnl || pos.unrealized_pnl || 0);
+                        const pnlClass = unrealizedPnl > 0 ? "color: #23b26f;" : unrealizedPnl < 0 ? "color: #df5a6a;" : "";
+                        const pnlBg = unrealizedPnl > 0 ? "background: rgba(35, 178, 111, 0.08);" : unrealizedPnl < 0 ? "background: rgba(223, 90, 106, 0.08);" : "";
+                        
+                        return `
+                          <tr class="assets-table-row" style="transition: background 0.15s ease;">
+                            <td style="padding: 14px 16px;">
+                              <div style="display: flex; align-items: center; gap: 10px;">
+                                <div class="assets-symbol-icon" style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #22c8ae, #1889b7); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; font-weight: 700;">
+                                  ${escapeHtml(symbol.charAt(0).toUpperCase())}
+                                </div>
+                                <div>
+                                  <div style="font-weight: 600; color: #10243c; font-size: 14px;">${escapeHtml(symbol)}</div>
+                                </div>
+                              </div>
+                            </td>
+                            <td style="padding: 14px 16px; text-align: right; font-weight: 500; color: #2d4867; font-size: 14px;">${formatNumber(quantity, 2)}</td>
+                            <td style="padding: 14px 16px; text-align: right; font-weight: 500; color: #2d4867; font-size: 14px;">¥ ${formatNumber(avgCost, 2)}</td>
+                            <td style="padding: 14px 16px; text-align: right; font-weight: 500; color: #2d4867; font-size: 14px;">¥ ${formatNumber(lastPrice, 2)}</td>
+                            <td style="padding: 14px 16px; text-align: right; font-weight: 500; color: #2d4867; font-size: 14px;">¥ ${formatNumber(marketValue, 2)}</td>
+                            <td style="padding: 14px 16px; text-align: right;">
+                              <span class="assets-pnl" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 8px; font-weight: 600; font-size: 14px; ${pnlClass} ${pnlBg}">
+                                ${unrealizedPnl >= 0 ? '+' : ''}¥ ${formatNumber(unrealizedPnl, 2)}
+                              </span>
+                            </td>
+                          </tr>
+                        `;
+                      }).join('')}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             `;
           }
         }
@@ -10063,10 +10206,13 @@
         const loading = modal.querySelector("#assets-loading");
         const content = modal.querySelector("#assets-content");
         const errorDiv = modal.querySelector("#assets-error");
+        const errorMsg = modal.querySelector("#assets-error-msg");
         loading.style.display = "none";
         content.style.display = "none";
-        errorDiv.style.display = "block";
-        errorDiv.innerHTML = `<div style="color: var(--text-muted);">暂时无法获取资产信息</div><div style="font-size: 12px; margin-top: 8px; color: var(--text-light);">${escapeHtml(error.message)}</div>`;
+        errorDiv.style.display = "flex";
+        if (errorMsg) {
+          errorMsg.textContent = error.message || '';
+        }
       }
     }
 
@@ -11082,9 +11228,9 @@
         if (action === "view-assets") {
           const account = (state.brokerAccounts || []).find((a) => String(a.id) === String(id));
           if (account) {
-            return openAssetsModal(account);
+            openAssetsModal(account).catch((error) => showToast(error.message, "danger"));
           } else {
-            return showToast("未找到账户信息", "warning");
+            showToast("未找到账户信息", "warning");
           }
         }
 
