@@ -5446,16 +5446,26 @@
               <article class="panel">
                 <div class="panel-head">
                   <div>
-                    <h3>知识库列表</h3>
-                    <p>维护向量库、Embedding 与文档规模</p>
+                    <h3>文档列表</h3>
+                    <p>文档解析状态、切片数量和同步记录</p>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:center;">
+                    <button class="btn btn-primary small" data-action="open-upload-document">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                      </svg>
+                      上传文档
+                    </button>
                   </div>
                 </div>
-                <div class="panel-body" id="knowledgeBasesTable"></div>
+                <div class="panel-body" id="knowledgeDocumentsTable"></div>
               </article>
             </div>
 
             <aside class="module-side-stack">
-              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-summary">
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-summary" open>
                 <summary>
                   <div class="agent-collab-card-copy">
                     <div class="agent-collab-card-kicker">KNOWLEDGE SUMMARY</div>
@@ -5471,6 +5481,7 @@
                 </div>
               </details>
 
+              <!-- 文档同步记录 -->
               <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-library">
                 <summary>
                   <div class="agent-collab-card-copy">
@@ -5485,22 +5496,25 @@
                 <div class="overview-side-card-body module-side-card-body" id="knowledgeDocumentsTable"></div>
               </details>
 
+              <!-- 知识库配置 -->
               <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-action">
                 <summary>
                   <div class="agent-collab-card-copy">
-                    <div class="agent-collab-card-kicker">MODULE ACTIONS</div>
+                    <div class="agent-collab-card-kicker">KNOWLEDGE CONFIG</div>
                     <div class="agent-collab-card-title-row">
-                      <h4>模块操作</h4>
-                      <span class="agent-collab-card-badge state-idle">ACTION</span>
+                      <h4>知识库配置</h4>
+                      <span class="agent-collab-card-badge state-idle">MANAGE</span>
                     </div>
-                    <p class="agent-collab-card-peek">新增知识库、新增文档和刷新统一收在右侧，不打断主列表浏览。</p>
+                    <p class="agent-collab-card-peek">新建、编辑和删除知识库，配置向量库参数。</p>
                   </div>
                 </summary>
                 <div class="overview-side-card-body module-side-card-body">
                   <div class="module-action-stack">
-                    <button class="btn btn-primary small" data-action="open-add-knowledge">新增知识库</button>
-                    <button class="btn btn-secondary small" data-action="open-add-knowledge-document">新增文档</button>
-                    <button class="btn btn-secondary small" data-action="reload-knowledge">刷新</button>
+                    <button class="btn btn-primary small" data-action="open-add-knowledge" style="width:100%;justify-content:center;">新建知识库</button>
+                  </div>
+                  <div class="module-side-card">
+                    <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">已创建的知识库：</div>
+                    <div id="knowledgeQuickActions"></div>
                   </div>
                 </div>
               </details>
@@ -5748,6 +5762,16 @@
                   <div>
                     <h3>Skills</h3>
                     <p>技能名称、描述、状态与绑定的工具</p>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:center;">
+                    <button class="btn btn-primary small" data-action="open-upload-skill">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                      </svg>
+                      上传技能
+                    </button>
                   </div>
                 </div>
                 <div class="panel-body" id="skillsTable"></div>
@@ -7761,31 +7785,32 @@
         `<div class="meta-card"><div class="meta-label">Embedding 模型</div><div class="meta-value" style="font-size: 14px;">${escapeHtml(pick(stats, "embedding_model", "embeddingModel") || "--")}</div></div>`
       ].join("");
 
-      renderTable("knowledgeBasesTable", [
-        {
-          label: "名称",
-          render: (row) => `<span class="value-strong">${escapeHtml(pick(row, "name") || "--")}</span><br><span class="item-meta">${escapeHtml(pick(row, "description") || "--")}</span>`
-        },
-        { label: "向量库", render: (row) => escapeHtml(pick(row, "vector_store", "vectorStore") || "--") },
-        { label: "Embedding", render: (row) => escapeHtml(pick(row, "embedding_model", "embeddingModel") || "--") },
-        { label: "文档数", render: (row) => formatNumber(pick(row, "document_count", "documentCount") || 0) },
-        { label: "切片数", render: (row) => formatNumber(pick(row, "slice_count", "sliceCount") || 0) },
-        {
-          label: "状态",
-          render: (row) => {
-            const rawStatus = String(pick(row, "status") || "--");
-            return `<span class="badge ${toneClass(normalizeToneFromStatus(rawStatus))}">${escapeHtml(rawStatus.toUpperCase())}</span>`;
-          }
-        },
-        { label: "最近同步", render: (row) => escapeHtml(formatDateTime(pick(row, "last_sync_at", "lastSyncAt"))) },
-        {
-          label: "操作",
-          render: (row) => `
-            <button class="mini-btn" data-action="edit-knowledge" data-id="${escapeHtml(pick(row, "id"))}">编辑</button>
-            <button class="mini-btn danger" data-action="delete-knowledge" data-id="${escapeHtml(pick(row, "id"))}">删除</button>
-          `
+      // 知识库快速操作（编辑/删除）
+      const quickActions = $("knowledgeQuickActions");
+      if (quickActions) {
+        const bases = state.knowledgeBases || [];
+        if (!bases.length) {
+          quickActions.innerHTML = `<div class="empty" style="padding:8px 0;">暂无知识库。</div>`;
+        } else {
+          quickActions.innerHTML = bases.map((row) => {
+            const id = pick(row, "id");
+            const name = pick(row, "name") || "--";
+            const store = pick(row, "vector_store", "vectorStore") || "--";
+            return `
+              <div class="side-card-item" style="display:flex;align-items:center;padding:8px;border-bottom:1px solid var(--border-color);">
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(name)}</div>
+                  <div style="font-size:11px;color:var(--text-muted);">${escapeHtml(store)}</div>
+                </div>
+                <div style="display:flex;gap:4px;margin-left:8px;">
+                  <button class="mini-btn" data-action="edit-knowledge" data-id="${escapeHtml(id)}">编辑</button>
+                  <button class="mini-btn danger" data-action="delete-knowledge" data-id="${escapeHtml(id)}">删除</button>
+                </div>
+              </div>
+            `;
+          }).join("");
         }
-      ], state.knowledgeBases, "暂无知识库数据。");
+      }
 
       renderTable("knowledgeDocumentsTable", [
         { label: "文件名", render: (row) => `<span class="value-strong">${escapeHtml(pick(row, "file_name", "fileName") || "--")}</span>` },
@@ -7800,7 +7825,15 @@
         { label: "Chunk", render: (row) => formatNumber(pick(row, "chunk_count", "chunkCount") || 0) },
         { label: "Page", render: (row) => formatNumber(pick(row, "page_count", "pageCount") || 0) },
         { label: "备注", render: (row) => escapeHtml(pick(row, "sync_note", "syncNote") || "--") },
-        { label: "最近同步", render: (row) => escapeHtml(formatDateTime(pick(row, "last_sync_at", "lastSyncAt"))) }
+        { label: "最近同步", render: (row) => escapeHtml(formatDateTime(pick(row, "last_sync_at", "lastSyncAt"))) },
+        {
+          label: "操作",
+          render: (row) => `
+            <button class="mini-btn" data-action="view-document" data-id="${escapeHtml(pick(row, "id"))}">查看</button>
+            <button class="mini-btn" data-action="edit-document" data-id="${escapeHtml(pick(row, "id"))}">编辑</button>
+            <button class="mini-btn danger" data-action="delete-document" data-id="${escapeHtml(pick(row, "id"))}">删除</button>
+          `
+        }
       ], state.knowledgeDocuments, "暂无文档记录。");
     }
 
@@ -9875,6 +9908,28 @@
           </div>
         `;
       }
+      if (field.type === "file") {
+        const acceptAttr = field.accept ? `accept="${escapeHtml(field.accept)}"` : "";
+        const multipleAttr = field.multiple ? "multiple" : "";
+        return `
+          <div class="${fullClass}">
+            <label for="modal-${escapeHtml(field.name)}">${escapeHtml(field.label)}</label>
+            <div class="file-upload-wrapper" style="position: relative;">
+              <input id="modal-${escapeHtml(field.name)}" type="file" name="${escapeHtml(field.name)}" ${required} ${acceptAttr} ${multipleAttr} style="display: none;">
+              <button class="btn btn-secondary small" onclick="document.getElementById('modal-${escapeHtml(field.name)}').click(); return false;" style="margin-right: 8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                选择文件
+              </button>
+              <span id="modal-${escapeHtml(field.name)}-filename" class="file-name" style="color: var(--text-muted); font-size: 13px;">未选择文件</span>
+            </div>
+            ${field.hint ? `<div class="field-hint" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">${escapeHtml(field.hint)}</div>` : ""}
+          </div>
+        `;
+      }
       const inputType = field.type === "number" ? "number" : field.type === "password" ? "password" : "text";
       const minAttr = field.min !== undefined ? `min="${field.min}"` : "";
       const stepAttr = field.step !== undefined ? `step="${field.step}"` : "";
@@ -9942,6 +9997,10 @@
         const formData = new FormData($("formModalForm"));
         const payload = {};
         config.fields.forEach((field) => {
+          // 跳过file类型字段，文件上传在onSubmit中单独处理
+          if (field.type === "file") {
+            return;
+          }
           let value = formData.get(field.name);
           if (field.cast === "int" && field.type !== "number") {
             value = value === null || value === "" ? null : Number.parseInt(String(value), 10);
@@ -10368,9 +10427,45 @@
 
     function openKnowledgeModal(record = null) {
       const isEdit = Boolean(record);
+
+      // 解析现有 vector_config
+      const rawVectorConfig = pick(record, "vector_config", "vectorConfig") || "{}";
+      let vectorConfig = {};
+      try {
+        if (typeof rawVectorConfig === "string") {
+          vectorConfig = JSON.parse(rawVectorConfig);
+        } else if (rawVectorConfig && typeof rawVectorConfig === "object") {
+          vectorConfig = rawVectorConfig;
+        }
+      } catch (e) {
+        vectorConfig = {};
+      }
+
+      const currentVectorStore = pick(record, "vector_store", "vectorStore") || "Milvus";
+
+      // 向量库可选列表
+      const vectorStoreOptions = [
+        { label: "Milvus", value: "Milvus" },
+        { label: "Weaviate", value: "Weaviate" },
+        { label: "Elasticsearch", value: "Elasticsearch" },
+        { label: "Pgvector (PostgreSQL)", value: "Pgvector" },
+        { label: "Chroma", value: "Chroma" },
+        { label: "Qdrant", value: "Qdrant" },
+        { label: "内置文件存储", value: "Local" }
+      ];
+
+      // Embedding 模型可选列表
+      const embeddingOptions = [
+        { label: "bge-m3（多语言，建议）", value: "bge-m3" },
+        { label: "bge-large-zh-v1.5（中文大模型）", value: "bge-large-zh-v1.5" },
+        { label: "text-embedding-3-small（OpenAI）", value: "text-embedding-3-small" },
+        { label: "text-embedding-3-large（OpenAI）", value: "text-embedding-3-large" },
+        { label: "text-embedding-ada-002（OpenAI）", value: "text-embedding-ada-002" }
+      ];
+
       openFormModal({
         title: isEdit ? "编辑知识库" : "新增知识库",
-        desc: "维护知识库描述、向量库与切片规模。",
+        desc: "维护知识库描述、向量库与切片规模，支持上传文档文件。",
         submitText: isEdit ? "保存修改" : "新增知识库",
         successText: isEdit ? "知识库已更新" : "知识库已创建",
         fields: [
@@ -10381,37 +10476,427 @@
             { label: "draft", value: "draft" }
           ] },
           { name: "description", label: "描述", type: "textarea", full: true, optional: true, value: pick(record, "description") || "" },
-          { name: "vectorStore", label: "向量库", type: "text", optional: true, value: pick(record, "vector_store", "vectorStore") || "Milvus" },
-          { name: "embeddingModel", label: "Embedding 模型", type: "text", optional: true, value: pick(record, "embedding_model", "embeddingModel") || "bge-m3" },
+          { name: "documentFile", label: "上传文档", type: "file", full: true, optional: true, accept: ".pdf,.md,.txt,.doc,.docx,.xlsx,.xls,.ppt,.pptx", multiple: true, hint: "支持 PDF、Markdown、Word、Excel、PPT 等格式，可多选" },
+          { name: "vectorStore", label: "向量库类型", type: "select", required: true, value: currentVectorStore, options: vectorStoreOptions },
+          { name: "embeddingModel", label: "Embedding 模型", type: "select", required: true, value: pick(record, "embedding_model", "embeddingModel") || "bge-m3", options: embeddingOptions },
+
+          // --- 向量库连接参数 ---
+          { name: "vectorHost", label: "Host / 地址", type: "text", full: true, optional: true, placeholder: "例如 localhost 或 192.168.1.100", value: vectorConfig.host || "" },
+          { name: "vectorPort", label: "Port / 端口", type: "number", cast: "int", optional: true, placeholder: "例如 19530", value: vectorConfig.port ?? "" },
+          { name: "vectorCollection", label: "Collection / 索引名", type: "text", full: true, optional: true, placeholder: "例如 knowledge_document_chunks", value: vectorConfig.collection || "knowledge_document_chunks" },
+          { name: "vectorApiKey", label: "API Key（如有）", type: "password", full: true, optional: true, placeholder: "API Key，本地部署可留空", value: vectorConfig.api_key || "" },
+          { name: "embeddingDim", label: "向量维度", type: "number", cast: "int", optional: true, placeholder: "bge-m3 默认 1024", value: vectorConfig.dim ?? 1024, min: 0 },
+
           { name: "documentCount", label: "文档数", type: "number", cast: "int", optional: true, value: pick(record, "document_count", "documentCount") || 0, min: 0 },
           { name: "sliceCount", label: "切片数", type: "number", cast: "int", optional: true, value: pick(record, "slice_count", "sliceCount") || 0, min: 0 }
         ],
         onSubmit: async (payload) => {
+          // 组装 vector_config
+          const vectorConfigPayload = {};
+          const host = payload.vectorHost;
+          const port = payload.vectorPort;
+          const collection = payload.vectorCollection;
+          const apiKey = payload.vectorApiKey;
+          const dim = payload.embeddingDim;
+          if (host !== null && host !== undefined && String(host).trim() !== "") vectorConfigPayload.host = String(host).trim();
+          if (port !== null && port !== undefined && String(port) !== "") vectorConfigPayload.port = Number(port);
+          if (collection !== null && collection !== undefined && String(collection).trim() !== "") vectorConfigPayload.collection = String(collection).trim();
+          if (apiKey !== null && apiKey !== undefined && String(apiKey).trim() !== "") vectorConfigPayload.api_key = String(apiKey).trim();
+          if (dim !== null && dim !== undefined && String(dim) !== "") vectorConfigPayload.dim = Number(dim);
+
+          // 组装提交给后端的 payload
+          const submitPayload = {
+            name: payload.name,
+            description: payload.description || "",
+            vectorStore: payload.vectorStore || "Milvus",
+            embeddingModel: payload.embeddingModel || "bge-m3",
+            status: payload.status || "draft",
+            documentCount: Number(payload.documentCount) || 0,
+            sliceCount: Number(payload.sliceCount) || 0,
+            vectorConfig: vectorConfigPayload
+          };
+
+          // 处理文件上传
+          const fileInput = document.getElementById("modal-documentFile");
+          if (fileInput && fileInput.files && fileInput.files.length > 0) {
+            const formData = new FormData();
+            for (let i = 0; i < fileInput.files.length; i++) {
+              formData.append("files", fileInput.files[i]);
+            }
+
+            // 编辑模式下传递知识库ID，新增模式下传递名称
+            if (isEdit) {
+              formData.append("knowledge_base_id", pick(record, "id"));
+            } else {
+              formData.append("knowledge_base_name", submitPayload.name);
+              formData.append("knowledge_base_description", submitPayload.description || "");
+            }
+
+            try {
+              showToast("正在上传文档...", "info");
+              const uploadResponse = await fetch("/api/admin/knowledge/documents/upload", {
+                method: "POST",
+                body: formData
+              });
+
+              if (!uploadResponse.ok) {
+                const errorData = await uploadResponse.json();
+                throw new Error(errorData.msg || "文档上传失败");
+              }
+
+              const uploadResult = await uploadResponse.json();
+              showToast(`文档上传成功，共 ${uploadResult.data?.success_count || 0} 个文件`, "success");
+            } catch (uploadError) {
+              showToast(`文档上传失败: ${uploadError.message}`, "warning");
+            }
+          }
+
           if (isEdit) {
-            await apiRequest(`/admin/knowledge/bases/${pick(record, "id")}`, { method: "PUT", body: payload });
+            await apiRequest(`/admin/knowledge/bases/${pick(record, "id")}`, { method: "PUT", body: submitPayload });
           } else {
-            await apiRequest("/admin/knowledge/bases", { method: "POST", body: payload });
+            await apiRequest("/admin/knowledge/bases", { method: "POST", body: submitPayload });
           }
           await loadKnowledgeData(true);
           await loadOverviewData(true);
         }
       });
+
+      // 添加文件选择后的显示逻辑
+      setTimeout(() => {
+        const fileInput = document.getElementById("modal-documentFile");
+        if (fileInput) {
+          fileInput.addEventListener("change", function(e) {
+            const fileNameSpan = document.getElementById("modal-documentFile-filename");
+            if (fileNameSpan && e.target.files && e.target.files.length > 0) {
+              const fileNames = Array.from(e.target.files).map(f => f.name).join(", ");
+              fileNameSpan.textContent = fileNames.length > 50 ? fileNames.substring(0, 50) + "..." : fileNames;
+              fileNameSpan.style.color = "var(--text-primary)";
+            }
+          });
+        }
+      }, 100);
     }
 
-    function openKnowledgeDocumentModal() {
+    function openDocumentViewer(documentId) {
+      // 创建模态 DOM
+      const existing = document.getElementById("documentViewerModal");
+      if (existing) existing.remove();
+
+      const overlay = document.createElement("div");
+      overlay.id = "documentViewerModal";
+      overlay.className = "modal-overlay show";
+      overlay.innerHTML = `
+        <div class="modal panel" style="max-width:880px;width:90%;">
+          <div class="modal-head">
+            <h3 id="dv-title">文档内容</h3>
+          </div>
+          <div class="modal-body" id="dv-body" style="max-height:70vh;overflow-y:auto;">
+            <div style="padding:12px 0;color:var(--text-muted);font-size:13px;">正在读取文档内容...</div>
+          </div>
+          <div class="modal-foot" style="justify-content:flex-end;">
+            <button class="btn btn-secondary small" id="dv-close">关闭</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      document.body.classList.add("modal-open");
+
+      const close = () => {
+        const el = document.getElementById("documentViewerModal");
+        if (el) el.remove();
+        document.body.classList.remove("modal-open");
+      };
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) close();
+      });
+      document.getElementById("dv-close").onclick = close;
+
+      // 异步加载
+      (async () => {
+        try {
+          const data = await apiRequest(`/admin/knowledge/documents/${documentId}/content`, { method: "GET" });
+          const body = document.getElementById("dv-body");
+          const title = document.getElementById("dv-title");
+          if (!body || !data) return;
+          const content = pick(data, "content") || "";
+          const truncated = pick(data, "content_truncated");
+          const fileName = pick(data, "file_name") || "";
+          const format = pick(data, "file_format") || "";
+          const fileSize = pick(data, "file_size") || 0;
+          const isText = pick(data, "is_text");
+          const parseStatus = pick(data, "parse_status") || "";
+
+          const safeContent = typeof content === "string" ? content : String(content || "");
+          const sizeKB = fileSize ? (Number(fileSize) / 1024).toFixed(1) + " KB" : "—";
+          if (title) title.textContent = fileName || "文档内容";
+
+          body.innerHTML = `
+            <div style="margin-bottom:16px;">
+              <div class="item-row" style="display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--text-muted);">
+                <span>格式: <span class="badge" style="padding:1px 8px;">${escapeHtml(format)}</span></span>
+                <span>大小: ${escapeHtml(sizeKB)}</span>
+                <span>解析状态: <span class="badge" style="padding:1px 8px;">${escapeHtml(parseStatus || "—")}</span></span>
+                <span>文本格式: ${isText ? "是" : "否（二进制/非文本）"}</span>
+              </div>
+            </div>
+            <div style="border:1px solid var(--border-color);border-radius:8px;padding:16px;background:var(--panel-bg);">
+              <pre style="white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12.5px;line-height:1.6;margin:0;color:var(--text-primary);">${escapeHtml(safeContent)}</pre>
+            </div>
+            ${truncated ? `<div style="margin-top:12px;color:var(--text-muted);font-size:12px;text-align:center;">内容过长，仅展示前 1MB，完整内容请从原文件查看。</div>` : ""}
+          `;
+        } catch (error) {
+          const body = document.getElementById("dv-body");
+          if (body) {
+            body.innerHTML = `<div style="color:var(--error);font-size:13px;padding:12px 0;">读取失败: ${escapeHtml(error.message || String(error))}</div>`;
+          }
+        }
+      })();
+    }
+
+    function openUploadDocumentModal() {
+      const existing = document.getElementById("uploadDocumentModal");
+      if (existing) existing.remove();
+
+      const bases = state.knowledgeBases || [];
+      if (!bases.length) {
+        showToast("请先创建知识库，再上传文档", "warning");
+        return;
+      }
+
+      const baseOptions = bases.map((b) => `<option value="${escapeHtml(pick(b, "id"))}">${escapeHtml(pick(b, "name") || "--")}</option>`).join("");
+
+      const overlay = document.createElement("div");
+      overlay.id = "uploadDocumentModal";
+      overlay.className = "modal-overlay show";
+      overlay.innerHTML = `
+        <div class="modal panel" style="max-width:640px;width:90%;">
+          <div class="modal-head">
+            <h3>上传文档</h3>
+          </div>
+          <div class="modal-body" style="max-height:70vh;overflow-y:auto;">
+            <div class="field">
+              <label for="up-doc-base">选择知识库（向量库）</label>
+              <select id="up-doc-base" name="knowledge_base_id" required>
+                ${baseOptions}
+              </select>
+            </div>
+            <div class="field" style="margin-top:12px;">
+              <label for="up-doc-files">选择文档文件</label>
+              <div style="display:flex;align-items:center;gap:12px;">
+                <input id="up-doc-files" type="file" name="files" multiple accept=".pdf,.md,.txt,.doc,.docx,.xlsx,.xls,.ppt,.pptx,.csv,.json,.log,.html,.xml" style="flex:1;">
+              </div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">支持 PDF、Markdown、Word、Excel、PPT、TXT、CSV、JSON 等格式，可多选</div>
+              <div id="up-doc-files-selected" style="font-size:12px;color:var(--text-primary);margin-top:8px;"></div>
+            </div>
+          </div>
+          <div class="modal-foot">
+            <button class="btn btn-secondary small" id="up-doc-cancel">取消</button>
+            <button class="btn btn-primary small" id="up-doc-submit">上传并保存</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      document.body.classList.add("modal-open");
+
+      const close = () => {
+        const el = document.getElementById("uploadDocumentModal");
+        if (el) el.remove();
+        document.body.classList.remove("modal-open");
+      };
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) close();
+      });
+      document.getElementById("up-doc-cancel").onclick = close;
+
+      // 显示已选文件名
+      document.getElementById("up-doc-files").addEventListener("change", (e) => {
+        const files = e.target.files;
+        const displayEl = document.getElementById("up-doc-files-selected");
+        if (files && files.length > 0) {
+          const names = Array.from(files).map(f => f.name).join(", ");
+          displayEl.textContent = `已选择 ${files.length} 个文件：${names.length > 60 ? names.substring(0, 60) + "..." : names}`;
+        } else {
+          displayEl.textContent = "";
+        }
+      });
+
+      document.getElementById("up-doc-submit").onclick = async () => {
+        const selectEl = document.getElementById("up-doc-base");
+        const fileInput = document.getElementById("up-doc-files");
+        const knowledgeBaseId = selectEl.value;
+        const files = fileInput.files;
+
+        if (!knowledgeBaseId) {
+          showToast("请选择知识库", "warning");
+          return;
+        }
+        if (!files || files.length === 0) {
+          showToast("请选择至少一个文件", "warning");
+          return;
+        }
+
+        const formData = new FormData();
+        for (let i = 0; i < files.length; i++) {
+          formData.append("files", files[i]);
+        }
+        formData.append("knowledge_base_id", knowledgeBaseId);
+
+        const submitBtn = document.getElementById("up-doc-submit");
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "上传中...";
+        }
+        showToast(`正在上传 ${files.length} 个文档...`, "info");
+
+        try {
+          const token = String(getToken() || "").trim();
+          const uploadResponse = await fetch(`${API_BASE}/admin/knowledge/documents/upload`, {
+            method: "POST",
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+            body: formData
+          });
+
+          if (!uploadResponse.ok) {
+            const errorData = await uploadResponse.json();
+            throw new Error(errorData.msg || "文档上传失败");
+          }
+
+          const uploadResult = await uploadResponse.json();
+          showToast(`上传成功，共 ${pick(uploadResult, "data.success_count") || 0} 个文件`, "success");
+          close();
+          await loadKnowledgeData(true);
+          await loadOverviewData(true);
+        } catch (uploadError) {
+          showToast(`上传失败: ${uploadError.message}`, "warning");
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "上传并保存";
+          }
+        }
+      };
+    }
+
+    function openUploadSkillModal() {
+      const existing = document.getElementById("uploadSkillModal");
+      if (existing) existing.remove();
+
+      const overlay = document.createElement("div");
+      overlay.id = "uploadSkillModal";
+      overlay.className = "modal-overlay show";
+      overlay.innerHTML = `
+        <div class="modal panel" style="max-width:640px;width:90%;">
+          <div class="modal-head">
+            <h3>上传技能包</h3>
+          </div>
+          <div class="modal-body" style="max-height:70vh;overflow-y:auto;">
+            <div class="field">
+              <label for="up-skill-zip">选择技能压缩包 (.zip)</label>
+              <input id="up-skill-zip" type="file" name="skillPackage" accept=".zip">
+              <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">
+                上传包含完整技能的压缩包（必须包含 config.json，可选 prompt.md、script.py）
+              </div>
+              <div id="up-skill-zip-selected" style="font-size:12px;color:var(--text-primary);margin-top:8px;"></div>
+            </div>
+          </div>
+          <div class="modal-foot">
+            <button class="btn btn-secondary small" id="up-skill-cancel">取消</button>
+            <button class="btn btn-primary small" id="up-skill-submit">上传并保存</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      document.body.classList.add("modal-open");
+
+      const close = () => {
+        const el = document.getElementById("uploadSkillModal");
+        if (el) el.remove();
+        document.body.classList.remove("modal-open");
+      };
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) close();
+      });
+      document.getElementById("up-skill-cancel").onclick = close;
+
+      // 显示已选文件名
+      document.getElementById("up-skill-zip").addEventListener("change", (e) => {
+        const files = e.target.files;
+        const displayEl = document.getElementById("up-skill-zip-selected");
+        if (files && files.length > 0) {
+          displayEl.textContent = `已选择: ${files[0].name} (${(files[0].size / 1024).toFixed(1)} KB)`;
+        } else {
+          displayEl.textContent = "";
+        }
+      });
+
+      document.getElementById("up-skill-submit").onclick = async () => {
+        const zipFile = document.getElementById("up-skill-zip").files;
+
+        if (!zipFile || zipFile.length === 0) {
+          showToast("请选择技能压缩包", "warning");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("skillPackage", zipFile[0]);
+
+        const submitBtn = document.getElementById("up-skill-submit");
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "上传中...";
+        }
+        showToast("正在解析并创建技能...", "info");
+
+        try {
+          const token = String(getToken() || "").trim();
+          const uploadResponse = await fetch(`${API_BASE}/admin/skills/upload`, {
+            method: "POST",
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+            body: formData
+          });
+
+          if (!uploadResponse.ok) {
+            const errorData = await uploadResponse.json();
+            throw new Error(errorData.msg || "技能上传失败");
+          }
+
+          const result = await uploadResponse.json();
+          showToast(`技能创建成功: ${result.data?.name || "未知"}`, "success");
+          close();
+          await loadSkillData(true);
+          await loadOverviewData(true);
+        } catch (uploadError) {
+          showToast(`创建失败: ${uploadError.message}`, "warning");
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "上传并保存";
+          }
+        }
+      };
+    }
+
+    function openKnowledgeDocumentModal(record = null) {
+      const isEdit = Boolean(record);
+
       if (!state.knowledgeBases.length) {
         showToast("请先创建知识库，再新增文档", "warning");
         return;
       }
+
       const baseOptions = state.knowledgeBases.map((row) => ({
         label: `${pick(row, "name") || "--"} (#${pick(row, "id")})`,
         value: String(pick(row, "id"))
       }));
+
+      // 编辑模式下尝试回填当前知识库ID
+      const defaultBaseId = isEdit
+        ? String(pick(record, "knowledge_base_id", "knowledgeBaseId") || baseOptions[0].value)
+        : baseOptions[0].value;
+
       openFormModal({
-        title: "新增文档同步记录",
-        desc: "新增 PDF/Markdown 等文档元数据，并提交解析状态。",
-        submitText: "新增文档",
-        successText: "文档记录已创建",
+        title: isEdit ? "编辑文档" : "新增文档同步记录",
+        desc: isEdit ? "修改文档元数据、解析状态与切片信息。" : "新增 PDF/Markdown 等文档元数据，并提交解析状态。",
+        submitText: isEdit ? "保存修改" : "新增文档",
+        successText: isEdit ? "文档已更新" : "文档记录已创建",
         fields: [
           {
             name: "knowledge_base_id",
@@ -10419,7 +10904,7 @@
             type: "select",
             cast: "int",
             required: true,
-            value: baseOptions[0].value,
+            value: defaultBaseId,
             options: baseOptions
           },
           {
@@ -10427,13 +10912,14 @@
             label: "文档文件名",
             type: "text",
             required: true,
+            value: pick(record, "file_name", "fileName") || "",
             placeholder: "例如：2026Q2-策略复盘.pdf"
           },
           {
             name: "parse_status",
             label: "解析状态",
             type: "select",
-            value: "queued",
+            value: pick(record, "parse_status", "parseStatus") || "queued",
             options: [
               { label: "queued", value: "queued" },
               { label: "pending", value: "pending" },
@@ -10447,7 +10933,7 @@
             type: "number",
             cast: "int",
             optional: true,
-            value: 0,
+            value: pick(record, "page_count", "pageCount") || 0,
             min: 0
           },
           {
@@ -10456,27 +10942,8 @@
             type: "number",
             cast: "int",
             optional: true,
-            value: 0,
+            value: pick(record, "chunk_count", "chunkCount") || 0,
             min: 0
-          },
-          {
-            name: "trigger_parse",
-            label: "提交解析任务",
-            type: "select",
-            cast: "boolean",
-            value: "true",
-            options: [
-              { label: "是", value: "true" },
-              { label: "否", value: "false" }
-            ]
-          },
-          {
-            name: "source_path",
-            label: "本地文件路径",
-            type: "text",
-            optional: true,
-            full: true,
-            placeholder: "/data/docs/2026Q2-策略复盘.pdf"
           },
           {
             name: "sync_note",
@@ -10484,14 +10951,22 @@
             type: "textarea",
             optional: true,
             full: true,
+            value: pick(record, "sync_note", "syncNote") || "",
             placeholder: "例如：待解析后写入 Milvus"
           }
         ],
         onSubmit: async (payload) => {
-          await apiRequest("/admin/knowledge/documents", {
-            method: "POST",
-            body: payload
-          });
+          if (isEdit) {
+            await apiRequest(`/admin/knowledge/documents/${pick(record, "id")}`, {
+              method: "PUT",
+              body: payload
+            });
+          } else {
+            await apiRequest("/admin/knowledge/documents", {
+              method: "POST",
+              body: payload
+            });
+          }
           await loadKnowledgeData(true);
           await loadOverviewData(true);
         }
@@ -11250,10 +11725,14 @@
         if (action === "open-run-history-item") return loadRunHistoryDetail(actionTarget.dataset.runId, false).catch((error) => showToast(error.message, "danger"));
 
         if (action === "open-add-knowledge") return openKnowledgeModal();
+        if (action === "open-upload-document") return openUploadDocumentModal();
         if (action === "open-add-knowledge-document") return openKnowledgeDocumentModal();
         if (action === "reload-knowledge") return loadKnowledgeData(false);
         if (action === "edit-knowledge") return openKnowledgeModal(findById(state.knowledgeBases, id));
         if (action === "delete-knowledge") return deleteWithConfirm("确认删除该知识库？", `/admin/knowledge/bases/${id}`, loadKnowledgeData).catch((error) => showToast(error.message, "danger"));
+        if (action === "view-document") return openDocumentViewer(id);
+        if (action === "edit-document") return openKnowledgeDocumentModal(findById(state.knowledgeDocuments, id));
+        if (action === "delete-document") return deleteWithConfirm("确认删除该文档？", `/admin/knowledge/documents/${id}`, loadKnowledgeData).catch((error) => showToast(error.message, "danger"));
 
         if (action === "open-add-conversation") return openConversationModal();
         if (action === "reload-conversation") return loadConversationData(false);
@@ -11272,6 +11751,7 @@
         if (action === "edit-skill") return openSkillModal(findById(state.skills, id));
         if (action === "delete-skill") return deleteWithConfirm("确认删除该 Skill？", `/admin/skills/${id}`, loadSkillData).catch((error) => showToast(error.message, "danger"));
         if (action === "open-add-skill") return openSkillModal();
+        if (action === "open-upload-skill") return openUploadSkillModal();
         if (action === "edit-notification") return openNotificationChannelModal(findById(state.notificationChannels, id));
         if (action === "delete-notification") return deleteWithConfirm("确认删除该通知渠道？", `/admin/notification-channels/${id}`, loadNotificationChannelData).catch((error) => showToast(error.message, "danger"));
         if (action === "open-add-notification") return openNotificationChannelModal();

@@ -55,7 +55,8 @@ public class AdminModuleRepository {
     public List<Map<String, Object>> listKnowledgeBases() {
         return jdbcTemplate.queryForList("""
                 SELECT id, name, description, vector_store, embedding_model, status,
-                       document_count, slice_count, last_sync_at
+                       document_count, slice_count, last_sync_at,
+                       COALESCE(vector_config, '{}'::jsonb)::text AS vector_config
                 FROM knowledge_base
                 ORDER BY updated_at DESC, id DESC
                 """);
@@ -64,11 +65,11 @@ public class AdminModuleRepository {
     public List<Map<String, Object>> listKnowledgeDocuments() {
         return jdbcTemplate.queryForList("""
                 SELECT kd.id, kb.name AS knowledge_base_name, kd.file_name, kd.parse_status,
-                       kd.chunk_count, kd.page_count, kd.sync_note, kd.last_sync_at
+                       kd.chunk_count, kd.page_count, kd.sync_note, kd.source_path, kd.last_sync_at
                 FROM knowledge_document kd
                 JOIN knowledge_base kb ON kb.id = kd.knowledge_base_id
                 ORDER BY kd.last_sync_at DESC NULLS LAST, kd.id DESC
-                LIMIT 20
+                LIMIT 200
                 """);
     }
 
@@ -119,11 +120,12 @@ public class AdminModuleRepository {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         String finalParseStatus = parseStatus;
         String finalNote = note;
+        String finalSourcePath = sourcePath;
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement("""
                     INSERT INTO knowledge_document
-                    (knowledge_base_id, file_name, parse_status, chunk_count, page_count, sync_note, last_sync_at)
-                    VALUES (?, ?, ?, ?, ?, ?, NOW())
+                    (knowledge_base_id, file_name, parse_status, chunk_count, page_count, sync_note, source_path, last_sync_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
                     """, Statement.RETURN_GENERATED_KEYS);
             ps.setLong(1, knowledgeBaseId);
             ps.setString(2, fileName);
@@ -131,6 +133,7 @@ public class AdminModuleRepository {
             ps.setInt(4, chunkCount);
             ps.setInt(5, pageCount);
             ps.setString(6, finalNote);
+            ps.setString(7, finalSourcePath);
             return ps;
         }, keyHolder);
 
@@ -158,7 +161,7 @@ public class AdminModuleRepository {
     public Map<String, Object> getKnowledgeDocument(long id) {
         List<Map<String, Object>> rows = jdbcTemplate.queryForList("""
                 SELECT kd.id, kd.knowledge_base_id, kd.file_name, kd.parse_status, kd.chunk_count,
-                       kd.page_count, kd.sync_note, kd.last_sync_at, kb.name AS knowledge_base_name
+                       kd.page_count, kd.sync_note, kd.source_path, kd.last_sync_at, kb.name AS knowledge_base_name
                 FROM knowledge_document kd
                 JOIN knowledge_base kb ON kb.id = kd.knowledge_base_id
                 WHERE kd.id = ?
@@ -205,6 +208,83 @@ public class AdminModuleRepository {
                     WHERE id = ?
                     """, knowledgeBaseId);
         }
+    }
+
+    public Map<String, Object> updateKnowledgeDocument(long id, KnowledgeDocumentCreateRequest request) {
+        Map<String, Object> existing = getKnowledgeDocument(id);
+        if (existing == null) {
+            throw new BusinessException(404, "knowledge_document_not_found");
+        }
+
+        long oldKnowledgeBaseId = ((Number) existing.get("knowledge_base_id")).longValue();
+        long newKnowledgeBaseId = request.knowledgeBaseId() != null ? request.knowledgeBaseId() : oldKnowledgeBaseId;
+        int oldChunkCount = ((Number) existing.get("chunk_count")).intValue();
+
+        String newFileName = defaultString(request.fileName(), String.valueOf(existing.get("file_name")));
+        String newStatus = defaultString(request.parseStatus(), String.valueOf(existing.get("parse_status")));
+        Integer newChunkCount = request.chunkCount() != null ? request.chunkCount() : oldChunkCount;
+        Integer newPageCount = request.pageCount() != null ? request.pageCount() : ((Number) existing.get("page_count")).intValue();
+        String newNote = defaultString(request.syncNote(), String.valueOf(existing.get("sync_note")));
+
+        jdbcTemplate.update("""
+                UPDATE knowledge_document
+                SET knowledge_base_id = ?, file_name = ?, parse_status = ?, chunk_count = ?,
+                    page_count = ?, sync_note = ?, last_sync_at = NOW()
+                WHERE id = ?
+                """, newKnowledgeBaseId, newFileName, newStatus, newChunkCount, newPageCount, newNote, id);
+
+        // 如果知识库ID或chunk_count发生变化，更新对应知识库的统计
+        int diffChunk = newChunkCount - oldChunkCount;
+        if (newKnowledgeBaseId != oldKnowledgeBaseId) {
+            // 从旧知识库减去旧的chunk_count
+            jdbcTemplate.update("""
+                    UPDATE knowledge_base
+                    SET document_count = GREATEST(COALESCE(document_count, 0) - 1, 0),
+                        slice_count = GREATEST(COALESCE(slice_count, 0) - ?, 0),
+                        updated_at = NOW()
+                    WHERE id = ?
+                    """, oldChunkCount, oldKnowledgeBaseId);
+            // 在新知识库加上新的chunk_count
+            jdbcTemplate.update("""
+                    UPDATE knowledge_base
+                    SET document_count = COALESCE(document_count, 0) + 1,
+                        slice_count = COALESCE(slice_count, 0) + ?,
+                        updated_at = NOW()
+                    WHERE id = ?
+                    """, newChunkCount, newKnowledgeBaseId);
+        } else if (diffChunk != 0) {
+            jdbcTemplate.update("""
+                    UPDATE knowledge_base
+                    SET slice_count = GREATEST(COALESCE(slice_count, 0) + ?, 0),
+                        updated_at = NOW()
+                    WHERE id = ?
+                    """, diffChunk, newKnowledgeBaseId);
+        }
+
+        return getKnowledgeDocument(id);
+    }
+
+    @Transactional
+    public Map<String, Object> deleteKnowledgeDocument(long id) {
+        Map<String, Object> existing = getKnowledgeDocument(id);
+        if (existing == null) {
+            return null;
+        }
+        long knowledgeBaseId = ((Number) existing.get("knowledge_base_id")).longValue();
+        int oldChunkCount = ((Number) existing.get("chunk_count")).intValue();
+
+        jdbcTemplate.update("DELETE FROM knowledge_document WHERE id = ?", id);
+
+        // 更新知识库统计
+        jdbcTemplate.update("""
+                UPDATE knowledge_base
+                SET document_count = GREATEST(COALESCE(document_count, 0) - 1, 0),
+                    slice_count = GREATEST(COALESCE(slice_count, 0) - ?, 0),
+                    updated_at = NOW()
+                WHERE id = ?
+                """, oldChunkCount, knowledgeBaseId);
+
+        return existing;
     }
 
     public List<Map<String, Object>> listConversations() {
@@ -431,8 +511,8 @@ public class AdminModuleRepository {
 
     public void createKnowledgeBase(KnowledgeBaseUpsertRequest request) {
         jdbcTemplate.update("""
-                INSERT INTO knowledge_base (name, description, vector_store, embedding_model, status, document_count, slice_count, last_sync_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+                INSERT INTO knowledge_base (name, description, vector_store, embedding_model, status, document_count, slice_count, vector_config, last_sync_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?::jsonb, NOW(), NOW())
                 """,
                 request.name(),
                 defaultString(request.description()),
@@ -440,14 +520,15 @@ public class AdminModuleRepository {
                 defaultString(request.embeddingModel(), "bge-m3"),
                 defaultString(request.status(), "draft"),
                 defaultInt(request.documentCount()),
-                defaultInt(request.sliceCount()));
+                defaultInt(request.sliceCount()),
+                toJson(request.vectorConfig()));
     }
 
     public void updateKnowledgeBase(long id, KnowledgeBaseUpsertRequest request) {
         jdbcTemplate.update("""
                 UPDATE knowledge_base
                 SET name = ?, description = ?, vector_store = ?, embedding_model = ?, status = ?,
-                    document_count = ?, slice_count = ?, updated_at = NOW()
+                    document_count = ?, slice_count = ?, vector_config = ?::jsonb, updated_at = NOW()
                 WHERE id = ?
                 """,
                 request.name(),
@@ -457,6 +538,7 @@ public class AdminModuleRepository {
                 defaultString(request.status(), "draft"),
                 defaultInt(request.documentCount()),
                 defaultInt(request.sliceCount()),
+                toJson(request.vectorConfig()),
                 id);
     }
 

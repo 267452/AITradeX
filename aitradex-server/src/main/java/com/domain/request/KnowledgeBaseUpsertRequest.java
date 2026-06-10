@@ -1,5 +1,7 @@
 package com.domain.request;
 
+import java.util.Map;
+
 public record KnowledgeBaseUpsertRequest(
         String name,
         String description,
@@ -7,5 +9,6 @@ public record KnowledgeBaseUpsertRequest(
         String embeddingModel,
         String status,
         Integer documentCount,
-        Integer sliceCount) {
+        Integer sliceCount,
+        Map<String, Object> vectorConfig) {
 }
