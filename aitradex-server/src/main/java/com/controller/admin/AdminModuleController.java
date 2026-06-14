@@ -2,6 +2,7 @@ package com.controller.admin;
 
 import com.common.api.ApiResponse;
 import com.common.exception.BusinessException;
+import com.domain.request.AgentUpsertRequest;
 import com.domain.request.ConversationSessionUpsertRequest;
 import com.domain.request.KnowledgeBaseUpsertRequest;
 import com.domain.request.KnowledgeDocumentCreateRequest;
@@ -456,7 +457,6 @@ public class AdminModuleController {
     @PostMapping("/skills/upload")
     public ApiResponse<Map<String, Object>> uploadSkill(
             @RequestParam("skillPackage") MultipartFile zipFile) throws IOException {
-
         if (zipFile == null || zipFile.isEmpty()) {
             throw new BusinessException(400, "zip_file_empty");
         }
@@ -578,6 +578,55 @@ public class AdminModuleController {
     @DeleteMapping("/notification-channels/{id}")
     public ApiResponse<Void> deleteNotificationChannel(@PathVariable long id) {
         adminModuleRepository.deleteNotificationChannel(id);
+        return ApiResponse.success();
+    }
+
+    // ======== Agent Management ========
+
+    @GetMapping("/agents")
+    public ApiResponse<List<Map<String, Object>>> agents() {
+        return ApiResponse.success(adminModuleRepository.listAgents());
+    }
+
+    @GetMapping("/agents/{id}")
+    public ApiResponse<Map<String, Object>> agent(@PathVariable long id) {
+        Map<String, Object> agent = adminModuleRepository.getAgent(id);
+        if (agent == null) {
+            throw new BusinessException(404, "agent_not_found");
+        }
+        return ApiResponse.success(agent);
+    }
+
+    @GetMapping("/agents/{id}/detail")
+    public ApiResponse<Map<String, Object>> agentDetail(@PathVariable long id) {
+        Map<String, Object> detail = adminModuleRepository.getAgentDetail(id);
+        if (detail == null) {
+            throw new BusinessException(404, "agent_not_found");
+        }
+        return ApiResponse.success(detail);
+    }
+
+    @PostMapping("/agents")
+    public ApiResponse<Map<String, Object>> createAgent(@RequestBody AgentUpsertRequest request) {
+        if (request.name() == null || request.name().isBlank()) {
+            throw new BusinessException(400, "agent_name_required");
+        }
+        long id = adminModuleRepository.createAgent(request);
+        return ApiResponse.success(Map.of("id", id));
+    }
+
+    @PutMapping("/agents/{id}")
+    public ApiResponse<Void> updateAgent(@PathVariable long id, @RequestBody AgentUpsertRequest request) {
+        if (request.name() == null || request.name().isBlank()) {
+            throw new BusinessException(400, "agent_name_required");
+        }
+        adminModuleRepository.updateAgent(id, request);
+        return ApiResponse.success();
+    }
+
+    @DeleteMapping("/agents/{id}")
+    public ApiResponse<Void> deleteAgent(@PathVariable long id) {
+        adminModuleRepository.deleteAgent(id);
         return ApiResponse.success();
     }
 }

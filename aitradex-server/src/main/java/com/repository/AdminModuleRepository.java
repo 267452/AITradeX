@@ -1,6 +1,7 @@
 package com.repository;
 
 import com.common.exception.BusinessException;
+import com.domain.request.AgentUpsertRequest;
 import com.domain.request.ConversationSessionUpsertRequest;
 import com.domain.request.KnowledgeBaseUpsertRequest;
 import com.domain.request.KnowledgeDocumentCreateRequest;
@@ -921,6 +922,174 @@ public class AdminModuleRepository {
 
     public void deleteWorkflow(long id) {
         jdbcTemplate.update("DELETE FROM workflow_definition WHERE id = ?", id);
+    }
+
+    // ======== Agent Management ========
+
+    public List<Map<String, Object>> listAgents() {
+        return jdbcTemplate.queryForList("""
+                SELECT id, name, description, icon, status, model_name, system_prompt,
+                       temperature, max_tokens, tool_call_mode, run_count, last_run_at, created_at, updated_at
+                FROM agent_definition
+                ORDER BY updated_at DESC, id DESC
+                """);
+    }
+
+    public Map<String, Object> getAgent(long id) {
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList("""
+                SELECT id, name, description, icon, status, model_name, system_prompt,
+                       temperature, max_tokens, tool_call_mode, run_count, last_run_at
+                FROM agent_definition
+                WHERE id = ?
+                LIMIT 1
+                """, id);
+        return rows.isEmpty() ? null : rows.get(0);
+    }
+
+    public Map<String, Object> getAgentDetail(long id) {
+        Map<String, Object> agent = getAgent(id);
+        if (agent == null) {
+            return null;
+        }
+
+        List<Map<String, Object>> skillRows = jdbcTemplate.queryForList("""
+                SELECT sd.id, sd.name, sd.description, sd.icon, sd.category, sd.status
+                FROM agent_skill ags
+                JOIN skill_definition sd ON sd.id = ags.skill_id
+                WHERE ags.agent_id = ?
+                ORDER BY ags.sort_order, sd.id
+                """, id);
+
+        List<Map<String, Object>> mcpRows = jdbcTemplate.queryForList("""
+                SELECT mt.id, mt.name, mt.transport_type, mt.endpoint, mt.category, mt.status, mt.note
+                FROM agent_mcp_tool agm
+                JOIN mcp_tool mt ON mt.id = agm.mcp_tool_id
+                WHERE agm.agent_id = ?
+                ORDER BY agm.sort_order, mt.id
+                """, id);
+
+        List<Map<String, Object>> kbRows = jdbcTemplate.queryForList("""
+                SELECT kb.id, kb.name, kb.description, kb.vector_store, kb.embedding_model, kb.status,
+                       agkb.top_k, agkb.score_threshold
+                FROM agent_knowledge_base agkb
+                JOIN knowledge_base kb ON kb.id = agkb.knowledge_base_id
+                WHERE agkb.agent_id = ?
+                ORDER BY agkb.sort_order, kb.id
+                """, id);
+
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.putAll(agent);
+        result.put("skills", skillRows);
+        result.put("mcpTools", mcpRows);
+        result.put("knowledgeBases", kbRows);
+        return result;
+    }
+
+    @Transactional
+    public long createAgent(AgentUpsertRequest request) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement("""
+                    INSERT INTO agent_definition (name, description, icon, status, model_name, system_prompt,
+                                                  temperature, max_tokens, tool_call_mode)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, request.name());
+            ps.setString(2, defaultString(request.description()));
+            ps.setString(3, defaultString(request.icon(), "🤖"));
+            ps.setString(4, defaultString(request.status(), "enabled"));
+            ps.setString(5, defaultString(request.modelName()));
+            ps.setString(6, defaultString(request.systemPrompt()));
+            ps.setDouble(7, request.temperature() != null ? request.temperature() : 0.70);
+            ps.setInt(8, request.maxTokens() != null ? request.maxTokens() : 2048);
+            ps.setString(9, defaultString(request.toolCallMode(), "auto"));
+            return ps;
+        }, keyHolder);
+
+        long agentId = extractGeneratedId(keyHolder);
+        if (agentId <= 0) {
+            throw new BusinessException(500, "agent_create_failed_no_id");
+        }
+
+        saveAgentRelations(agentId, request);
+
+        return agentId;
+    }
+
+    @Transactional
+    public void updateAgent(long id, AgentUpsertRequest request) {
+        int updated = jdbcTemplate.update("""
+                UPDATE agent_definition
+                SET name = ?, description = ?, icon = ?, status = ?, model_name = ?,
+                    system_prompt = ?, temperature = ?, max_tokens = ?, tool_call_mode = ?, updated_at = NOW()
+                WHERE id = ?
+                """,
+                request.name(),
+                defaultString(request.description()),
+                defaultString(request.icon(), "🤖"),
+                defaultString(request.status(), "enabled"),
+                defaultString(request.modelName()),
+                defaultString(request.systemPrompt()),
+                request.temperature() != null ? request.temperature() : 0.70,
+                request.maxTokens() != null ? request.maxTokens() : 2048,
+                defaultString(request.toolCallMode(), "auto"),
+                id);
+        if (updated == 0) {
+            throw new BusinessException(404, "agent_not_found");
+        }
+        saveAgentRelations(id, request);
+    }
+
+    @Transactional
+    public void deleteAgent(long id) {
+        jdbcTemplate.update("DELETE FROM agent_definition WHERE id = ?", id);
+    }
+
+    private void saveAgentRelations(long agentId, AgentUpsertRequest request) {
+        jdbcTemplate.update("DELETE FROM agent_skill WHERE agent_id = ?", agentId);
+        jdbcTemplate.update("DELETE FROM agent_mcp_tool WHERE agent_id = ?", agentId);
+        jdbcTemplate.update("DELETE FROM agent_knowledge_base WHERE agent_id = ?", agentId);
+
+        List<Long> skillIds = request.skillIds();
+        if (skillIds != null && !skillIds.isEmpty()) {
+            for (int i = 0; i < skillIds.size(); i++) {
+                Long skillId = skillIds.get(i);
+                if (skillId == null || skillId <= 0) continue;
+                jdbcTemplate.update("""
+                        INSERT INTO agent_skill (agent_id, skill_id, sort_order)
+                        VALUES (?, ?, ?)
+                        ON CONFLICT (agent_id, skill_id) DO NOTHING
+                        """, agentId, skillId, i + 1);
+            }
+        }
+
+        List<Long> mcpToolIds = request.mcpToolIds();
+        if (mcpToolIds != null && !mcpToolIds.isEmpty()) {
+            for (int i = 0; i < mcpToolIds.size(); i++) {
+                Long mcpToolId = mcpToolIds.get(i);
+                if (mcpToolId == null || mcpToolId <= 0) continue;
+                jdbcTemplate.update("""
+                        INSERT INTO agent_mcp_tool (agent_id, mcp_tool_id, sort_order)
+                        VALUES (?, ?, ?)
+                        ON CONFLICT (agent_id, mcp_tool_id) DO NOTHING
+                        """, agentId, mcpToolId, i + 1);
+            }
+        }
+
+        List<AgentUpsertRequest.AgentKnowledgeConfig> knowledgeBases = request.knowledgeBases();
+        if (knowledgeBases != null && !knowledgeBases.isEmpty()) {
+            for (int i = 0; i < knowledgeBases.size(); i++) {
+                AgentUpsertRequest.AgentKnowledgeConfig kb = knowledgeBases.get(i);
+                if (kb.knowledgeBaseId() == null || kb.knowledgeBaseId() <= 0) continue;
+                int topK = kb.topK() != null ? kb.topK() : 5;
+                double scoreThreshold = kb.scoreThreshold() != null ? kb.scoreThreshold() : 0.70;
+                jdbcTemplate.update("""
+                        INSERT INTO agent_knowledge_base (agent_id, knowledge_base_id, sort_order, top_k, score_threshold)
+                        VALUES (?, ?, ?, ?, ?)
+                        ON CONFLICT (agent_id, knowledge_base_id) DO NOTHING
+                        """, agentId, kb.knowledgeBaseId(), i + 1, topK, scoreThreshold);
+            }
+        }
     }
 
     private Map<String, Object> getWorkflowById(long workflowId) {

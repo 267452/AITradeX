@@ -2729,6 +2729,44 @@
       grid-column: span 2;
     }
 
+    .modal-body .field.full-3 {
+      grid-column: span 2;
+    }
+
+    .multi-select-wrap {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 8px;
+      max-height: 220px;
+      overflow-y: auto;
+      padding: 10px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      background: var(--bg-soft);
+    }
+
+    .multi-select-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.15s;
+    }
+
+    .multi-select-item:hover {
+      background: rgba(102, 126, 234, 0.08);
+    }
+
+    .multi-select-item input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
     .modal-foot {
       border-top: 1px solid #e1edf6;
       padding: 12px 18px;
@@ -4930,6 +4968,10 @@
             <div class="nav-icon">模</div>
             <div class="nav-text">模型管理</div>
           </div>
+          <div class="nav-item" data-page="agent">
+            <div class="nav-icon">A</div>
+            <div class="nav-text">智能体管理</div>
+          </div>
           <div class="nav-item" data-page="conversation">
             <div class="nav-icon">话</div>
             <div class="nav-text">对话管理</div>
@@ -5754,6 +5796,45 @@
           </div>
         </section>
 
+        <section class="page-view" id="page-agent">
+          <div class="panel panel-tier-1 module-console-layout module-shell-card">
+            <div class="module-main-column">
+              <article class="panel">
+                <div class="panel-head">
+                  <div>
+                    <h3>智能体</h3>
+                    <p>智能体名称、描述、模型与绑定的技能、MCP 工具、知识库</p>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:center;">
+                    <button class="btn btn-primary small" data-action="open-add-agent">新增智能体</button>
+                    <button class="btn btn-secondary small" data-action="reload-agent">刷新</button>
+                  </div>
+                </div>
+                <div class="panel-body" id="agentsTable"></div>
+              </article>
+            </div>
+            <aside class="module-side-stack">
+              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-action" open>
+                <summary>
+                  <div class="agent-collab-card-copy">
+                    <div class="agent-collab-card-kicker">说明</div>
+                    <div class="agent-collab-card-title-row">
+                      <h4>配置提示</h4>
+                      <span class="agent-collab-card-badge state-idle">TIP</span>
+                    </div>
+                    <p class="agent-collab-card-peek">Agent 把技能、MCP 工具和知识库整合在一起，形成可用的对话实体。</p>
+                  </div>
+                </summary>
+                <div class="overview-side-card-body module-side-card-body">
+                  <div class="module-action-stack">
+                    <span class="agent-collab-card-peek">选中一条 Agent 可以编辑它的提示词、工具与知识绑定。</span>
+                  </div>
+                </div>
+              </details>
+            </aside>
+          </div>
+        </section>
+
         <section class="page-view" id="page-skill">
           <div class="panel panel-tier-1 module-console-layout module-shell-card">
             <div class="module-main-column">
@@ -5991,6 +6072,10 @@
         title: "模型管理",
         desc: "维护模型供应商配置并测试连接可用性。"
       },
+      agent: {
+        title: "智能体管理",
+        desc: "配置智能体绑定的技能、MCP 工具和知识库。"
+      },
       knowledge: {
         title: "知识管理",
         desc: "知识库与文档切片的状态化管理。"
@@ -6038,6 +6123,7 @@
       mcpTools: [],
       mcpMarkets: [],
       skills: [],
+      agents: [],
       notificationChannels: [],
       workflows: [],
       workflowNodes: [],
@@ -6521,6 +6607,10 @@
         await loadSkillData(silent);
         return;
       }
+      if (page === "agent") {
+        await loadAgentData(silent);
+        return;
+      }
       if (page === "notification") {
         await loadNotificationChannelData(silent);
         return;
@@ -6826,6 +6916,15 @@
         });
       }
       renderMcpPage();
+    }
+
+    async function loadAgentData(silent = false) {
+      const resp = await apiRequest("/admin/agents");
+      state.agents = resp || [];
+      if (!silent && resp === null) {
+        showToast("Agent 数据加载失败", "warning");
+      }
+      renderAgentPage();
     }
 
     async function loadSkillData(silent = false) {
@@ -7925,6 +8024,34 @@
           `
         }
       ], state.mcpMarkets, "暂无 MCP 市场。");
+    }
+
+    function renderAgentPage() {
+      renderTable("agentsTable", [
+        {
+          label: "Agent",
+          render: (row) => `
+            <span class="value-strong">${escapeHtml(row.icon || "🤖")} ${escapeHtml(row.name || "--")}</span>
+            <br><span class="item-meta">${escapeHtml(row.model_name || row.modelName || "未指定模型")} · 运行 ${formatNumber(row.run_count || 0)} 次</span>
+          `
+        },
+        { label: "描述", render: (row) => escapeHtml(row.description || "--") },
+        {
+          label: "状态",
+          render: (row) => {
+            const status = String(row.status || "--");
+            return `<span class="badge ${toneClass(normalizeToneFromStatus(status))}">${escapeHtml(status.toUpperCase())}</span>`;
+          }
+        },
+        { label: "最近运行", render: (row) => escapeHtml(formatDateTime(row.last_run_at || row.lastRunAt)) },
+        {
+          label: "操作",
+          render: (row) => `
+            <button class="mini-btn" data-action="edit-agent" data-id="${escapeHtml(row.id)}">编辑</button>
+            <button class="mini-btn danger" data-action="delete-agent" data-id="${escapeHtml(row.id)}">删除</button>
+          `
+        }
+      ], state.agents, "暂无智能体，点击右上角「新增智能体」创建。");
     }
 
     function renderSkillPage() {
@@ -11045,6 +11172,284 @@
       });
     }
 
+    async function openAgentModal(record = null) {
+      const isEdit = Boolean(record);
+      let agentDetail = record ? { ...record } : null;
+      let existingSkillIds = new Set();
+      let existingMcpToolIds = new Set();
+      let existingKnowledgeBases = [];
+
+      if (isEdit) {
+        const detail = await apiRequest(`/admin/agents/${record.id}/detail`);
+        if (detail) {
+          agentDetail = { ...agentDetail, ...detail };
+          (detail.skills || []).forEach(s => existingSkillIds.add(Number(s.id)));
+          (detail.mcpTools || []).forEach(m => existingMcpToolIds.add(Number(m.id)));
+          existingKnowledgeBases = (detail.knowledgeBases || []).map(kb => ({
+            knowledgeBaseId: Number(kb.id),
+            topK: kb.top_k || kb.topK || 5,
+            scoreThreshold: kb.score_threshold || kb.scoreThreshold || 0.7,
+            name: kb.name
+          }));
+        }
+      }
+
+      const modal = document.createElement("div");
+      modal.id = "agentModal";
+      modal.className = "modal-overlay show";
+      modal.innerHTML = `
+        <div class="modal panel" style="max-width:780px;width:90%;">
+          <div class="modal-head">
+            <h3>${isEdit ? "编辑智能体" : "新增智能体"}</h3>
+            <p>配置智能体的基本信息、提示词以及绑定的技能、MCP 工具和知识库。</p>
+          </div>
+          <div class="modal-body" style="max-height:70vh;overflow-y:auto;">
+            <div class="field">
+              <label for="agent-name"><span style="color:red;margin-right:4px;">*</span>名称</label>
+              <input id="agent-name" type="text" value="${escapeHtml(agentDetail?.name || "")}" placeholder="例如：智能投顾助手">
+            </div>
+            <div class="field">
+              <label for="agent-description">描述</label>
+              <input id="agent-description" type="text" value="${escapeHtml(agentDetail?.description || "")}" placeholder="简要说明 Agent 的用途">
+            </div>
+            <div class="field" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+              <div>
+                <label for="agent-icon">图标</label>
+                <input id="agent-icon" type="text" value="${escapeHtml(agentDetail?.icon || "🤖")}" placeholder="emoji 或简短标识">
+              </div>
+              <div>
+                <label for="agent-status">状态</label>
+                <select id="agent-status">
+                  <option value="enabled" ${String(agentDetail?.status || "enabled") === "enabled" ? "selected" : ""}>enabled</option>
+                  <option value="disabled" ${String(agentDetail?.status || "enabled") === "disabled" ? "selected" : ""}>disabled</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="agent-model">模型名称</label>
+              <input id="agent-model" type="text" value="${escapeHtml(agentDetail?.model_name || agentDetail?.modelName || "")}" placeholder="例如：gpt-4.1">
+            </div>
+            <div class="field">
+              <label for="agent-system-prompt">系统提示词 (system_prompt)</label>
+              <textarea id="agent-system-prompt" rows="4" placeholder="描述 Agent 的身份和行为。">${escapeHtml(agentDetail?.system_prompt || agentDetail?.systemPrompt || "")}</textarea>
+            </div>
+            <div class="field" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+              <div>
+                <label for="agent-temperature">Temperature</label>
+                <input id="agent-temperature" type="number" step="0.1" min="0" max="2" value="${agentDetail?.temperature ?? 0.7}">
+              </div>
+              <div>
+                <label for="agent-max-tokens">Max Tokens</label>
+                <input id="agent-max-tokens" type="number" step="1" min="0" value="${agentDetail?.max_tokens ?? agentDetail?.maxTokens ?? 2048}">
+              </div>
+              <div>
+                <label for="agent-tool-call-mode">Tool Call Mode</label>
+                <select id="agent-tool-call-mode">
+                  <option value="auto" ${String(agentDetail?.tool_call_mode || agentDetail?.toolCallMode || "auto") === "auto" ? "selected" : ""}>auto</option>
+                  <option value="required" ${String(agentDetail?.tool_call_mode || agentDetail?.toolCallMode || "auto") === "required" ? "selected" : ""}>required</option>
+                  <option value="none" ${String(agentDetail?.tool_call_mode || agentDetail?.toolCallMode || "auto") === "none" ? "selected" : ""}>none</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field" id="agent-skills-field">
+              <label>绑定技能 (Skills)</label>
+              <div id="agent-skills-select" class="multi-select-wrap"></div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">选中的 skill 将可被该 Agent 调用。</div>
+            </div>
+
+            <div class="field" id="agent-mcp-field">
+              <label>绑定 MCP 工具</label>
+              <div id="agent-mcp-select" class="multi-select-wrap"></div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">选中的 MCP 工具将可被该 Agent 调用。</div>
+            </div>
+
+            <div class="field" id="agent-kb-field">
+              <label>绑定知识库 (Knowledge Bases)</label>
+              <div id="agent-kb-select" class="multi-select-wrap"></div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">选中的知识库将用于 RAG 检索，可自定义 top_k 和 score 阈值。</div>
+            </div>
+          </div>
+          <div class="modal-foot">
+            <button class="btn btn-secondary small" id="agent-cancel" type="button" onclick="this.closest('.modal-overlay').remove()">取消</button>
+            <button class="btn btn-primary small" id="agent-submit" type="button" onclick="handleAgentSubmit(this)">${isEdit ? "保存修改" : "创建智能体"}</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      modal.dataset.isEdit = isEdit;
+      modal.dataset.recordId = record?.id || "";
+      modal.dataset.existingSkillIds = JSON.stringify([...existingSkillIds]);
+      modal.dataset.existingMcpToolIds = JSON.stringify([...existingMcpToolIds]);
+      modal.dataset.existingKnowledgeBases = JSON.stringify(existingKnowledgeBases);
+
+      const [skillsResp, mcpResp, kbResp] = await Promise.all([
+        apiRequest("/admin/skills"),
+        apiRequest("/admin/mcp-tools"),
+        apiRequest("/admin/knowledge")
+      ]);
+      const skillsList = skillsResp || [];
+      const mcpList = mcpResp || [];
+      const kbList = kbResp ? (kbResp.knowledgeBases || kbResp || []) : [];
+
+      modal.dataset.skillsList = JSON.stringify(skillsList);
+      modal.dataset.mcpList = JSON.stringify(mcpList);
+      modal.dataset.kbList = JSON.stringify(kbList);
+
+      function renderMultiSelect(containerId, items, selectedIds, idKey = "id", labelKey = "name") {
+        const container = modal.querySelector("#" + containerId);
+        if (!container) return;
+        container.innerHTML = items.map(item => {
+          const id = Number(item[idKey]);
+          const checked = selectedIds.has(id) ? "checked" : "";
+          const label = item[labelKey] || String(id);
+          return `
+            <label class="multi-select-item">
+              <input type="checkbox" data-id="${escapeHtml(id)}" ${checked}>
+              <span>${escapeHtml(label)}</span>
+            </label>
+          `;
+        }).join("");
+      }
+
+      function renderKbSelect(containerId, items, existingKbs) {
+        const container = modal.querySelector("#" + containerId);
+        if (!container) return;
+        const kbMap = new Map();
+        existingKbs.forEach(kb => kbMap.set(Number(kb.knowledgeBaseId), kb));
+        container.innerHTML = items.map(item => {
+          const id = Number(item.id);
+          const existing = kbMap.get(id);
+          const checked = existing ? "checked" : "";
+          const topK = existing?.topK || 5;
+          const threshold = existing?.scoreThreshold || 0.7;
+          return `
+            <div class="multi-select-item" style="flex-direction:column;align-items:flex-start;">
+              <label style="display:flex;align-items:center;gap:8px;width:100%;">
+                <input type="checkbox" data-id="${escapeHtml(id)}" ${checked}>
+                <span>${escapeHtml(item.name || String(id))}</span>
+              </label>
+              ${checked ? `
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-left:24px;width:100%;margin-top:8px;">
+                  <div style="font-size:12px;">
+                    <label style="display:block;color:var(--text-muted);">Top K</label>
+                    <input type="number" min="1" max="50" value="${topK}" data-kb-topk="${escapeHtml(id)}" style="width:100%;">
+                  </div>
+                  <div style="font-size:12px;">
+                    <label style="display:block;color:var(--text-muted);">Score 阈值</label>
+                    <input type="number" step="0.01" min="0" max="1" value="${threshold}" data-kb-threshold="${escapeHtml(id)}" style="width:100%;">
+                  </div>
+                </div>
+              ` : ""}
+            </div>
+          `;
+        }).join("");
+
+        container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+          cb.addEventListener("change", () => {
+            const currentKbs = [];
+            container.querySelectorAll('input[type="checkbox"]').forEach(c => {
+              if (c.checked) {
+                const id = Number(c.dataset.id);
+                const topKInput = container.querySelector(`[data-kb-topk="${id}"]`);
+                const thresholdInput = container.querySelector(`[data-kb-threshold="${id}"]`);
+                const item = items.find(i => Number(i.id) === id);
+                currentKbs.push({
+                  knowledgeBaseId: id,
+                  topK: topKInput ? Number(topKInput.value) : 5,
+                  scoreThreshold: thresholdInput ? Number(thresholdInput.value) : 0.7,
+                  name: item?.name || ""
+                });
+              }
+            });
+            renderKbSelect(containerId, items, currentKbs);
+          });
+        });
+      }
+
+      renderMultiSelect("agent-skills-select", skillsList, existingSkillIds);
+      renderMultiSelect("agent-mcp-select", mcpList, existingMcpToolIds);
+      renderKbSelect("agent-kb-select", kbList, existingKnowledgeBases);
+    }
+
+    window.handleAgentSubmit = async function(btn) {
+      const modal = btn.closest(".modal-overlay");
+      const isEdit = modal.dataset.isEdit === "true";
+      const recordId = modal.dataset.recordId;
+      const skillsList = JSON.parse(modal.dataset.skillsList || "[]");
+      const mcpList = JSON.parse(modal.dataset.mcpList || "[]");
+      const kbList = JSON.parse(modal.dataset.kbList || "[]");
+      const existingSkillIds = new Set(JSON.parse(modal.dataset.existingSkillIds || "[]"));
+      const existingMcpToolIds = new Set(JSON.parse(modal.dataset.existingMcpToolIds || "[]"));
+      const existingKnowledgeBases = JSON.parse(modal.dataset.existingKnowledgeBases || "[]");
+
+      const name = modal.querySelector("#agent-name").value.trim();
+      if (!name) {
+        showToast("请填写智能体名称", "warning");
+        return;
+      }
+
+      function collectCheckedIds(containerId) {
+        const container = modal.querySelector("#" + containerId);
+        if (!container) return [];
+        const ids = [];
+        container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+          if (cb.checked) ids.push(Number(cb.dataset.id));
+        });
+        return ids;
+      }
+
+      function collectKbConfig(containerId) {
+        const container = modal.querySelector("#" + containerId);
+        if (!container) return [];
+        const result = [];
+        container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+          if (cb.checked) {
+            const id = Number(cb.dataset.id);
+            const topKInput = container.querySelector(`[data-kb-topk="${id}"]`);
+            const thresholdInput = container.querySelector(`[data-kb-threshold="${id}"]`);
+            const item = kbList.find(i => Number(i.id) === id);
+            result.push({
+              knowledgeBaseId: id,
+              topK: topKInput ? Number(topKInput.value) : 5,
+              scoreThreshold: thresholdInput ? Number(thresholdInput.value) : 0.7,
+              name: item?.name || ""
+            });
+          }
+        });
+        return result;
+      }
+
+      const payload = {
+        name,
+        description: modal.querySelector("#agent-description").value.trim(),
+        icon: modal.querySelector("#agent-icon").value.trim() || "🤖",
+        status: modal.querySelector("#agent-status").value,
+        modelName: modal.querySelector("#agent-model").value.trim(),
+        systemPrompt: modal.querySelector("#agent-system-prompt").value,
+        temperature: parseFloat(modal.querySelector("#agent-temperature").value) || 0.7,
+        maxTokens: parseInt(modal.querySelector("#agent-max-tokens").value) || 2048,
+        toolCallMode: modal.querySelector("#agent-tool-call-mode").value,
+        skillIds: collectCheckedIds("agent-skills-select"),
+        mcpToolIds: collectCheckedIds("agent-mcp-select"),
+        knowledgeBases: collectKbConfig("agent-kb-select")
+      };
+
+      try {
+        if (isEdit) {
+          await apiRequest(`/admin/agents/${recordId}`, { method: "PUT", body: payload });
+          showToast("智能体 已更新", "success");
+        } else {
+          await apiRequest("/admin/agents", { method: "POST", body: payload });
+          showToast("智能体 已创建", "success");
+        }
+        modal.remove();
+        await loadAgentData(true);
+      } catch (err) {
+        showToast(err.message || "保存失败", "warning");
+      }
+    };
+
     async function openSkillModal(record = null) {
       const isEdit = Boolean(record);
       if (isEdit) {
@@ -11747,6 +12152,10 @@
         if (action === "edit-mcp-market") return openMcpMarketModal(findById(state.mcpMarkets, id));
         if (action === "delete-mcp-market") return deleteWithConfirm("确认删除该 MCP 市场？", `/admin/mcp/markets/${id}`, loadMcpData).catch((error) => showToast(error.message, "danger"));
 
+        if (action === "reload-agent") return loadAgentData(false);
+        if (action === "open-add-agent") return openAgentModal();
+        if (action === "edit-agent") return openAgentModal(findById(state.agents, id));
+        if (action === "delete-agent") return deleteWithConfirm("确认删除该智能体？", `/admin/agents/${id}`, loadAgentData).catch((error) => showToast(error.message, "danger"));
         if (action === "reload-skill") return loadSkillData(false);
         if (action === "edit-skill") return openSkillModal(findById(state.skills, id));
         if (action === "delete-skill") return deleteWithConfirm("确认删除该 Skill？", `/admin/skills/${id}`, loadSkillData).catch((error) => showToast(error.message, "danger"));
