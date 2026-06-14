@@ -2737,7 +2737,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       gap: 8px;
-      max-height: 220px;
+      max-height: 100px;
       overflow-y: auto;
       padding: 10px;
       border: 1px solid var(--border-subtle);
@@ -11283,14 +11283,26 @@
       modal.dataset.existingMcpToolIds = JSON.stringify([...existingMcpToolIds]);
       modal.dataset.existingKnowledgeBases = JSON.stringify(existingKnowledgeBases);
 
-      const [skillsResp, mcpResp, kbResp] = await Promise.all([
-        apiRequest("/admin/skills"),
-        apiRequest("/admin/mcp-tools"),
-        apiRequest("/admin/knowledge")
-      ]);
-      const skillsList = skillsResp || [];
-      const mcpList = mcpResp || [];
-      const kbList = kbResp ? (kbResp.knowledgeBases || kbResp || []) : [];
+      let skillsList = [], mcpList = [], kbList = [];
+      try {
+        const [skillsResp, mcpResp, kbResp] = await Promise.all([
+          apiRequest("/admin/skills"),
+          apiRequest("/admin/mcp/tools"),
+          apiRequest("/admin/knowledge/bases")
+        ]);
+        skillsList = Array.isArray(skillsResp) ? skillsResp : [];
+        mcpList = Array.isArray(mcpResp) ? mcpResp : [];
+        // 后端返回直接是数组，或包装在 {knowledgeBases: [...]} 中
+        if (Array.isArray(kbResp)) {
+          kbList = kbResp;
+        } else if (kbResp && Array.isArray(kbResp.knowledgeBases)) {
+          kbList = kbResp.knowledgeBases;
+        } else {
+          kbList = [];
+        }
+      } catch (e) {
+        console.error("加载下拉选项失败:", e);
+      }
 
       modal.dataset.skillsList = JSON.stringify(skillsList);
       modal.dataset.mcpList = JSON.stringify(mcpList);

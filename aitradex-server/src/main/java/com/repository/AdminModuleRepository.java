@@ -56,8 +56,7 @@ public class AdminModuleRepository {
     public List<Map<String, Object>> listKnowledgeBases() {
         return jdbcTemplate.queryForList("""
                 SELECT id, name, description, vector_store, embedding_model, status,
-                       document_count, slice_count, last_sync_at,
-                       COALESCE(vector_config, '{}'::jsonb)::text AS vector_config
+                       document_count, slice_count, last_sync_at
                 FROM knowledge_base
                 ORDER BY updated_at DESC, id DESC
                 """);
