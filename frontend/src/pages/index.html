@@ -5414,61 +5414,46 @@
         </section>
 
         <section class="page-view" id="page-models">
-          <div class="panel panel-tier-1 module-console-layout module-shell-card">
-            <div class="module-main-column">
-              <article class="panel">
-                <div class="panel-head">
-                  <div>
-                    <h3>当前模型配置</h3>
-                    <p>生效中的供应商、模型与密钥状态</p>
-                  </div>
-                </div>
-                <div class="panel-body" id="modelConfigSummary"></div>
-              </article>
-
-              <article class="panel">
-                <div class="panel-head">
-                  <div>
-                    <h3>AI 对话</h3>
-                    <p>与当前配置的大模型进行实时对话</p>
-                  </div>
-                </div>
-                <div class="panel-body chat-panel">
-                  <div class="chat-messages" id="chatMessages"></div>
-                  <div class="chat-input-row">
-                    <textarea id="chatInput" placeholder="输入消息..." rows="2"></textarea>
-                    <button class="btn btn-primary" id="chatSendBtn">发送</button>
-                  </div>
-                </div>
-              </article>
+          <div class="panel panel-tier-1 module-shell-card">
+            <div class="panel-head">
+              <div>
+                <h3>当前模型配置</h3>
+                <p>生效中的供应商、模型与密钥状态</p>
+              </div>
+              <div class="panel-head-actions" style="display:flex;gap:8px;">
+                <button class="btn btn-primary small" data-action="switch-ai-model">切换模型</button>
+                <button class="btn btn-secondary small" data-action="open-ai-config">编辑配置</button>
+                <button class="btn btn-secondary small" data-action="test-ai-config">测试连接</button>
+                <button class="btn btn-danger-soft small" data-action="clear-ai-config">清空配置</button>
+              </div>
             </div>
+            <div class="panel-body" id="modelConfigSummary"></div>
+          </div>
 
-            <aside class="module-side-stack">
-              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-action">
-                <summary>
-                  <div class="agent-collab-card-copy">
-                    <div class="agent-collab-card-kicker">MODEL ACTIONS</div>
-                    <div class="agent-collab-card-title-row">
-                      <h4>模型配置与操作</h4>
-                      <span class="agent-collab-card-badge state-idle">ACTION</span>
-                    </div>
-                    <p class="agent-collab-card-peek">切换模型、编辑配置、测试连接和已保存配置统一收纳到这里。</p>
-                  </div>
-                </summary>
-                <div class="overview-side-card-body module-side-card-body">
-                  <div class="module-action-stack">
-                    <button class="btn btn-primary small" data-action="switch-ai-model">切换模型</button>
-                    <button class="btn btn-secondary small" data-action="open-ai-config">编辑配置</button>
-                    <button class="btn btn-secondary small" data-action="test-ai-config">测试连接</button>
-                    <button class="btn btn-danger-soft small" data-action="clear-ai-config">清空配置</button>
-                  </div>
-                  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border-subtle);">
-                    <h5 style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">已保存的配置</h5>
-                    <div id="savedConfigList"></div>
-                  </div>
-                </div>
-              </details>
-            </aside>
+          <div class="panel panel-tier-1 module-shell-card">
+            <div class="panel-head">
+              <div>
+                <h3>AI 对话</h3>
+                <p>与当前配置的大模型进行实时对话</p>
+              </div>
+            </div>
+            <div class="panel-body chat-panel">
+              <div class="chat-messages" id="chatMessages"></div>
+              <div class="chat-input-row">
+                <textarea id="chatInput" placeholder="输入消息..." rows="2"></textarea>
+                <button class="btn btn-primary" id="chatSendBtn">发送</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel panel-tier-1 module-shell-card">
+            <div class="panel-head">
+              <div>
+                <h3>已保存的配置</h3>
+                <p>查看已保存的配置并进行快速切换</p>
+              </div>
+            </div>
+            <div class="panel-body" id="savedConfigList"></div>
           </div>
         </section>
 
