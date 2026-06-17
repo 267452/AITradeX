@@ -5449,10 +5449,10 @@
                   <div class="agent-collab-card-copy">
                     <div class="agent-collab-card-kicker">MODEL ACTIONS</div>
                     <div class="agent-collab-card-title-row">
-                      <h4>模块操作</h4>
+                      <h4>模型配置与操作</h4>
                       <span class="agent-collab-card-badge state-idle">ACTION</span>
                     </div>
-                    <p class="agent-collab-card-peek">切换模型、编辑配置、测试连接和清空配置统一收纳到这里。</p>
+                    <p class="agent-collab-card-peek">切换模型、编辑配置、测试连接和已保存配置统一收纳到这里。</p>
                   </div>
                 </summary>
                 <div class="overview-side-card-body module-side-card-body">
@@ -5462,21 +5462,11 @@
                     <button class="btn btn-secondary small" data-action="test-ai-config">测试连接</button>
                     <button class="btn btn-danger-soft small" data-action="clear-ai-config">清空配置</button>
                   </div>
-                </div>
-              </details>
-
-              <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-library">
-                <summary>
-                  <div class="agent-collab-card-copy">
-                    <div class="agent-collab-card-kicker">SAVED CONFIGS</div>
-                    <div class="agent-collab-card-title-row">
-                      <h4>已保存的配置</h4>
-                      <span class="agent-collab-card-badge state-idle">LIST</span>
-                    </div>
-                    <p class="agent-collab-card-peek">默认收起，展开查看已保存配置并进行快速切换。</p>
+                  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border-subtle);">
+                    <h5 style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">已保存的配置</h5>
+                    <div id="savedConfigList"></div>
                   </div>
-                </summary>
-                <div class="overview-side-card-body module-side-card-body" id="savedConfigList"></div>
+                </div>
               </details>
             </aside>
           </div>
