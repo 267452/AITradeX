@@ -6399,6 +6399,42 @@
       }, 2600);
     }
 
+    function showConfirm(title, message) {
+      return new Promise((resolve) => {
+        const overlay = document.createElement("div");
+        overlay.className = "modal-overlay";
+        overlay.innerHTML = `
+          <div class="modal-card" style="max-width:400px;">
+            <div class="modal-head">
+              <h3>${escapeHtml(title)}</h3>
+            </div>
+            <div class="modal-body">
+              <p style="margin:0;color:var(--text-secondary);">${escapeHtml(message)}</p>
+            </div>
+            <div class="modal-foot" style="justify-content:flex-end;gap:8px;">
+              <button class="btn btn-secondary small" data-action="cancel">取消</button>
+              <button class="btn btn-danger small" data-action="confirm">确认删除</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+        overlay.querySelector('[data-action="cancel"]').onclick = () => {
+          overlay.remove();
+          resolve(false);
+        };
+        overlay.querySelector('[data-action="confirm"]').onclick = () => {
+          overlay.remove();
+          resolve(true);
+        };
+        overlay.onclick = (e) => {
+          if (e.target === overlay) {
+            overlay.remove();
+            resolve(false);
+          }
+        };
+      });
+    }
+
     function updateHealthChip(tone, text) {
       const chip = $("healthChip");
       chip.className = `chip ${toneClass(tone)}`;
@@ -11648,7 +11684,7 @@
     }
 
     async function deleteWithConfirm(message, endpoint, reloadFn) {
-      const ok = window.confirm(message);
+      const ok = await showConfirm("确认删除", message);
       if (!ok) return;
       await apiRequest(endpoint, { method: "DELETE" });
       await reloadFn(true);
@@ -11671,7 +11707,7 @@
     }
 
     async function clearAiConfig() {
-      const ok = window.confirm("确认清空当前 AI 配置吗？");
+      const ok = await showConfirm("确认清空", "确认清空当前 AI 配置吗？");
       if (!ok) return;
       await apiRequest("/ai/config", { method: "DELETE" });
       await loadModelData(true);
@@ -12087,9 +12123,9 @@
           }
         }
         if (action === "delete-account") {
-          if (confirm("确定要删除这个接入账户吗？此操作不可恢复。")) {
-            return deleteAccount(id).catch((error) => showToast(error.message, "danger"));
-          }
+          showConfirm("确认删除", "确定要删除这个接入账户吗？此操作不可恢复。").then((ok) => {
+            if (ok) deleteAccount(id).catch((error) => showToast(error.message, "danger"));
+          });
           return;
         }
         if (action === "view-assets") {
@@ -12197,11 +12233,10 @@
           if (!state.workflowEditor.selectedNodeId) {
             return;
           }
-          const ok = window.confirm("确认删除当前选中节点？");
-          if (!ok) {
-            return;
-          }
-          return removeWorkflowNode(state.workflowEditor.selectedNodeId);
+          showConfirm("确认删除", "确认删除当前选中节点？").then((ok) => {
+            if (ok) removeWorkflowNode(state.workflowEditor.selectedNodeId);
+          });
+          return;
         }
         if (action === "workflow-delete-edge") return removeWorkflowEdge(actionTarget.dataset.edgeId);
         if (action === "undo-workflow-graph") return undoWorkflowGraph();
@@ -12676,9 +12711,8 @@
     }
 
     async function deleteRiskRule(id) {
-      if (!window.confirm("确认删除该风控规则？")) {
-        return;
-      }
+      const ok = await showConfirm("确认删除", "确认删除该风控规则？");
+      if (!ok) return;
       try {
         await apiRequest(`/admin/risk/rules/${id}`, { method: "DELETE" });
         await loadRiskRuleData(true);
