@@ -21,7 +21,10 @@ public class TradingIntentAgent {
             "(?i)(\\d{6}(?:\\.(?:SH|SZ|BJ))?|[A-Z]{2,10}-[A-Z]{2,10}|[A-Z]{2,10}USDT|[A-Z][A-Z0-9]{0,9}(?:\\.US)?)");
     private static final List<String> ACCOUNT_KEYWORDS = List.of("账户", "资产", "持仓", "仓位", "订单", "总览");
     private static final List<String> RISK_KEYWORDS = List.of("风控", "风险", "限额", "仓位限制", "最大数量", "最大金额");
-    private static final List<String> MARKET_KEYWORDS = List.of("行情", "报价", "价格", "k线", "走势", "分析", "看看", "研究");
+    private static final List<String> MARKET_KEYWORDS = List.of(
+            "行情", "报价", "价格", "k线", "走势", "分析", "看看", "研究",
+            "怎么样", "如何", "股票", "股", "代码", "估值", "涨了", "跌了", "涨跌",
+            "what do you think", "how about", "stock", "quote", "price", "trend");
     private static final String INTENT_SYSTEM_PROMPT = """
             你是交易系统的 intent-router agent，负责把用户请求归类成交易决策任务。
 
@@ -58,11 +61,14 @@ public class TradingIntentAgent {
 
     private final AiChatService aiChatService;
     private final TradeService tradeService;
+    private final com.service.QuoteService quoteService;
     private final ObjectMapper objectMapper;
 
-    public TradingIntentAgent(AiChatService aiChatService, TradeService tradeService, ObjectMapper objectMapper) {
+    public TradingIntentAgent(AiChatService aiChatService, TradeService tradeService,
+                              com.service.QuoteService quoteService, ObjectMapper objectMapper) {
         this.aiChatService = aiChatService;
         this.tradeService = tradeService;
+        this.quoteService = quoteService;
         this.objectMapper = objectMapper;
     }
 
@@ -142,6 +148,16 @@ public class TradingIntentAgent {
         String symbol = extractSymbol(normalized);
         String lowered = normalized.toLowerCase(Locale.ROOT);
 
+        if (symbol == null && containsChineseText(normalized)) {
+            String nameCandidate = extractChineseStockName(normalized);
+            if (nameCandidate != null) {
+                try {
+                    symbol = quoteService.resolveStockName(nameCandidate);
+                } catch (Exception ignored) {
+                }
+            }
+        }
+
         if (containsAny(normalized, ACCOUNT_KEYWORDS)) {
             return new TradingIntent(
                     "account_review",
@@ -176,7 +192,8 @@ public class TradingIntentAgent {
                     Map.of("matched_keywords", RISK_KEYWORDS));
         }
 
-        if (symbol != null && (containsAny(normalized, MARKET_KEYWORDS) || lowered.contains("what do you think"))) {
+        boolean hasMarketKeyword = containsAny(normalized, MARKET_KEYWORDS);
+        if (symbol != null && hasMarketKeyword) {
             return new TradingIntent(
                     "market_research",
                     "研究标的行情与趋势",
@@ -193,7 +210,67 @@ public class TradingIntentAgent {
                     Map.of("matched_keywords", MARKET_KEYWORDS));
         }
 
+        if (symbol != null) {
+            return new TradingIntent(
+                    "market_research",
+                    "查询标的行情信息",
+                    symbol,
+                    null,
+                    null,
+                    null,
+                    "",
+                    false,
+                    true,
+                    false,
+                    false,
+                    "heuristic",
+                    Map.of("detection_mode", "symbol_only"));
+        }
+
+        if (hasMarketKeyword && containsChineseText(normalized)) {
+            return new TradingIntent(
+                    "market_research",
+                    "研究标的行情与趋势",
+                    symbol,
+                    null,
+                    null,
+                    null,
+                    "",
+                    false,
+                    symbol != null,
+                    false,
+                    false,
+                    "heuristic",
+                    Map.of("matched_keywords", MARKET_KEYWORDS, "cn_stock_name", extractChineseStockName(normalized), "needs_symbol_resolution", symbol == null));
+        }
+
         return null;
+    }
+
+    private boolean containsChineseText(String text) {
+        if (text == null || text.isEmpty()) return false;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c >= '\u4e00' && c <= '\u9fff') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String extractChineseStockName(String text) {
+        if (text == null || text.isEmpty()) return null;
+        String cleaned = text.replaceAll("[\\s\\d,.!?。，！？、]", "");
+        String[] stopKeywords = {"这个", "那个", "股票", "股", "怎么样", "如何", "走势", "行情", "看看",
+                "分析", "价格", "报价", "代码", "的", "我", "你", "请问", "帮我", "一下"};
+        for (String keyword : stopKeywords) {
+            cleaned = cleaned.replace(keyword, "");
+        }
+        if (cleaned.isEmpty()) return null;
+        String cleanedOnlyCn = cleaned.replaceAll("[^\u4e00-\u9fff]", "");
+        if (cleanedOnlyCn.isEmpty()) return null;
+        if (cleanedOnlyCn.length() > 10) return null;
+        return cleanedOnlyCn;
     }
 
     private TradingIntent resolveByModel(String message, String provider, String model,
@@ -226,6 +303,23 @@ public class TradingIntentAgent {
             boolean requiresRiskReview = Boolean.TRUE.equals(data.get("requires_risk_review"));
             boolean requiresPortfolioContext = Boolean.TRUE.equals(data.get("requires_portfolio_context"));
             String summary = blankToDefault(asString(data.get("summary")), "金融问题分析");
+
+            if (symbol == null && (requiresMarketData || "market_research".equals(category) || "manual_trade".equals(category))) {
+                try {
+                    String nameCandidate = extractChineseStockName(message);
+                    if (nameCandidate != null) {
+                        symbol = quoteService.resolveStockName(nameCandidate);
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+
+            if (symbol != null && symbol.matches("[\u4e00-\u9fff]+")) {
+                try {
+                    symbol = quoteService.resolveStockName(symbol);
+                } catch (Exception ignored) {
+                }
+            }
 
             if ("manual_trade".equals(category) && commandSuggestion.isBlank()) {
                 commandSuggestion = buildTradeCommand(symbol, side, quantity);

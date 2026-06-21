@@ -105,6 +105,23 @@ public class QuoteService {
         return getCnQuote(symbol);
     }
 
+    public String resolveStockName(String name) {
+        if (name == null || name.trim().isBlank()) return null;
+        String query = name.trim();
+        if (query.matches("\\d{6}(?:\\.(?:SH|SZ|BJ))?")) {
+            return normalizeSymbol(query);
+        }
+        List<Map<String, Object>> results = searchCn(query, 5, true);
+        if (results.isEmpty()) return null;
+        Map<String, Object> first = results.get(0);
+        String symbol = String.valueOf(first.get("symbol"));
+        String stockName = String.valueOf(first.getOrDefault("name", ""));
+        if (stockName.isEmpty() || stockName.equals(query)) {
+            return symbol;
+        }
+        return symbol;
+    }
+
     public List<Map<String, Object>> searchPublicQuotes(String q, int limit, String channel) {
         String query = q == null ? "" : q.trim();
         if (query.isBlank()) return List.of();
@@ -161,21 +178,43 @@ public class QuoteService {
     }
 
     private Map<String, Object> getCnQuote(String symbol) {
-        String secid = secidFromSymbol(symbol);
-        Map<String, Object> payload = getJson(buildUrl("https://push2.eastmoney.com/api/qt/stock/get", Map.of(
-                        "invt", "2", "fltt", "2", "fields", "f43,f44,f45,f46,f57,f58", "secid", secid)),
-                defaultHeaders(), properties.getGtjaQuoteTimeoutSec());
-        Map<String, Object> data = mapOf(payload.get("data"));
-        Object priceRaw = data.get("f43");
-        if (priceRaw == null || "-".equals(String.valueOf(priceRaw))) throw new IllegalStateException("eastmoney_quote_not_found");
-        String code = String.valueOf(data.getOrDefault("f57", normalizeSymbol(symbol).substring(0, 6)));
-        String market = normalizeSymbol(symbol).endsWith(".BJ") || code.startsWith("8") || code.startsWith("4") || code.startsWith("9") ? ".BJ" : (secid.startsWith("1.") ? ".SH" : ".SZ");
+        String normalized = normalizeSymbol(symbol);
+        String code = normalized.substring(0, 6);
+        String marketPrefix;
+        String market;
+        if (normalized.endsWith(".SH") || (code.length() == 6 && code.startsWith("6"))) {
+            marketPrefix = "sh";
+            market = ".SH";
+        } else if (normalized.endsWith(".BJ") || code.startsWith("8") || code.startsWith("4") || code.startsWith("9")) {
+            marketPrefix = "bj";
+            market = ".BJ";
+        } else {
+            marketPrefix = "sz";
+            market = ".SZ";
+        }
+
+        String url = "https://hq.sinajs.cn/list=" + marketPrefix + code;
+        String raw = SimpleHttp.getWithHeaders(httpClient, url, sinaHeaders(), properties.getGtjaQuoteTimeoutSec());
+        int quoteStart = raw.indexOf('"');
+        int quoteEnd = raw.lastIndexOf('"');
+        if (quoteStart < 0 || quoteEnd <= quoteStart) throw new IllegalStateException("sina_quote_parse_error");
+        String content = raw.substring(quoteStart + 1, quoteEnd);
+        if (content.isBlank()) throw new IllegalStateException("sina_quote_empty");
+        String[] parts = content.split(",");
+        if (parts.length < 10) throw new IllegalStateException("sina_quote_format_error");
+
+        String priceStr = parts[3].trim();
+        if (priceStr.isBlank() || "0.00".equals(priceStr)) throw new IllegalStateException("sina_quote_price_missing");
+        BigDecimal price = new BigDecimal(priceStr);
+        BigDecimal bid = parts[6].isBlank() ? null : new BigDecimal(parts[6]);
+        BigDecimal ask = parts[7].isBlank() ? null : new BigDecimal(parts[7]);
+
         Map<String, Object> quote = new LinkedHashMap<>();
-        quote.put("provider", "eastmoney");
+        quote.put("provider", "sina");
         quote.put("symbol", code + market);
-        quote.put("price", new BigDecimal(String.valueOf(priceRaw)));
-        quote.put("bid", data.get("f45") == null || "-".equals(String.valueOf(data.get("f45"))) ? null : new BigDecimal(String.valueOf(data.get("f45"))));
-        quote.put("ask", data.get("f44") == null || "-".equals(String.valueOf(data.get("f44"))) ? null : new BigDecimal(String.valueOf(data.get("f44"))));
+        quote.put("price", price);
+        quote.put("bid", bid);
+        quote.put("ask", ask);
         quote.put("ts", OffsetDateTime.now(ZoneOffset.UTC));
         return quote;
     }
@@ -337,7 +376,7 @@ public class QuoteService {
                             "type", "14",
                             "token", EASTMONEY_SUGGEST_TOKEN,
                             "count", String.valueOf(Math.max(1, Math.min(count, 100))))),
-                    defaultHeaders(), properties.getGtjaQuoteTimeoutSec());
+                    eastmoneyHeaders(), properties.getGtjaQuoteTimeoutSec());
             Map<String, Object> table = mapOf(payload.get("QuotationCodeTable"));
             return rows(table.get("Data"));
         } catch (Exception ignored) {
@@ -466,19 +505,40 @@ public class QuoteService {
     }
 
     private List<Map<String, Object>> fetchCnKlines(String symbol, String interval, int limit) {
-        String secid = secidFromSymbol(symbol);
-        String klt = switch (interval.toLowerCase(Locale.ROOT)) { case "5m" -> "5"; case "1mo" -> "103"; default -> "101"; };
-        Map<String, Object> payload = getJson(buildUrl("https://push2his.eastmoney.com/api/qt/stock/kline/get", Map.of(
-                        "secid", secid, "klt", klt, "fqt", "1", "lmt", String.valueOf(limit), "end", "20500101",
-                        "fields1", "f1,f2,f3,f4,f5,f6", "fields2", "f51,f52,f53,f54,f55,f56,f57,f58")),
-                defaultHeaders(), properties.getGtjaQuoteTimeoutSec());
-        Map<String, Object> data = mapOf(payload.get("data"));
-        List<Object> klines = data.get("klines") instanceof List<?> list ? new ArrayList<>(list) : List.of();
+        String normalized = normalizeSymbol(symbol);
+        String code = normalized.substring(0, 6);
+        String marketPrefix;
+        if (normalized.endsWith(".SH") || (code.length() == 6 && code.startsWith("6"))) {
+            marketPrefix = "sh";
+        } else if (normalized.endsWith(".BJ") || code.startsWith("8") || code.startsWith("4") || code.startsWith("9")) {
+            marketPrefix = "bj";
+        } else {
+            marketPrefix = "sz";
+        }
+
+        String scale = "240";
+        if ("5m".equalsIgnoreCase(interval)) scale = "5";
+        if ("1mo".equalsIgnoreCase(interval)) scale = "240";
+
+        String url = buildUrl("https://money.finance.sina.com.cn/quotes_service/api/json_v2.php/CN_MarketData.getKLineData",
+                Map.of("symbol", marketPrefix + code, "scale", scale, "ma", "5", "datalen", String.valueOf(Math.max(5, limit))));
+        String raw = SimpleHttp.getWithHeaders(httpClient, url, sinaHeaders(), properties.getGtjaQuoteTimeoutSec());
+        List<Map<String, Object>> items;
+        try {
+            items = objectMapper.readValue(raw, new TypeReference<>() {});
+        } catch (Exception e) {
+            return List.of();
+        }
         List<Map<String, Object>> out = new ArrayList<>();
-        for (Object line : klines) {
-            String[] p = String.valueOf(line).split(",");
-            if (p.length < 6) continue;
-            out.add(Map.of("ts", p[0], "open", p[1], "high", p[3], "low", p[4], "close", p[2], "volume", p[5]));
+        for (Map<String, Object> item : items) {
+            String ts = String.valueOf(item.getOrDefault("day", ""));
+            String open = String.valueOf(item.getOrDefault("open", ""));
+            String high = String.valueOf(item.getOrDefault("high", ""));
+            String low = String.valueOf(item.getOrDefault("low", ""));
+            String close = String.valueOf(item.getOrDefault("close", ""));
+            String volume = String.valueOf(item.getOrDefault("volume", ""));
+            if (ts.isBlank() || open.isBlank()) continue;
+            out.add(Map.of("ts", ts, "open", open, "high", high, "low", low, "close", close, "volume", volume));
         }
         return out;
     }
@@ -608,7 +668,24 @@ public class QuoteService {
     }
 
     private Map<String, String> defaultHeaders() {
-        return Map.of("Accept", "application/json", "User-Agent", "Mozilla/5.0 (AIBuy-Java/1.0)");
+        return Map.of("Accept", "application/json", "User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+    }
+
+    private Map<String, String> eastmoneyHeaders() {
+        Map<String, String> h = new LinkedHashMap<>();
+        h.put("Accept", "application/json, text/plain, */*");
+        h.put("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8");
+        h.put("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+        return h;
+    }
+
+    private Map<String, String> sinaHeaders() {
+        Map<String, String> h = new LinkedHashMap<>();
+        h.put("Accept", "*/*");
+        h.put("Accept-Language", "zh-CN,zh;q=0.9");
+        h.put("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+        h.put("Referer", "https://finance.sina.com.cn/");
+        return h;
     }
 
     private String stringValue(Object raw) {
@@ -655,6 +732,22 @@ public class QuoteService {
             try {
                 var request = java.net.http.HttpRequest.newBuilder(java.net.URI.create(url)).timeout(java.time.Duration.ofSeconds(timeoutSec)).GET().build();
                 var response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
+                if (response.statusCode() >= 400) throw new IllegalStateException("http_error:" + response.statusCode());
+                return response.body();
+            } catch (Exception e) {
+                throw new IllegalStateException("network_error", e);
+            }
+        }
+
+        static String getWithHeaders(HttpClient client, String url, Map<String, String> headers, int timeoutSec) {
+            try {
+                var builder = java.net.http.HttpRequest.newBuilder(java.net.URI.create(url))
+                        .timeout(java.time.Duration.ofSeconds(timeoutSec)).GET();
+                if (headers != null) {
+                    headers.forEach(builder::header);
+                }
+                var request = builder.build();
+                var response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString(java.nio.charset.StandardCharsets.UTF_8));
                 if (response.statusCode() >= 400) throw new IllegalStateException("http_error:" + response.statusCode());
                 return response.body();
             } catch (Exception e) {

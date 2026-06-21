@@ -107,6 +107,16 @@ public class TradingResponseAgent {
         }
 
         if (intent.isMarketResearch()) {
+            Object quoteObj = marketAnalysis.facts().get("quote");
+            Map<String, Object> quote = toMap(quoteObj);
+            if (!quote.isEmpty()) {
+                return String.format(
+                        "已完成行情分析。%s 的当前价格为 %s，当前市场倾向为 %s，置信度约 %.0f%%。近 30 根日线趋势供进一步判断，如需下单建议补充数量与方向。",
+                        quote.getOrDefault("symbol", "该标的"),
+                        formatNumber(quote.get("price")),
+                        marketAnalysis.marketBias(),
+                        marketAnalysis.confidence() * 100);
+            }
             return String.format(
                     "标的的行情上下文已经整理完，当前市场倾向是 %s，置信度约 %.0f%%。如果你准备进一步下单，下一步最好补一轮风控预检和仓位评估。",
                     marketAnalysis.marketBias(),
