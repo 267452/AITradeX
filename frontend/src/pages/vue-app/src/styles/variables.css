@@ -1,0 +1,29 @@
+:root {
+  --bg-root: #0d1525;
+  --bg-sidebar: #0f1e33;
+  --bg-sidebar-elev: #142844;
+  --bg-panel: #111d31;
+  --bg-panel-soft: #15263f;
+  --bg-card: #f5f8fc;
+  --bg-card-soft: #ffffff;
+  --text-strong: #10243c;
+  --text-main: #2d4867;
+  --text-muted: #5f7793;
+  --text-light: #d7e6f7;
+  --line-dark: rgba(120, 182, 210, 0.2);
+  --line-soft: #dbe6f2;
+  --brand: #23b8a6;
+  --brand-strong: #1197a7;
+  --brand-soft: rgba(35, 184, 166, 0.12);
+  --good: #23b26f;
+  --warn: #eb9f31;
+  --bad: #df5a6a;
+  --info: #5f87c7;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --shadow-panel: 0 10px 24px rgba(5, 16, 30, 0.16);
+  --shadow-card: 0 2px 10px rgba(19, 40, 68, 0.05);
+  --sidebar-width: 246px;
+  --header-height: 92px;
+}
