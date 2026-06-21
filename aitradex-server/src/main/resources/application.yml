@@ -10,9 +10,9 @@ spring:
   application:
     name: aitradex
   datasource:
-    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/aibuy}
-    username: ${POSTGRES_USER:aibuy}
-    password: ${POSTGRES_PASSWORD:aibuy}
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/aitradex}
+    username: ${POSTGRES_USER:aitradex}
+    password: ${POSTGRES_PASSWORD:aitradex}
     driver-class-name: org.postgresql.Driver
   sql:
     init:

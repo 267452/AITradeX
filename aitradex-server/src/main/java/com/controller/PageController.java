@@ -42,4 +42,18 @@ public class PageController {
         FileSystemResource resource = new FileSystemResource(FRONTEND_PAGES_PATH + "/index.html");
         return StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
     }
+
+    @GetMapping(value = {"/vue", "/vue/", "/vue/**"})
+    @ResponseBody
+    public Object vueApp(jakarta.servlet.http.HttpServletRequest request) throws IOException {
+        String requestUri = request.getRequestURI();
+        if (requestUri.contains("/assets/")) {
+            String assetPath = requestUri.replaceFirst("^/vue/assets/", "");
+            String basePath = "/Users/wangyan/Desktop/AITradeX/aitradex-server/src/main/resources/static/vue/assets/";
+            return new FileSystemResource(basePath + assetPath);
+        }
+        String vueAppPath = "/Users/wangyan/Desktop/AITradeX/aitradex-server/src/main/resources/static/vue/index.html";
+        FileSystemResource resource = new FileSystemResource(vueAppPath);
+        return StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
+    }
 }
