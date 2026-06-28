@@ -20,9 +20,18 @@ CREATE TABLE IF NOT EXISTS knowledge_document (
     chunk_count INTEGER NOT NULL DEFAULT 0,
     page_count INTEGER NOT NULL DEFAULT 0,
     sync_note TEXT NOT NULL DEFAULT '',
+    source_path TEXT,
     last_sync_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- 添加 source_path 列（如果已存在表结构但不包含此列的旧数据库）
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'knowledge_document' AND column_name = 'source_path') THEN
+        ALTER TABLE knowledge_document ADD COLUMN source_path TEXT;
+    END IF;
+END $$;
 
 CREATE TABLE IF NOT EXISTS conversation_session (
     id BIGSERIAL PRIMARY KEY,

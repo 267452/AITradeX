@@ -43,13 +43,20 @@ public class PageController {
         return StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
     }
 
-    @GetMapping(value = {"/vue", "/vue/", "/vue/**"})
+    @GetMapping(value = {"/knowledge", "/knowledge/", "/knowledge/**"})
     @ResponseBody
-    public Object vueApp(jakarta.servlet.http.HttpServletRequest request) throws IOException {
+    public Object knowledgePage(jakarta.servlet.http.HttpServletRequest request) throws IOException {
         String requestUri = request.getRequestURI();
-        if (requestUri.contains("/assets/")) {
-            String assetPath = requestUri.replaceFirst("^/vue/assets/", "");
+        // 处理 /knowledge/assets/ 路径
+        if (requestUri.contains("/knowledge/assets/")) {
+            String assetPath = requestUri.replaceFirst("^/knowledge/assets/", "");
             String basePath = "/Users/wangyan/Desktop/AITradeX/aitradex-server/src/main/resources/static/vue/assets/";
+            return new FileSystemResource(basePath + assetPath);
+        }
+        // 处理根路径的 assets（Vue 路由）
+        if (requestUri.startsWith("/assets/")) {
+            String assetPath = requestUri.substring(1);
+            String basePath = "/Users/wangyan/Desktop/AITradeX/aitradex-server/src/main/resources/static/vue/";
             return new FileSystemResource(basePath + assetPath);
         }
         String vueAppPath = "/Users/wangyan/Desktop/AITradeX/aitradex-server/src/main/resources/static/vue/index.html";

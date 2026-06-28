@@ -19,6 +19,14 @@ spring:
       mode: never
   jackson:
     time-zone: Asia/Shanghai
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 500MB
+      enabled: true
+  tomcat:
+    max-http-form-post-size: 500MB
+    max-swallow-size: 500MB
 
 logging:
   level:

@@ -1,0 +1,1 @@
+const i="/api";function a(r,t={}){const o=localStorage.getItem("token"),n={method:t.method||"GET",headers:{"Content-Type":"application/json",...o?{Authorization:`Bearer ${o}`}:{}}};return t.body&&(n.body=JSON.stringify(t.body)),fetch(`${i}${r}`,n).then(e=>e.json()).then(e=>{if(e.code!==200)throw new Error(e.msg||"请求失败");return e.data})}export{a};

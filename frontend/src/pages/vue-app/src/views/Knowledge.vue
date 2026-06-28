@@ -58,102 +58,6 @@
           </div>
         </article>
       </div>
-
-      <aside class="module-side-stack">
-        <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-summary" open>
-          <summary>
-            <div class="agent-collab-card-copy">
-              <div class="agent-collab-card-kicker">KNOWLEDGE SUMMARY</div>
-              <div class="agent-collab-card-title-row">
-                <h4>知识概览</h4>
-                <span class="agent-collab-card-badge state-idle">摘要</span>
-              </div>
-              <p class="agent-collab-card-peek">默认收起，展开查看知识库规模、文档量和切片状态摘要。</p>
-            </div>
-          </summary>
-          <div class="overview-side-card-body module-side-card-body">
-            <div class="meta-grid">
-              <div class="meta-card">
-                <div class="meta-label">知识库数量</div>
-                <div class="meta-value">{{ formatNumber(stats.baseCount || stats.base_count || 0) }}</div>
-              </div>
-              <div class="meta-card">
-                <div class="meta-label">文档总量</div>
-                <div class="meta-value">{{ formatNumber(stats.documentCount || stats.document_count || 0) }}</div>
-              </div>
-              <div class="meta-card">
-                <div class="meta-label">切片总量</div>
-                <div class="meta-value">{{ formatNumber(stats.sliceCount || stats.slice_count || 0) }}</div>
-              </div>
-              <div class="meta-card">
-                <div class="meta-label">Embedding 模型</div>
-                <div class="meta-value" style="font-size: 14px;">{{ stats.embeddingModel || stats.embedding_model || '--' }}</div>
-              </div>
-            </div>
-          </div>
-        </details>
-
-        <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-action" open>
-          <summary>
-            <div class="agent-collab-card-copy">
-              <div class="agent-collab-card-kicker">DOCUMENT SYNC</div>
-              <div class="agent-collab-card-title-row">
-                <h4>文档同步记录</h4>
-                <span class="agent-collab-card-badge state-idle">LIST</span>
-              </div>
-              <p class="agent-collab-card-peek">默认收起，展开查看最新文档解析与写入状态。</p>
-            </div>
-          </summary>
-          <div class="overview-side-card-body module-side-card-body">
-            <div v-if="documents.length === 0" class="empty" style="padding:8px 0;">暂无文档。</div>
-            <div v-else class="list-box">
-              <div v-for="doc in documents.slice(0, 5)" :key="doc.id" class="list-item">
-                <div class="list-item-title">{{ doc.fileName || '--' }}</div>
-                <div class="list-item-meta">
-                  <span :class="['badge', 'mini', toneClass(normalizeToneFromStatus(doc.parseStatus))]">
-                    {{ (doc.parseStatus || '--').toUpperCase() }}
-                  </span>
-                  {{ formatDateTime(doc.lastSyncAt) }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </details>
-
-        <details class="agent-collab-card overview-side-fold-card overview-side-nav-card side-nav-action" open>
-          <summary>
-            <div class="agent-collab-card-copy">
-              <div class="agent-collab-card-kicker">KNOWLEDGE CONFIG</div>
-              <div class="agent-collab-card-title-row">
-                <h4>知识库配置</h4>
-                <span class="agent-collab-card-badge state-idle">MANAGE</span>
-              </div>
-              <p class="agent-collab-card-peek">新建、编辑和删除知识库，配置向量库参数。</p>
-            </div>
-          </summary>
-          <div class="overview-side-card-body module-side-card-body">
-            <div class="module-action-stack">
-              <button class="btn btn-primary small" @click="openKnowledgeModal()" style="width:100%;justify-content:center;">新建知识库</button>
-            </div>
-            <div class="module-side-card">
-              <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">已创建的知识库：</div>
-              <div v-if="bases.length === 0" class="empty" style="padding:8px 0;">暂无知识库。</div>
-              <div v-else>
-                <div v-for="base in bases" :key="base.id" class="side-card-item" style="display:flex;align-items:center;padding:8px;border-bottom:1px solid var(--border-color);">
-                  <div style="flex:1;min-width:0;">
-                    <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ base.name || '--' }}</div>
-                    <div style="font-size:11px;color:var(--text-muted);">{{ base.vectorStore || base.vector_store || '--' }}</div>
-                  </div>
-                  <div style="display:flex;gap:4px;margin-left:8px;">
-                    <button class="mini-btn" @click="openKnowledgeModal(base)">编辑</button>
-                    <button class="mini-btn danger" @click="deleteKnowledge(base.id)">删除</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </details>
-      </aside>
     </div>
 
     <!-- 知识库弹窗 -->
@@ -190,7 +94,7 @@
                 <input id="kb-files" type="file" ref="fileInput" multiple accept=".pdf,.md,.txt,.doc,.docx,.xlsx,.xls,.ppt,.pptx" @change="onFileChange" />
               </div>
               <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">支持 PDF、Markdown、Word、Excel、PPT 等格式，可多选</div>
-              <div v-if="selectedFiles.length > 0" style="font-size:12px;color:var(--text-primary);margin-top:8px;">
+              <div v-if="selectedFiles.length > 0" style="font-size:12px;color:var(--text-strong);margin-top:8px;">
                 已选择 {{ selectedFiles.length }} 个文件：{{ selectedFiles.map(f => f.name).join(', ') }}
               </div>
             </div>
@@ -270,7 +174,7 @@
               <input id="up-doc-files" type="file" multiple accept=".pdf,.md,.txt,.doc,.docx,.xlsx,.xls,.ppt,.pptx,.csv,.json,.log,.html,.xml" @change="onUploadFileChange" />
             </div>
             <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">支持 PDF、Markdown、Word、Excel、PPT、TXT、CSV、JSON 等格式，可多选</div>
-            <div v-if="uploadFiles.length > 0" style="font-size:12px;color:var(--text-primary);margin-top:8px;">
+            <div v-if="uploadFiles.length > 0" style="font-size:12px;color:var(--text-strong);margin-top:8px;">
               已选择 {{ uploadFiles.length }} 个文件：{{ uploadFiles.map(f => f.name).join(', ') }}
             </div>
           </div>
@@ -304,8 +208,8 @@
                 <span>文本格式: {{ documentViewerData.isText ? '是' : '否（二进制/非文本）' }}</span>
               </div>
             </div>
-            <div style="border:1px solid var(--border-color);border-radius:8px;padding:16px;background:var(--panel-bg);">
-              <pre style="white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12.5px;line-height:1.6;margin:0;color:var(--text-primary);">{{ documentViewerData.content }}</pre>
+            <div style="border:1px solid var(--line-dark);border-radius:8px;padding:16px;background:var(--bg-panel);">
+              <pre style="white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12.5px;line-height:1.6;margin:0;color:var(--text-strong);">{{ documentViewerData.content }}</pre>
             </div>
             <div v-if="documentViewerData.contentTruncated" style="margin-top:12px;color:var(--text-muted);font-size:12px;text-align:center;">内容过长，仅展示前 1MB，完整内容请从原文件查看。</div>
           </template>
@@ -423,6 +327,25 @@ function toneClass(tone) {
   return `tone-${tone}`
 }
 
+// 工具函数：将 snake_case 转换为 camelCase
+function toCamelCase(str) {
+  if (!str || typeof str !== 'string') return str
+  return str.replace(/_([a-z])/g, (g) => g[1].toUpperCase())
+}
+
+// 转换对象中的 snake_case 键为 camelCase
+function convertKeysToCamelCase(obj) {
+  if (obj === null || typeof obj !== 'object') return obj
+  if (Array.isArray(obj)) return obj.map(convertKeysToCamelCase)
+  const result = {}
+  for (const key in obj) {
+    const camelKey = toCamelCase(key)
+    const value = obj[key]
+    result[camelKey] = (value !== null && typeof value === 'object') ? convertKeysToCamelCase(value) : value
+  }
+  return result
+}
+
 // 加载数据
 async function loadKnowledgeData() {
   loading.value = true
@@ -433,9 +356,9 @@ async function loadKnowledgeData() {
       apiRequest('/admin/knowledge/documents').catch(() => [])
     ])
 
-    Object.assign(stats, statsData || {})
-    bases.value = basesData || []
-    documents.value = docsData || []
+    Object.assign(stats, convertKeysToCamelCase(statsData || {}))
+    bases.value = convertKeysToCamelCase(basesData || [])
+    documents.value = convertKeysToCamelCase(docsData || [])
   } catch (error) {
     console.error('加载知识库数据失败:', error)
   } finally {
@@ -735,8 +658,8 @@ onMounted(() => {
 }
 
 .panel {
-  background: var(--panel-bg);
-  border: 1px solid var(--border-color);
+  background: var(--bg-panel);
+  border: 1px solid var(--line-dark);
   border-radius: 12px;
 }
 
@@ -745,13 +668,13 @@ onMounted(() => {
   justify-content: space-between;
   align-items: flex-start;
   padding: 20px 24px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--line-dark);
 }
 
 .panel-head h3 {
   font-size: 16px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-strong);
   margin: 0;
 }
 
@@ -795,13 +718,13 @@ onMounted(() => {
 }
 
 .btn-secondary {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
+  background: var(--bg-panel-soft);
+  color: var(--text-strong);
+  border: 1px solid var(--line-dark);
 }
 
 .btn-secondary:hover {
-  background: var(--bg-hover);
+  background: var(--bg-panel);
 }
 
 .mini-btn {
@@ -810,13 +733,13 @@ onMounted(() => {
   border-radius: 4px;
   border: none;
   cursor: pointer;
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: var(--bg-panel-soft);
+  color: var(--text-strong);
   transition: all 0.2s ease;
 }
 
 .mini-btn:hover {
-  background: var(--bg-hover);
+  background: var(--bg-panel);
 }
 
 .mini-btn.danger {
@@ -837,7 +760,7 @@ onMounted(() => {
 .data-table td {
   padding: 10px 12px;
   text-align: left;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--line-dark);
 }
 
 .data-table th {
@@ -849,7 +772,7 @@ onMounted(() => {
 }
 
 .data-table td {
-  color: var(--text-primary);
+  color: var(--text-strong);
 }
 
 .value-strong {
@@ -902,25 +825,26 @@ onMounted(() => {
 .module-main-column {
   flex: 1;
   min-width: 0;
+  overflow: hidden;
 }
 
 .module-side-stack {
-  width: 320px;
+  width: 280px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  overflow-y: auto;
 }
 
 .agent-collab-card {
-  background: var(--panel-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
+  background: var(--bg-card-soft);
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 
 .agent-collab-card summary {
-  padding: 16px;
+  padding: 14px 16px;
   cursor: pointer;
   list-style: none;
 }
@@ -938,7 +862,8 @@ onMounted(() => {
 .agent-collab-card-kicker {
   font-size: 10px;
   letter-spacing: 0.7px;
-  color: rgba(183, 210, 236, 0.54);
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
 .agent-collab-card-title-row {
@@ -949,28 +874,29 @@ onMounted(() => {
 }
 
 .agent-collab-card-title-row h4 {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-strong);
   margin: 0;
 }
 
 .agent-collab-card-badge {
-  font-size: 10px;
-  padding: 2px 8px;
-  border-radius: 4px;
-  background: rgba(148, 163, 184, 0.15);
-  color: #94a3b8;
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(95, 119, 147, 0.12);
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
 .agent-collab-card-peek {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-muted);
-  margin: 0;
+  margin-top: 4px;
 }
 
 .overview-side-card-body {
-  padding: 0 16px 16px;
+  padding: 0 16px 14px;
 }
 
 .meta-grid {
@@ -980,7 +906,7 @@ onMounted(() => {
 }
 
 .meta-card {
-  background: var(--bg-secondary);
+  background: var(--bg-panel-soft);
   border-radius: 8px;
   padding: 12px;
 }
@@ -994,7 +920,7 @@ onMounted(() => {
 .meta-value {
   font-size: 18px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-strong);
 }
 
 .module-action-stack {
@@ -1005,7 +931,7 @@ onMounted(() => {
 }
 
 .module-side-card {
-  background: var(--bg-secondary);
+  background: var(--bg-panel-soft);
   border-radius: 8px;
   padding: 12px;
 }
@@ -1018,14 +944,14 @@ onMounted(() => {
 
 .list-item {
   padding: 8px;
-  background: var(--bg-secondary);
+  background: var(--bg-panel-soft);
   border-radius: 6px;
 }
 
 .list-item-title {
   font-size: 13px;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text-strong);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1050,7 +976,7 @@ onMounted(() => {
 }
 
 .side-card-item:hover {
-  background: var(--bg-hover);
+  background: var(--bg-panel);
 }
 
 /* Modal */
@@ -1066,8 +992,8 @@ onMounted(() => {
 }
 
 .modal-card {
-  background: var(--panel-bg);
-  border: 1px solid var(--border-color);
+  background: var(--bg-panel);
+  border: 1px solid var(--line-dark);
   border-radius: 12px;
   max-width: 560px;
   width: 90%;
@@ -1082,13 +1008,13 @@ onMounted(() => {
   justify-content: space-between;
   align-items: flex-start;
   padding: 20px 24px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--line-dark);
 }
 
 .modal-head h3 {
   font-size: 16px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-strong);
   margin: 0;
 }
 
@@ -1114,8 +1040,8 @@ onMounted(() => {
 }
 
 .modal-close:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
+  background: var(--bg-panel-soft);
+  color: var(--text-strong);
 }
 
 .modal-form {
@@ -1136,7 +1062,7 @@ onMounted(() => {
   justify-content: flex-end;
   gap: 8px;
   padding: 16px 24px;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--line-dark);
 }
 
 .field {
@@ -1147,7 +1073,7 @@ onMounted(() => {
   display: block;
   font-size: 13px;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text-strong);
   margin-bottom: 6px;
 }
 
@@ -1158,10 +1084,10 @@ onMounted(() => {
 .field textarea {
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--line-dark);
   border-radius: 6px;
-  background: var(--bg-input);
-  color: var(--text-primary);
+  background: var(--bg-panel-soft);
+  color: var(--text-strong);
   font-size: 13px;
   transition: border-color 0.2s ease;
 }
