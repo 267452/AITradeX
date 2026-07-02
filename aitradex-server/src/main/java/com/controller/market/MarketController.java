@@ -75,7 +75,14 @@ public class MarketController {
 
     @PostMapping("/ticks/ingest")
     public ApiResponse<Map<String, Object>> ingestTicks(@RequestBody MarketTickIngestRequest req,
-                                                        @RequestHeader(value = "X-Stream-Token", required = false) String streamToken) {
+                                                        @RequestHeader(value = "X-Stream-Token", required = false) String streamToken,
+                                                        @RequestParam(value = "dry_run", required = false, defaultValue = "false") boolean dryRun) {
+        if (dryRun) {
+            int accepted = (req == null || req.items() == null) ? 0 : (int) req.items().stream()
+                    .filter(item -> item != null && item.symbol() != null && !item.symbol().isBlank() && item.lastPrice() != null)
+                    .count();
+            return ApiResponse.success(Map.of("accepted", accepted, "received", req == null || req.items() == null ? 0 : req.items().size(), "dry_run", true));
+        }
         if (!properties.isStreamEnabled()) {
             throw new BusinessException(400, "stream_not_enabled");
         }
