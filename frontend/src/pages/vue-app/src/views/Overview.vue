@@ -334,9 +334,7 @@ const quickActions = ref([
   { id: 1, label: '刷新持仓', handler: loadPositions },
   { id: 2, label: '刷新订单', handler: loadOrders },
   { id: 3, label: '账户明细', handler: loadAccountSummary },
-  { id: 4, label: '风险监控', handler: () => {} },
-  { id: 5, label: '模拟推送数据', handler: simulatePushData },
-  { id: 6, label: '批量模拟推送', handler: simulateBatchPushData }
+  { id: 4, label: '风险监控', handler: () => {} }
 ])
 
 // 快捷命令
@@ -567,86 +565,6 @@ async function loadAccountSummary() {
     statsBadgeText.value = '异常'
     commandResult.value = `加载账户概览失败: ${error.message}`
     resultStatus.value = 'danger'
-  }
-}
-
-// 生成随机价格（在基准价基础上波动）
-function randomPrice(base, volatility = 0.02) {
-  const change = (Math.random() - 0.5) * 2 * volatility
-  return parseFloat((base * (1 + change)).toFixed(2))
-}
-
-// 模拟推送单条数据
-async function simulatePushData() {
-  const symbols = ['BTC-USDT', 'ETH-USDT', 'BNB-USDT', 'SOL-USDT', 'XRP-USDT', '600519', '000001']
-  const symbol = symbols[Math.floor(Math.random() * symbols.length)]
-  const basePrice = symbol === 'BTC-USDT' ? 66234 : symbol === 'ETH-USDT' ? 3450 : symbol === '600519' ? 1780 : 100
-
-  const tick = {
-    source: 'simulation',
-    exchange: symbol.endsWith('USDT') ? 'okx' : 'simu',
-    symbol: symbol,
-    event_time: new Date().toISOString(),
-    last_price: randomPrice(basePrice),
-    bid1: randomPrice(basePrice * 0.999),
-    ask1: randomPrice(basePrice * 1.001),
-    volume: parseFloat((Math.random() * 10).toFixed(4)),
-    turnover: parseFloat((Math.random() * 100000).toFixed(2)),
-    source_event_id: 'sim-' + Date.now()
-  }
-
-  try {
-    const response = await apiRequest('/market/ticks/ingest', {
-      method: 'POST',
-      body: { items: [tick] }
-    })
-    commandResult.value = `模拟推送成功: ${symbol} @ ${tick.last_price} (已推送 1 条)`
-    resultStatus.value = 'success'
-  } catch (error) {
-    if (error.message && error.message.includes('stream_not_enabled')) {
-      commandResult.value = '模拟推送失败: Stream 未启用（请在 .env 中设置 STREAM_ENABLED=true）'
-      resultStatus.value = 'warning'
-    } else {
-      commandResult.value = `模拟推送失败: ${error.message}`
-      resultStatus.value = 'danger'
-    }
-  }
-}
-
-// 批量模拟推送数据
-async function simulateBatchPushData() {
-  const symbols = ['BTC-USDT', 'ETH-USDT', 'BNB-USDT', 'SOL-USDT', 'XRP-USDT']
-  const items = symbols.map(symbol => {
-    const basePrice = symbol === 'BTC-USDT' ? 66234 : symbol === 'ETH-USDT' ? 3450 : 100
-    return {
-      source: 'simulation',
-      exchange: 'okx',
-      symbol: symbol,
-      event_time: new Date().toISOString(),
-      last_price: randomPrice(basePrice),
-      bid1: randomPrice(basePrice * 0.999),
-      ask1: randomPrice(basePrice * 1.001),
-      volume: parseFloat((Math.random() * 10).toFixed(4)),
-      turnover: parseFloat((Math.random() * 100000).toFixed(2)),
-      source_event_id: 'sim-' + Date.now() + '-' + Math.random().toString(36).substring(2, 8)
-    }
-  })
-
-  try {
-    const response = await apiRequest('/market/ticks/ingest', {
-      method: 'POST',
-      body: { items }
-    })
-    commandResult.value = `批量模拟推送成功: ${items.length} 条数据已推送（${symbols.join(', ')}）`
-    resultStatus.value = 'success'
-  } catch (error) {
-    if (error.message && error.message.includes('stream_not_enabled')) {
-      commandResult.value = '批量模拟推送失败: Stream 未启用（请在 .env 中设置 STREAM_ENABLED=true）'
-      resultStatus.value = 'warning'
-    } else {
-      commandResult.value = `批量模拟推送失败: ${error.message}`
-      resultStatus.value = 'danger'
-    }
   }
 }
 
